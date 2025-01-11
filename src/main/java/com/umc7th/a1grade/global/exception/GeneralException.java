@@ -1,4 +1,4 @@
-package com.umc7th.a1grade.domain.temp.exception;
+package com.umc7th.a1grade.global.exception;
 
 import com.umc7th.a1grade.global.apiPayload.code.BaseErrorCode;
 import com.umc7th.a1grade.global.apiPayload.code.ErrorReasonDTO;
