@@ -1,4 +1,4 @@
-package com.umc7th.a1grade.global.apiPayload.code.status;
+package com.umc7th.a1grade.domain.temp.handler.status;
 
 import org.springframework.http.HttpStatus;
 
@@ -10,9 +10,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum SuccessStatus implements BaseCode {
-
-  // Common Success
+public enum TempSuccessStatus implements BaseCode {
   _OK(HttpStatus.OK, "COMMON200", "응답에 성공했습니다.");
 
   private final HttpStatus httpStatus;
