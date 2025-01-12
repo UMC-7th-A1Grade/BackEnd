@@ -27,5 +27,13 @@ public class QuestionResponseDTO {
 		boolean isCorrect;
 	}
 
+	@Builder
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class getAnswerDTO{
+		String answer;
+	}
+
 
 }

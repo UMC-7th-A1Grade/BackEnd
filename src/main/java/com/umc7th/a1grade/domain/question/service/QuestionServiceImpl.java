@@ -17,4 +17,9 @@ public class QuestionServiceImpl implements QuestionService {
 	public void submitAnswer() {
 
 	}
+
+	@Override
+	public void getAnswer() {
+
+	}
 }
