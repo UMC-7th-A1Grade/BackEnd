@@ -12,4 +12,9 @@ public class QuestionServiceImpl implements QuestionService {
 	@Transactional(readOnly = true)
 	public void getRandomQuestions() {
 	}
+
+	@Override
+	public void submitAnswer() {
+
+	}
 }

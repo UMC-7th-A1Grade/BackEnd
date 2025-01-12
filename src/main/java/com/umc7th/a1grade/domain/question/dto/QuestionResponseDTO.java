@@ -17,4 +17,15 @@ public class QuestionResponseDTO {
 	public static class RandomQuestionDTO{
 		List<Question> questions;
 	}
+
+	@Builder
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class SubmitAnswerDTO{
+		String answer;
+		boolean isCorrect;
+	}
+
+
 }
