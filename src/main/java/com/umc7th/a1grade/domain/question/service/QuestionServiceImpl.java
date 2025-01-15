@@ -8,18 +8,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService {
-	@Override
-	@Transactional(readOnly = true)
-	public void getRandomQuestions() {
-	}
+  @Override
+  @Transactional(readOnly = true)
+  public void getRandomQuestions() {}
 
-	@Override
-	public void submitAnswer() {
+  @Override
+  public void submitAnswer() {}
 
-	}
-
-	@Override
-	public void getAnswer() {
-
-	}
+  @Override
+  public void getAnswer() {}
 }
