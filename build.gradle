@@ -44,6 +44,20 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 
+
+
+    // OAuth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // Spring-security, Spring-security-test
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Jwt
+    implementation group:'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    implementation group:'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    implementation group:'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
 }
 
 tasks.named('compileJava') {
