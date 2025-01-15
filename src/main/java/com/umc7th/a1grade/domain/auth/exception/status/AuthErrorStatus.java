@@ -19,7 +19,13 @@ public enum AuthErrorStatus implements BaseErrorCode {
   _TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4005", "토큰이 만료되었습니다."),
   _REFRESH_TOKEN_REQUIRED(HttpStatus.FORBIDDEN, "AUTH4006", "리프레시 토큰이 필요합니다."),
 
-  _LOGOUT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5000", "로그아웃 처리 중 오류가 발생했습니다.");
+  _LOGOUT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5000", "로그아웃 처리 중 오류가 발생했습니다."),
+
+  EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_EXPIRED4001", "JWT 토큰이 만료되었습니다."),
+  UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_UNSUPPORTED4002", "지원되지 않는 JWT 형식입니다."),
+  MALFORMED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_MALFORMED4003", "JWT 형식이 올바르지 않습니다."),
+  INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "JWT_INVALID_SIGNATURE4004", "JWT 서명이 유효하지 않습니다."),
+  ILLEGAL_ARGUMENT(HttpStatus.UNAUTHORIZED, "JWT_ILLEGAL_ARGUMENT4005", "JWT 토큰 값이 잘못되었습니다.");
 
   private final HttpStatus httpStatus;
   private final String code;

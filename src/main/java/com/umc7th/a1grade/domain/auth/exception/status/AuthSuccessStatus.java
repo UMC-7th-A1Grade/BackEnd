@@ -11,9 +11,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum AuthSuccessStatus implements BaseCode {
-  _OK(HttpStatus.OK, "COMMON2000", "응답에 성공했습니다."),
-  _LOGIN_URL_SUCCESS(HttpStatus.OK, "AUTH2001", "로그인 url 생성에 성공했습니다."),
-  _LOGIN_SUCCESS(HttpStatus.OK, "AUTH2002", "로그인에 성공했습니다."),
+  _LOGIN_SUCCESS(HttpStatus.OK, "AUTH2002", "로그인에 성공했습니다. JWT 액세스 토큰과 사용자 정보 반환 완료."),
   _LOGOUT_SUCCESS(HttpStatus.OK, "AUTH2003", "로그아웃에 성공했습니다."),
   _TOKEN_REFRESH_SUCCESS(HttpStatus.OK, "AUTH2004", "토큰 재발급에 성공했습니다.");
 

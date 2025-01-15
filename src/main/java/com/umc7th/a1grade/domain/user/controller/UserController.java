@@ -2,6 +2,8 @@ package com.umc7th.a1grade.domain.user.controller;
 
 import jakarta.validation.Valid;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,13 +35,15 @@ public class UserController {
             example = "testUser")
       })
   @GetMapping("/nickname/check")
-  public ApiResponse<Boolean> confirmNickName(@RequestParam("nickname") String nickname) {
+  public ApiResponse<Boolean> confirmNickName(
+      @AuthenticationPrincipal UserDetails userDetails, @RequestParam("nickname") String nickname) {
     return ApiResponse.onSuccess(true);
   }
 
   @Operation(summary = "닉네임 저장", description = "사용자에게 입력받은 닉네임을 저장합니다.")
   @PostMapping("/nickname/save")
-  public ApiResponse<Boolean> saveNickame(@RequestBody @Valid UserInfoDto request) {
+  public ApiResponse<Boolean> saveNickame(
+      @AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserInfoDto request) {
     return ApiResponse.onSuccess(true);
   }
 }

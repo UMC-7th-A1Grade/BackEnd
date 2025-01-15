@@ -33,6 +33,7 @@ public class User extends BaseTimeEntity {
   private SocialType socialType;
 
   @NotNull private String socialId;
+
   @NotNull private String email;
 
   @Enumerated(EnumType.STRING)
@@ -42,8 +43,18 @@ public class User extends BaseTimeEntity {
 
   private Long imageId;
 
+  private String refreshToken;
+
   // 필요한 항목들인지 확인 해야함
   private String birth;
   private String region;
   private String phone;
+
+  public void setRefreshToken(String refreshToken) {
+    this.refreshToken = refreshToken;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
+  }
 }
