@@ -1,7 +1,8 @@
-package com.umc7th.a1grade.domain.auth.controller.response;
+package com.umc7th.a1grade.domain.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
+@Schema(title = "LoginResponse - 구글 소셜 로그인 응답 객체")
 public class LoginResponse {
   private String email;
   private String accessToken;

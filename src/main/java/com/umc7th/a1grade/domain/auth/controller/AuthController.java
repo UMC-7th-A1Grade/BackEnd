@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.umc7th.a1grade.domain.auth.controller.response.LoginResponse;
+import com.umc7th.a1grade.domain.auth.dto.LoginResponse;
 import com.umc7th.a1grade.domain.auth.exception.status.AuthSuccessStatus;
 import com.umc7th.a1grade.domain.auth.service.CookieHelper;
 import com.umc7th.a1grade.domain.auth.service.OAuth2TokenService;

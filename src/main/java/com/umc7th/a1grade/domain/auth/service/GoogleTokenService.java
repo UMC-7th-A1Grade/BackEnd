@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.umc7th.a1grade.domain.auth.controller.response.LoginResponse;
+import com.umc7th.a1grade.domain.auth.dto.LoginResponse;
 import com.umc7th.a1grade.domain.auth.dto.GoogleTokenResponse;
 import com.umc7th.a1grade.domain.auth.dto.OAuthAttributes;
 import com.umc7th.a1grade.domain.auth.exception.AuthHandler;
