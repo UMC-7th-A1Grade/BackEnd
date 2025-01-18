@@ -1,3 +1,13 @@
 package com.umc7th.a1grade.domain.user.repository;
 
-public interface UserRepository {}
+import java.util.Optional;
+
+import com.umc7th.a1grade.domain.user.entity.User;
+
+public interface UserRepository {
+  Optional<User> findByNickname(String nickname);
+
+  Optional<User> findBySocailId(String socialId);
+
+  User save(User user);
+}
