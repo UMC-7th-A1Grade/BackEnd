@@ -63,7 +63,7 @@ public class GoogleTokenService implements OAuth2TokenService {
     OAuthAttributes attributes = getUserInfo(accessToken);
     User user =
         userRepository
-            .findBySocialId(attributes.getSub())
+            .findBySocailId(attributes.getSub())
             .orElseGet(
                 () -> {
                   User newUser = attributes.toEntity();
