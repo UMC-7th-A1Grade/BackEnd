@@ -19,7 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> findBySocailId(String socialId) {
+  public Optional<User> findBySocialId(String socialId) {
     return userJpaRepository.findBySocialId(socialId);
   }
 
