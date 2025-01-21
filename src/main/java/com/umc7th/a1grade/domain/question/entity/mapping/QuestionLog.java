@@ -28,15 +28,15 @@ public class QuestionLog extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long userQuestionId;
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "userId", nullable = false)
+  @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "questionId", nullable = false)
-  private UserQuestion userQUestion;
+  @JoinColumn(name = "user_question_Id", nullable = false)
+  private UserQuestion userQuestion;
 
   @Column(nullable = false)
   @Comment("제출시간")
