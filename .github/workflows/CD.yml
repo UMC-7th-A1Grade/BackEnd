@@ -25,7 +25,7 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          ./gradlew clean build -x test
+          ./gradlew clean bootjar -Pprofile=dev
 
       - name: Docker build & push
         run: |
