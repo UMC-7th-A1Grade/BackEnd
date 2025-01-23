@@ -36,20 +36,8 @@ public class S3Config {
   @Value("${aws.s3.path.question}")
   private String questionPath;
 
-  @Value("${aws.s3.path.question.user}")
-  private String userPath;
-
-  @Value("${aws.s3.path.question.ai}")
-  private String aiPath;
-
   @Value("${aws.s3.path.memo}")
   private String memoPath;
-
-  @Value("${aws.s3.path.note}")
-  private String notePath;
-
-  @Value("${aws.s3.path.character}")
-  private String characterPath;
 
   @PostConstruct
   public void init() {
@@ -68,13 +56,5 @@ public class S3Config {
   @Bean
   public AWSCredentialsProvider awsCredentialsProvider() {
     return new AWSStaticCredentialsProvider(awsCredentials);
-  }
-
-  public String getUserQuestionPath() {
-    return questionPath + '/' + userPath;
-  }
-
-  public String getAiQuestionPath() {
-    return questionPath + '/' + aiPath;
   }
 }
