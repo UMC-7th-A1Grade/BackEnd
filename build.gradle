@@ -22,23 +22,12 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
 }
-
-ext {
-    set('springAiVersion', "1.0.0-M2")
-}
-
-def gradleProfile = project.hasProperty('profile') ? project.property('profile').toString() : 'local'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // Spring-boot-devtools
-    if (gradleProfile == 'local') {
-        implementation 'org.springframework.boot:spring-boot-devtools'
-    }
+    implementation 'org.springframework.boot:spring-boot-devtools'
 
     // Swagger openapi-ui
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1'
@@ -54,6 +43,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+
+    // S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
     // OAuth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
@@ -66,17 +60,6 @@ dependencies {
     implementation group:'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     implementation group:'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-    // S3
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-
-    // Spring AI
-    implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-    }
 }
 
 tasks.named('compileJava') {
@@ -99,22 +82,5 @@ spotless {
         trimTrailingWhitespace()
         // 파일 끝에 새로운 라인 추가
         endWithNewline()
-    }
-}
-
-processResources {
-    dependsOn 'copyResources'
-}
-
-tasks.register('copyResources', Copy) {
-    from './BackEnd_Config'
-    include '*.properties'
-    into 'src/main/resources/'
-}
-
-test {
-    doFirst {
-        def profile = project.hasProperty('profile') ? project.property('profile').toString() : 'local'
-        jvmArgs = ["-Dspring.profiles.active=${profile}"]
     }
 }
