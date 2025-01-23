@@ -43,9 +43,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-
-
-
     // OAuth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
@@ -81,4 +78,14 @@ spotless {
         // 파일 끝에 새로운 라인 추가
         endWithNewline()
     }
+}
+
+processResources {
+    dependsOn 'copyResources'
+}
+
+tasks.register('copyResources', Copy) {
+    from './BackEnd_Config'
+    include('*.properties')
+    into 'src/main/resources/'
 }
