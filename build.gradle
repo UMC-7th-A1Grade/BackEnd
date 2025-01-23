@@ -24,10 +24,16 @@ repositories {
     mavenCentral()
 }
 
+def gradleProfile = project.hasProperty('profile') ? project.property('profile').toString() : 'local'
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-devtools'
+
+    // Spring-boot-devtools
+    if (gradleProfile == 'local') {
+        implementation 'org.springframework.boot:spring-boot-devtools'
+    }
 
     // Swagger openapi-ui
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1'
@@ -88,4 +94,11 @@ tasks.register('copyResources', Copy) {
     from './BackEnd_Config'
     include('*.properties')
     into 'src/main/resources/'
+}
+
+test {
+    doFirst {
+        def profile = project.hasProperty('profile') ? project.property('profile').toString() : 'local'
+        jvmArgs = ["-Dspring.profiles.active=${profile}"]
+    }
 }
