@@ -18,15 +18,18 @@ import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Tag(name = "auth", description = "로그인 및 토큰 관련 API")
+@Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class AuthController {
   private final OAuth2TokenService googleTokenService;
@@ -75,15 +78,13 @@ public class AuthController {
   @PostMapping("/token")
   @Operation(
       summary = "액세스 토큰 재발급",
-      description =
-          "리프레시 토큰을 사용하여 새로운 액세스 토큰과 리프레시 토큰을 재발급합니다. \n"
-              + "액세스 토큰은 응답 바디에 포함되며, 리프레시 토큰은 HttpOnly 쿠키로 저장됩니다.",
+      description = "리프레시 토큰을 사용하여 새로운 액세스 토큰과 리프레시 토큰을 재발급합니다.",
       parameters = {
         @Parameter(
-            name = "refreshToken",
-            description = "HttpOnly 쿠키에 저장된 리프레시 토큰",
-            required = false,
-            hidden = true)
+            name = "Cookie",
+            description = "refreshToken=JWT_REFRESH_TOKEN 형식의 HttpOnly 쿠키",
+            required = true,
+            in = ParameterIn.HEADER)
       })
   @ApiResponses({
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -95,8 +96,10 @@ public class AuthController {
                 schema = @Schema(implementation = String.class)))
   })
   public ResponseEntity<ApiResponse<String>> refreshToken(
-      @AuthenticationPrincipal UserDetails userDetails,
-      @CookieValue(value = "refreshToken", required = false) String refreshToken) {
+      @RequestHeader(value = "Cookie", required = false) String cookieHeader) {
+    log.info("cookie header: {}", cookieHeader);
+    String refreshToken = cookieHelper.extractRefreshToken(cookieHeader);
+    log.info("refreshToken: {}", refreshToken);
     Map<String, String> response = tokenService.getSocialIdFronRefreshToken(refreshToken);
     ResponseCookie responseCookie =
         cookieHelper.createHttpOnlyCookie("refreshToken", response.get("refreshToken"));

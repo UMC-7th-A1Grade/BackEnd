@@ -26,6 +26,7 @@ public class TokenServiceImpl implements TokenService {
   public Map<String, String> getSocialIdFronRefreshToken(String refreshToken) {
     validateRefreshToken(refreshToken);
     String socialId = jwtProvider.extractSocialId(refreshToken);
+    log.info("socialId 출력: {}", socialId);
     User user = findUserBySocialId(socialId);
     Map<String, String> newTokens = createNewTokens(socialId);
     updateUserRefreshToken(user, newTokens.get("RefreshToken"));
@@ -47,7 +48,7 @@ public class TokenServiceImpl implements TokenService {
 
   private Map<String, String> createNewTokens(String socialId) {
     String newAccessToken = jwtProvider.createAccessToken(socialId);
-    String newRefreshToken = jwtProvider.createRefreshToken();
+    String newRefreshToken = jwtProvider.createRefreshToken(socialId);
 
     return Map.of(
         "AccessToken", newAccessToken,

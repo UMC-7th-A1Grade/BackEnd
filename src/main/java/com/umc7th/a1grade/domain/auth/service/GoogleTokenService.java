@@ -72,7 +72,7 @@ public class GoogleTokenService implements OAuth2TokenService {
                 });
 
     String jwtAccessToken = jwtProvider.createAccessToken(user.getSocialId());
-    String jwtRefreshToken = jwtProvider.createRefreshToken();
+    String jwtRefreshToken = jwtProvider.createRefreshToken(user.getSocialId());
     user.setRefreshToken(jwtRefreshToken);
 
     log.info("JWT 액세스 토큰 생성: {}", jwtAccessToken);

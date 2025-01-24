@@ -40,9 +40,10 @@ public class JwtProvider {
         .compact();
   }
 
-  public String createRefreshToken() {
+  public String createRefreshToken(String socialId) {
     Date now = new Date();
     return Jwts.builder()
+        .setSubject(socialId)
         .setIssuedAt(now)
         .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME))
         .signWith(key, SignatureAlgorithm.HS256)
