@@ -3,7 +3,9 @@ package com.umc7th.a1grade.unittest.auth.fake;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FakeJwtProvider {
+import com.umc7th.a1grade.domain.jwt.JwtProvider;
+
+public class FakeJwtProvider implements JwtProvider {
   private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;
   private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;
 
@@ -15,9 +17,9 @@ public class FakeJwtProvider {
     return token;
   }
 
-  public String createRefreshToken() {
-    String token = "mock-refresh-token";
-    tokenStore.put(token, "refresh-user");
+  public String createRefreshToken(String socialId) {
+    String token = "mock-refresh-token" + socialId;
+    tokenStore.put(token, socialId);
     return token;
   }
 
