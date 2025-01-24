@@ -1,6 +1,7 @@
 package com.umc7th.a1grade.global.s3;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +26,6 @@ public class S3Service {
 
   private final S3Config s3Config;
 
-  private final UuidRepository uuidRepository;
-
   public String uploadFile(String keyName, MultipartFile file) {
     ObjectMetadata metadata = new ObjectMetadata();
     metadata.setContentLength(file.getSize());
@@ -40,12 +39,17 @@ public class S3Service {
     return amazonS3.getUrl(s3Config.getBucket(), keyName).toString();
   }
 
-  public String generateQuestionKeyName(Uuid uuid) {
-    return s3Config.getQuestionPath() + '/' + uuid.getUuid();
-  }
+  public String generateKeyNameWithPathName(PathName pathName) {
 
-  public String generateMemoKeyName(Uuid uuid) {
-    return s3Config.getMemoPath() + '/' + uuid.getUuid();
+    return switch (pathName) {
+          case AI_QUESTION -> s3Config.getAiQuestionPath();
+          case USER_QUESTION -> s3Config.getUserQuestionPath();
+          case NOTE -> s3Config.getNotePath();
+          case MEMO -> s3Config.getMemoPath();
+          case CHARACTER -> s3Config.getCharacterPath();
+        }
+        + '/'
+        + UUID.randomUUID().toString();
   }
 
   public boolean deleteFile(String keyName) {
