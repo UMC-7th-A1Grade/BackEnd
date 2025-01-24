@@ -1,0 +1,3 @@
+[submodule "BackEnd_Config"]
+	path = BackEnd_Config
+	url = https://github.com/UMC-7th-A1Grade/BackEnd_Config.git
