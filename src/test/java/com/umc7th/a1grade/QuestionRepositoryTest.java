@@ -86,5 +86,4 @@ public class QuestionRepositoryTest {
   private List<Question> getRandomQuestionsByLimit(Long userId) {
     return questionRepository.findQuestionsByUserNative(userId);
   }
-  }
-
+}

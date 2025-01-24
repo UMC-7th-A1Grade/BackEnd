@@ -1,6 +1,5 @@
 package com.umc7th.a1grade.domain.question.repository;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -55,4 +54,3 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
       nativeQuery = true)
   List<Question> findQuestionsByUserAndType(@Param("userId") Long userId);
 }
-
