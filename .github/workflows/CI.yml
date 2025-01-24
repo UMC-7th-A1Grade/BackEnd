@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GIT_ACTION_TOKEN }}
+          submodules: true
+
+      - name: Set up JDK 17
+        if: steps.changes.outputs.application == 'true'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew clean build -Pprofile=local
+
+  code-style:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Filtering changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            application:
+            - 'build.gradle'
+            - 'src/**'
+
+      - name: Set up JDK 17
+        if: steps.changes.outputs.application == 'true'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Style check
+        if: steps.changes.outputs.application == 'true'
+        run: |
+          ./gradlew spotlessCheck
