@@ -42,7 +42,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     List<Question> RecentQuestions = questionRepository.findRecentQuestion(user.getId());
 
-    if (RecentQuestions.isEmpty()){
+    if (RecentQuestions.isEmpty()) {
       throw new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND);
     }
 
