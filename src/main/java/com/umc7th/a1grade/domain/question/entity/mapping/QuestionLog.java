@@ -53,5 +53,6 @@ public class QuestionLog extends BaseTimeEntity {
 
   @Column(nullable = false)
   @Comment("정답 여부")
-  private boolean isCorrect;
+  @Builder.Default
+  private boolean isCorrect = false;
 }

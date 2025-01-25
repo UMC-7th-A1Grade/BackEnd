@@ -42,6 +42,7 @@ public class UserQuestion extends BaseTimeEntity {
   @JoinColumn(name = "question_id", nullable = false)
   private Question question;
 
+  @Builder.Default
   @OneToMany(mappedBy = "userQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<QuestionLog> questionLogs = new ArrayList<>();
 }

@@ -55,6 +55,7 @@ public class Question extends BaseTimeEntity {
   @Column(nullable = false)
   private String answer;
 
+  @Builder.Default
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<UserQuestion> userQuestions = new ArrayList<>();
 }
