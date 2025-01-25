@@ -97,10 +97,9 @@ public class AuthController {
   })
   public ResponseEntity<ApiResponse<String>> refreshToken(
       @RequestHeader(value = "Cookie", required = false) String cookieHeader) {
-    log.info("cookie header: {}", cookieHeader);
     String refreshToken = cookieHelper.extractRefreshToken(cookieHeader);
-    log.info("refreshToken: {}", refreshToken);
     Map<String, String> response = tokenService.getSocialIdFronRefreshToken(refreshToken);
+
     ResponseCookie responseCookie =
         cookieHelper.createHttpOnlyCookie("refreshToken", response.get("refreshToken"));
 
