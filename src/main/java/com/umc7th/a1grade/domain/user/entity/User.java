@@ -56,6 +56,7 @@ public class User extends BaseTimeEntity {
   private String region;
   private String phone;
 
+  @Builder.Default
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<UserQuestion> userQuestions = new ArrayList<>();
 
