@@ -26,12 +26,12 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/questions")
+@RequestMapping("/api/question")
 public class QuestionController {
   private final QuestionService questionService;
 
-  @GetMapping("/random")
-  @Operation(summary = "랜덤 3문제 조회하기", description = "사용자가 저장한 3문제를 랜덤으로 조회하는 API")
+  @GetMapping("/recent")
+  @Operation(summary = "최근에 저장된 5문제 이미지 조회하기", description = "사용자가 최근에 저장한 5문제 이미지를 조회하는 API")
   @ApiResponses({
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
@@ -50,11 +50,11 @@ public class QuestionController {
       @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
           @AuthenticationPrincipal
           UserDetails userDetails) {
-    QuestionResponseDTO.RandomQuestionDTO result = questionService.getRandomQuestions(userDetails);
+    QuestionResponseDTO.RandomQuestionDTO result = questionService.getRecentQuestions(userDetails);
     return ApiResponse.onSuccess(result);
   }
 
-  @GetMapping("/random/false")
+  @GetMapping("/random")
   @Operation(summary = "틀린 문제 중 랜덤 3문제 조회하기", description = "사용자가 틀린 3문제를 랜덤으로 조회하는 API")
   @ApiResponses({
     @io.swagger.v3.oas.annotations.responses.ApiResponse(

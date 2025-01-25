@@ -6,7 +6,7 @@ import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
 
 public interface QuestionService {
-  QuestionResponseDTO.RandomQuestionDTO getRandomQuestions(UserDetails userDetails);
+  QuestionResponseDTO.RandomQuestionDTO getRecentQuestions(UserDetails userDetails);
 
   QuestionResponseDTO.SubmitAnswerDTO submitAnswer(
       int questionNum, QuestionRequestDTO.submitAnswerDTO answer, UserDetails userDetails);

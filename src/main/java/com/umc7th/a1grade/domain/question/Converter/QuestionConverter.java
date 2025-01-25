@@ -33,7 +33,7 @@ public class QuestionConverter {
         .user(user)
         .userQuestion(userQuestion)
         .submissionTime(LocalDateTime.now())
-        .memo(answer.getMemo())
+        .note(answer.getNote())
         .isCorrect(isCorrect)
         .build();
   }
@@ -45,28 +45,18 @@ public class QuestionConverter {
   public QuestionResponseDTO.GetAnswerDTO toGetAnswerDTO(Question question) {
     return QuestionResponseDTO.GetAnswerDTO.builder()
         .answer(question.getAnswer())
-        .content(question.getContent())
+        .memo(question.getMemo())
         .build();
   }
 
-  public List<QuestionResponseDTO.QuestionDTO> toQuestionDTO(
-      List<Question> questions, Long userId) {
+  public List<QuestionResponseDTO.QuestionDTO> toQuestionDTO(List<Question> questions) {
     return questions.stream()
         .map(
-            question -> {
-              String memoImg =
-                  questionLogRepository
-                      .findLatestMemoByUserAndQuestion(userId, question.getId())
-                      .orElse(null);
-
-              return QuestionResponseDTO.QuestionDTO.builder()
-                  .num(question.getNum())
-                  .questionImg(question.getImageUrl())
-                  .answer(question.getAnswer())
-                  .explanation(question.getContent())
-                  .memoImg(memoImg)
-                  .build();
-            })
+            question ->
+                QuestionResponseDTO.QuestionDTO.builder()
+                    .num(question.getNum())
+                    .questionImg(question.getImageUrl())
+                    .build())
         .collect(Collectors.toList());
   }
 

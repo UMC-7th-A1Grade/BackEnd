@@ -10,7 +10,7 @@ public class QuestionRequestDTO {
   public static class submitAnswerDTO {
     @Schema(description = "사용자가 제출한 답안 메모", example = "1+2=3")
     @NotNull
-    String memo;
+    String note;
 
     @Schema(description = "사용자가 제출한 답안", example = "42")
     @NotNull

@@ -11,13 +11,6 @@ import org.springframework.data.repository.query.Param;
 import com.umc7th.a1grade.domain.question.entity.mapping.QuestionLog;
 
 public interface QuestionLogRepository extends JpaRepository<QuestionLog, Long> {
-  @Query(
-      "SELECT ql.memo FROM QuestionLog ql "
-          + "WHERE ql.user.id = :userId "
-          + "AND ql.userQuestion.question.id = :questionId "
-          + "ORDER BY ql.submissionTime DESC")
-  Optional<String> findLatestMemoByUserAndQuestion(
-      @Param("userId") Long userId, @Param("questionId") Long questionId);
 
   @Query(
       "SELECT DISTINCT uq.question.id FROM QuestionLog ql "

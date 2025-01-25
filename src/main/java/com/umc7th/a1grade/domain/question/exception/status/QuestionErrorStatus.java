@@ -15,7 +15,8 @@ public enum QuestionErrorStatus implements BaseErrorCode {
   USER_QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION4003", "유저 문제가 존재하지 않습니다"),
   INVALID_QUESTION_ID(HttpStatus.BAD_REQUEST, "QUESTION4005", "유효하지 않은 문제 ID입니다."),
   INVALID_ANSWER(HttpStatus.BAD_REQUEST, "QUESTION4006", "답안이 유효하지 않습니다."),
-  INVALID_MEMO(HttpStatus.BAD_REQUEST, "QUESTION4007", "메모가 유효하지 않습니다.");
+  INVALID_MEMO(HttpStatus.BAD_REQUEST, "QUESTION4007", "메모가 유효하지 않습니다."),
+  INSUFFICENT_QUESTIONS(HttpStatus.BAD_REQUEST, "QUESTION4008", "저장된 문제가 3개 미만입니다.");
 
   private final HttpStatus httpStatus;
   private final String code;

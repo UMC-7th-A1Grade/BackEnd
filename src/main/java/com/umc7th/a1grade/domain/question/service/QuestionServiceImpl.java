@@ -35,15 +35,19 @@ public class QuestionServiceImpl implements QuestionService {
 
   @Override
   @Transactional(readOnly = true)
-  public QuestionResponseDTO.RandomQuestionDTO getRandomQuestions(
+  public QuestionResponseDTO.RandomQuestionDTO getRecentQuestions(
       @AuthenticationPrincipal UserDetails userDetails) {
 
     User user = getUserByUsername(userDetails.getUsername());
 
-    List<Question> randomQuestions = questionRepository.findQuestionsByUserNative(user.getId());
+    List<Question> RecentQuestions = questionRepository.findRecentQuestion(user.getId());
+
+    if (RecentQuestions.isEmpty()){
+      throw new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND);
+    }
 
     List<QuestionResponseDTO.QuestionDTO> questionDTOList =
-        questionConverter.toQuestionDTO(randomQuestions, user.getId());
+        questionConverter.toQuestionDTO(RecentQuestions);
 
     return questionConverter.randomQuestionDTO(questionDTOList);
   }
@@ -84,6 +88,10 @@ public class QuestionServiceImpl implements QuestionService {
 
     List<Question> randomFalseQuestions =
         questionRepository.findQuestionsByUserAndType(user.getId());
+
+    if (randomFalseQuestions.size() < 3) {
+      throw new GeneralException(QuestionErrorStatus.INSUFFICENT_QUESTIONS);
+    }
 
     List<QuestionResponseDTO.FalseQuestionDTO> falseQuestionDTO =
         questionConverter.toFalseQuestionDTO(randomFalseQuestions);

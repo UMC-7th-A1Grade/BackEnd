@@ -49,7 +49,7 @@ public class QuestionLog extends BaseTimeEntity {
 
   @Column(nullable = true)
   @Comment("메모")
-  private String memo;
+  private String note;
 
   @Column(nullable = false)
   @Comment("정답 여부")

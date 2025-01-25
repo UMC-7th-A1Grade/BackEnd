@@ -41,7 +41,7 @@ public class Question extends BaseTimeEntity {
 
   @Comment("풀이")
   @Column(nullable = false, columnDefinition = "TEXT")
-  private String content;
+  private String memo;
 
   @Comment("문제 이미지 URL")
   @Column(nullable = false)
