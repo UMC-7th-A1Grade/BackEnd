@@ -1,8 +1,5 @@
 package com.umc7th.a1grade.domain.question.service;
 
-import com.umc7th.a1grade.domain.question.entity.mapping.QuestionReviewHistory;
-import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryRepository;
-import com.umc7th.a1grade.global.common.Utils;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
@@ -19,10 +16,10 @@ import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.question.exception.status.QuestionErrorStatus;
 import com.umc7th.a1grade.domain.question.repository.QuestionLogRepository;
 import com.umc7th.a1grade.domain.question.repository.QuestionRepository;
+import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryRepository;
 import com.umc7th.a1grade.domain.question.repository.UserQuestionRepository;
 import com.umc7th.a1grade.domain.user.entity.User;
-import com.umc7th.a1grade.domain.user.exception.status.UserErrorStatus;
-import com.umc7th.a1grade.domain.user.repository.UserRepository;
+import com.umc7th.a1grade.global.common.Utils;
 import com.umc7th.a1grade.global.exception.GeneralException;
 
 import lombok.RequiredArgsConstructor;
@@ -74,8 +71,7 @@ public class QuestionServiceImpl implements QuestionService {
     questionLogRepository.save(
         questionConverter.toQuestionLog(user, userQuestion, answer, isCorrect));
 
-    questionReviewHistoryRepository.save(
-        questionConverter.toQuestionReviewHistory(userQuestion));
+    questionReviewHistoryRepository.save(questionConverter.toQuestionReviewHistory(userQuestion));
 
     return questionConverter.toSubmitAnswerDTO(isCorrect);
   }
@@ -122,5 +118,4 @@ public class QuestionServiceImpl implements QuestionService {
         .findByNum(questionNum)
         .orElseThrow(() -> new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND));
   }
-
 }

@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
+import com.umc7th.a1grade.domain.question.exception.status.QuestionErrorStatus;
 import com.umc7th.a1grade.domain.question.service.QuestionService;
+import com.umc7th.a1grade.global.annotation.ApiErrorCodeExample;
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,14 +37,9 @@ public class QuestionController {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
         description = "OK, 성공",
-        content = @Content(schema = @Schema(implementation = ApiResponse.class))),
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "404",
-        description = "QUESTION4004 : 최근에 저장된 문제가 존재하지 않음, USER4001: 유저를 찾을 수 없음 "),
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "400",
-        description = "USER4004 : 유효하지 않은 username입니다.")
+        content = @Content(schema = @Schema(implementation = ApiResponse.class)))
   })
+  @ApiErrorCodeExample(QuestionErrorStatus.class)
   public ApiResponse<QuestionResponseDTO.RandomQuestionDTO> getRandomQuestions(
       @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
           @AuthenticationPrincipal
@@ -59,6 +56,7 @@ public class QuestionController {
         description = "OK, 성공",
         content = @Content(schema = @Schema(implementation = ApiResponse.class)))
   })
+  @ApiErrorCodeExample(QuestionErrorStatus.class)
   public ApiResponse<QuestionResponseDTO.RandomFalseQuestionDTO> getFalseRandomQuestions(
       @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
           @AuthenticationPrincipal
@@ -76,6 +74,7 @@ public class QuestionController {
         description = "OK, 성공",
         content = @Content(schema = @Schema(implementation = ApiResponse.class)))
   })
+  @ApiErrorCodeExample(QuestionErrorStatus.class)
   public ApiResponse<QuestionResponseDTO.SubmitAnswerDTO> submitAnswer(
       @Parameter(
               name = "questionNum",
@@ -102,6 +101,7 @@ public class QuestionController {
         description = "OK, 성공",
         content = @Content(schema = @Schema(implementation = ApiResponse.class)))
   })
+  @ApiErrorCodeExample(QuestionErrorStatus.class)
   public ApiResponse<QuestionResponseDTO.GetAnswerDTO> getAnswer(
       @Parameter(description = "질문 번호", example = "1") @PathVariable Integer questionNum) {
     QuestionResponseDTO.GetAnswerDTO answer = questionService.getAnswer(questionNum);

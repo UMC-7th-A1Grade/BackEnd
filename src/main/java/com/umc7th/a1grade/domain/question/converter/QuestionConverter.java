@@ -1,7 +1,5 @@
 package com.umc7th.a1grade.domain.question.converter;
 
-import com.umc7th.a1grade.domain.question.entity.mapping.QuestionReviewHistory;
-import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -14,8 +12,10 @@ import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO.QuestionDTO;
 import com.umc7th.a1grade.domain.question.entity.Question;
 import com.umc7th.a1grade.domain.question.entity.mapping.QuestionLog;
+import com.umc7th.a1grade.domain.question.entity.mapping.QuestionReviewHistory;
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.question.repository.QuestionLogRepository;
+import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryRepository;
 import com.umc7th.a1grade.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -99,8 +99,7 @@ public class QuestionConverter {
             .findByUserQuestionId(userQuestion.getId())
             .map(
                 existingHistory -> {
-                  existingHistory.setReviewCount(
-                      existingHistory.getReviewCount() + 1);
+                  existingHistory.setReviewCount(existingHistory.getReviewCount() + 1);
                   existingHistory.setLastReviewedAt(LocalDateTime.now());
                   return existingHistory;
                 })
