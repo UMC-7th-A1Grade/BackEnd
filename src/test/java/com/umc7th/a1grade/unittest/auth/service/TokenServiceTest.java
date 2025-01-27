@@ -55,9 +55,9 @@ public class TokenServiceTest {
     Map<String, String> tokens = tokenService.getSocialIdFronRefreshToken(mockRefreshToken);
 
     // Then
-    assertThat(tokens).containsKeys("AccessToken", "RefreshToken");
-    assertThat(tokens.get("AccessToken")).isNotEmpty();
-    assertThat(tokens.get("RefreshToken")).isNotEmpty();
+    assertThat(tokens).containsKeys("accessToken", "refreshToken");
+    assertThat(tokens.get("accessToken")).isNotEmpty();
+    assertThat(tokens.get("refreshToken")).isNotEmpty();
   }
 
   @Test
@@ -116,9 +116,9 @@ public class TokenServiceTest {
     Map<String, String> newTokens = tokenService.createNewTokens(socialId);
 
     // Then
-    assertThat(newTokens).containsKeys("AccessToken", "RefreshToken");
-    assertThat(newTokens.get("AccessToken")).isNotEmpty();
-    assertThat(newTokens.get("RefreshToken")).isNotEmpty();
+    assertThat(newTokens).containsKeys("accessToken", "refreshToken");
+    assertThat(newTokens.get("accessToken")).isNotEmpty();
+    assertThat(newTokens.get("refreshToken")).isNotEmpty();
   }
 
   @Test
