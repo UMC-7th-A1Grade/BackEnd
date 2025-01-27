@@ -53,8 +53,8 @@ public class TokenServiceImpl implements TokenService {
     String newRefreshToken = jwtProvider.createRefreshToken(socialId);
 
     return Map.of(
-        "AccessToken", newAccessToken,
-        "RefreshToken", newRefreshToken);
+        "accessToken", newAccessToken,
+        "refreshToken", newRefreshToken);
   }
 
   @Transactional
