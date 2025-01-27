@@ -19,7 +19,6 @@ import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +35,13 @@ public class QuestionController {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
         description = "OK, 성공",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiResponse.class),
-                examples = {
-                  @ExampleObject(
-                      name = "COMMON200",
-                      value =
-                          "{\"isSuccess\":true,\"code\":\"COMMON200\",\"message\":\"성공\",\"data\":{\"questions\":[{\"id\":1,\"title\":\"문제1\",\"content\":\"내용1\"},{\"id\":2,\"title\":\"문제2\",\"content\":\"내용2\"},{\"id\":3,\"title\":\"문제3\",\"content\":\"내용3\"}]}}")
-                }))
+        content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "404",
+        description = "QUESTION4004 : 최근에 저장된 문제가 존재하지 않음, USER4001: 유저를 찾을 수 없음 "),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "USER4004 : 유효하지 않은 username입니다.")
   })
   public ApiResponse<QuestionResponseDTO.RandomQuestionDTO> getRandomQuestions(
       @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
@@ -60,15 +57,7 @@ public class QuestionController {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
         description = "OK, 성공",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiResponse.class),
-                examples = {
-                  @ExampleObject(
-                      name = "COMMON200",
-                      value =
-                          "{\"isSuccess\":true,\"code\":\"COMMON200\",\"message\":\"성공\",\"data\":{\"questions\":[{\"id\":1,\"title\":\"문제1\",\"content\":\"내용1\"},{\"id\":2,\"title\":\"문제2\",\"content\":\"내용2\"},{\"id\":3,\"title\":\"문제3\",\"content\":\"내용3\"}]}}")
-                }))
+        content = @Content(schema = @Schema(implementation = ApiResponse.class)))
   })
   public ApiResponse<QuestionResponseDTO.RandomFalseQuestionDTO> getFalseRandomQuestions(
       @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
@@ -85,15 +74,7 @@ public class QuestionController {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
         description = "OK, 성공",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiResponse.class),
-                examples = {
-                  @ExampleObject(
-                      name = "COMMON200",
-                      value =
-                          "{\"isSuccess\":true,\"code\":\"COMMON200\",\"message\":\"정답 제출 완료\",\"data\":{\"isCorrect\":false}}")
-                }))
+        content = @Content(schema = @Schema(implementation = ApiResponse.class)))
   })
   public ApiResponse<QuestionResponseDTO.SubmitAnswerDTO> submitAnswer(
       @Parameter(
@@ -119,15 +100,7 @@ public class QuestionController {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
         description = "OK, 성공",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiResponse.class),
-                examples = {
-                  @ExampleObject(
-                      name = "COMMON200",
-                      value =
-                          "{\"isSuccess\":true,\"code\":\"COMMON200\",\"message\":\"성공\",\"data\":{\"questionId\":1,\"answer\":\"정답\",\"explanation\":\"풀이 내용\"}}")
-                }))
+        content = @Content(schema = @Schema(implementation = ApiResponse.class)))
   })
   public ApiResponse<QuestionResponseDTO.GetAnswerDTO> getAnswer(
       @Parameter(description = "질문 번호", example = "1") @PathVariable Integer questionNum) {

@@ -1,5 +1,8 @@
 package com.umc7th.a1grade.domain.question.service;
 
+import com.umc7th.a1grade.domain.question.entity.mapping.QuestionReviewHistory;
+import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryRepository;
+import com.umc7th.a1grade.global.common.Utils;
 import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -7,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.umc7th.a1grade.domain.question.Converter.QuestionConverter;
+import com.umc7th.a1grade.domain.question.converter.QuestionConverter;
 import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
 import com.umc7th.a1grade.domain.question.entity.Question;
@@ -29,16 +32,17 @@ public class QuestionServiceImpl implements QuestionService {
 
   private final QuestionRepository questionRepository;
   private final QuestionLogRepository questionLogRepository;
-  private final UserRepository userRepository;
   private final QuestionConverter questionConverter;
   private final UserQuestionRepository userQuestionRepository;
+  private final Utils utils;
+  private final QuestionReviewHistoryRepository questionReviewHistoryRepository;
 
   @Override
   @Transactional(readOnly = true)
   public QuestionResponseDTO.RandomQuestionDTO getRecentQuestions(
       @AuthenticationPrincipal UserDetails userDetails) {
 
-    User user = getUserByUsername(userDetails.getUsername());
+    User user = utils.getUserByUsername(userDetails.getUsername());
 
     List<Question> RecentQuestions = questionRepository.findRecentQuestion(user.getId());
 
@@ -55,10 +59,9 @@ public class QuestionServiceImpl implements QuestionService {
   @Override
   public QuestionResponseDTO.SubmitAnswerDTO submitAnswer(
       int questionNum, QuestionRequestDTO.submitAnswerDTO answer, UserDetails userDetails) {
-
     Question question = getQuestionById(questionNum);
 
-    User user = getUserByUsername(userDetails.getUsername());
+    User user = utils.getUserByUsername(userDetails.getUsername());
 
     UserQuestion userQuestion =
         userQuestionRepository
@@ -69,6 +72,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     questionLogRepository.save(
         questionConverter.toQuestionLog(user, userQuestion, answer, isCorrect));
+
+    questionReviewHistoryRepository.save(
+        questionConverter.toQuestionReviewHistory(userQuestion));
 
     return questionConverter.toSubmitAnswerDTO(isCorrect);
   }
@@ -84,7 +90,7 @@ public class QuestionServiceImpl implements QuestionService {
   @Transactional(readOnly = true)
   public QuestionResponseDTO.RandomFalseQuestionDTO getRandomFalseQuestions(
       UserDetails userDetails) {
-    User user = getUserByUsername(userDetails.getUsername());
+    User user = utils.getUserByUsername(userDetails.getUsername());
 
     List<Question> randomFalseQuestions =
         questionRepository.findQuestionsByUserAndType(user.getId());
@@ -108,12 +114,4 @@ public class QuestionServiceImpl implements QuestionService {
         .orElseThrow(() -> new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND));
   }
 
-  private User getUserByUsername(String username) {
-    if (username == null || username.isEmpty()) {
-      throw new GeneralException(UserErrorStatus._USER_INVALID);
-    }
-    return userRepository
-        .findBySocailId(username)
-        .orElseThrow(() -> new GeneralException(UserErrorStatus._USER_NOT_FOUND));
-  }
 }

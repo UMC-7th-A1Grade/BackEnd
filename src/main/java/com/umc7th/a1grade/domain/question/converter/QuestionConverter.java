@@ -1,5 +1,7 @@
-package com.umc7th.a1grade.domain.question.Converter;
+package com.umc7th.a1grade.domain.question.converter;
 
+import com.umc7th.a1grade.domain.question.entity.mapping.QuestionReviewHistory;
+import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class QuestionConverter {
 
   private final QuestionLogRepository questionLogRepository;
+  private final QuestionReviewHistoryRepository questionReviewHistoryRepository;
 
   public QuestionLog toQuestionLog(
       User user,
@@ -87,5 +90,28 @@ public class QuestionConverter {
     return QuestionResponseDTO.RandomFalseQuestionDTO.builder()
         .questions(falseQuestionDTOS)
         .build();
+  }
+
+  public QuestionReviewHistory toQuestionReviewHistory(UserQuestion userQuestion) {
+
+    QuestionReviewHistory history =
+        questionReviewHistoryRepository
+            .findByUserQuestionId(userQuestion.getId())
+            .map(
+                existingHistory -> {
+                  existingHistory.setReviewCount(
+                      existingHistory.getReviewCount() + 1);
+                  existingHistory.setLastReviewedAt(LocalDateTime.now());
+                  return existingHistory;
+                })
+            .orElseGet(
+                () ->
+                    QuestionReviewHistory.builder()
+                        .userQuestion(userQuestion)
+                        .reviewCount(1)
+                        .lastReviewedAt(LocalDateTime.now())
+                        .isForgotten(false)
+                        .build());
+    return history;
   }
 }

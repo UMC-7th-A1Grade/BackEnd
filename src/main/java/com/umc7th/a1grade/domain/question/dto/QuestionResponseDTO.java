@@ -14,7 +14,7 @@ public class QuestionResponseDTO {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class RandomQuestionDTO {
-    @Schema(description = "랜덤 5문제 문제 이미지 리스트", example = "")
+    @Schema(description = "랜덤 5문제 문제 이미지 리스트")
     List<QuestionResponseDTO.QuestionDTO> questions;
   }
 
@@ -23,7 +23,7 @@ public class QuestionResponseDTO {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class RandomFalseQuestionDTO {
-    @Schema(description = "틀린 문제 중 랜덤 3문제 질문 리스트", example = "")
+    @Schema(description = "틀린 문제 중 랜덤 3문제 질문 리스트")
     List<QuestionResponseDTO.FalseQuestionDTO> questions;
   }
 
