@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "user", description = "회원 관리 API")
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
   @Operation(
@@ -34,14 +34,14 @@ public class UserController {
             required = true,
             example = "testUser")
       })
-  @GetMapping("/nickname/check")
+  @GetMapping("")
   public ApiResponse<Boolean> confirmNickName(
       @AuthenticationPrincipal UserDetails userDetails, @RequestParam("nickname") String nickname) {
     return ApiResponse.onSuccess(true);
   }
 
   @Operation(summary = "닉네임 저장", description = "사용자에게 입력받은 닉네임을 저장합니다.")
-  @PostMapping("/nickname/save")
+  @PostMapping("")
   public ApiResponse<Boolean> saveNickame(
       @AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserInfoDto request) {
     return ApiResponse.onSuccess(true);
