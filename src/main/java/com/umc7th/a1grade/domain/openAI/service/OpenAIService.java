@@ -8,8 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.confirmQuestionResponse;
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.generateQuestionResponse;
+import com.umc7th.a1grade.domain.openAI.exception.AIErrorStatus;
 import com.umc7th.a1grade.domain.openAI.infrastructure.ConfirmQuestionManager;
 import com.umc7th.a1grade.domain.openAI.infrastructure.GenerateQuestionManager;
+import com.umc7th.a1grade.global.exception.GeneralException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,23 +25,40 @@ public class OpenAIService {
 
   @Retryable(maxAttempts = 2, backoff = @Backoff(delay = 1000))
   public confirmQuestionResponse confirmQuestion(MultipartFile image) {
+
     try {
-      log.info("[POST /api/open-ai/confirm] 수학 문제 판별 성공");
+      validateFile(image);
+
       return confirmQuestionManager.confirmQuestion(image);
     } catch (Exception e) {
-      log.error("[POST /api/open-ai/confirm] 수학 문제 판별 실패 - {}", e.getMessage());
-      return confirmQuestionResponse.builder().success(false).build();
+      throw new GeneralException(AIErrorStatus._FILE_SERVER_ERROR);
     }
   }
 
   @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
   public generateQuestionResponse generateQuestion(MultipartFile image) {
+
     try {
-      log.error("[POST /api/open-ai/generate] 유사 문제 생성 성공");
+      validateFile(image);
+
       return generateQuestionManager.generateQuestion(image);
     } catch (Exception e) {
-      log.error("[POST /api/open-ai/generate] 유사 문제 생성 실패 - {}", e.getMessage());
-      return generateQuestionResponse.builder().message("[서버 오류] 유사 문제 생성에 실패하였습니다.").build();
+      throw new GeneralException(AIErrorStatus._FILE_SERVER_ERROR);
+    }
+  }
+
+  private void validateFile(MultipartFile file) {
+    if (file.isEmpty()) {
+      throw new GeneralException(AIErrorStatus._FILE_NOT_FOUND);
+    }
+
+    if (file.getSize() > 5 * 1024 * 1024) {
+      throw new GeneralException(AIErrorStatus._FILE_SIZE_INVALID);
+    }
+
+    String contentType = file.getContentType();
+    if (contentType == null || !contentType.startsWith("image/")) {
+      throw new GeneralException(AIErrorStatus._FILE_TYPE_INVALID);
     }
   }
 }
