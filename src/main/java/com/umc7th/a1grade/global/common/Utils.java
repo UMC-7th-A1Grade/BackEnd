@@ -19,7 +19,7 @@ public class Utils {
       throw new GeneralException(UserErrorStatus._USER_INVALID);
     }
     return userRepository
-        .findBySocailId(username)
+        .findBySocialId(username)
         .orElseThrow(() -> new GeneralException(UserErrorStatus._USER_NOT_FOUND));
   }
 }
