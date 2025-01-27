@@ -11,6 +11,8 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.generateQuestionResponse;
+import com.umc7th.a1grade.domain.openAI.exception.AIErrorStatus;
+import com.umc7th.a1grade.global.exception.GeneralException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +22,7 @@ public class GenerateQuestionManager {
   private final ChatClient chatClient;
 
   public generateQuestionResponse generateQuestion(MultipartFile image) {
+
     BeanOutputConverter<generateQuestionResponse> parser =
         new BeanOutputConverter<>(generateQuestionResponse.class);
 
@@ -95,7 +98,7 @@ public class GenerateQuestionManager {
                                 + parser.getFormat())
                         .media(MimeTypeUtils.IMAGE_JPEG, imageResource);
                   } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new GeneralException(AIErrorStatus._FILE_SERVER_ERROR);
                   }
                 })
             .call()
