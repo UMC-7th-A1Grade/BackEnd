@@ -5,6 +5,7 @@ import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryReposi
 import com.umc7th.a1grade.global.common.Utils;
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -92,8 +93,16 @@ public class QuestionServiceImpl implements QuestionService {
       UserDetails userDetails) {
     User user = utils.getUserByUsername(userDetails.getUsername());
 
-    List<Question> randomFalseQuestions =
-        questionRepository.findQuestionsByUserAndType(user.getId());
+    List<Question> randomFalseQuestions;
+    try {
+      randomFalseQuestions = questionRepository.findQuestionsByUserAndType(user.getId());
+    } catch (DataAccessException e) {
+      throw new GeneralException(QuestionErrorStatus.QUESTION_DATABASE_ERROR);
+    }
+
+    if (randomFalseQuestions == null || randomFalseQuestions.isEmpty()) {
+      throw new GeneralException(QuestionErrorStatus.NO_QUESTIONS_FOUND);
+    }
 
     if (randomFalseQuestions.size() < 3) {
       throw new GeneralException(QuestionErrorStatus.INSUFFICENT_QUESTIONS);
