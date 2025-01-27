@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtProviderImpl implements JwtProvider {
   private final Key key;
   private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;
-  private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;
+  private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 2;
 
   public JwtProviderImpl(@Value("${spring.jwt.secret}") String secretKey) {
     byte[] keyBytes = java.util.Base64.getDecoder().decode(secretKey);
