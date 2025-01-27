@@ -1,10 +1,7 @@
 package com.umc7th.a1grade.domain.openAI.controller;
 
 import org.springframework.http.MediaType;
-<<<<<<< HEAD
-=======
 import org.springframework.http.ResponseEntity;
->>>>>>> d8ad096 (:sparkles:Feat: AI 기능(유사 문제 생성, 수학 문제 판별) 추가)
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -15,10 +12,7 @@ import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse;
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.confirmQuestionResponse;
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.generateQuestionResponse;
 import com.umc7th.a1grade.domain.openAI.service.OpenAIService;
-<<<<<<< HEAD
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
-=======
->>>>>>> d8ad096 (:sparkles:Feat: AI 기능(유사 문제 생성, 수학 문제 판별) 추가)
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
