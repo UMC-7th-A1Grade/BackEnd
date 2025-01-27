@@ -1,4 +1,4 @@
-package com.umc7th.a1grade.domain.temp.handler.status;
+package com.umc7th.a1grade.domain.openAI.exception;
 
 import org.springframework.http.HttpStatus;
 
@@ -10,11 +10,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum TempErrorStatus implements BaseErrorCode {
-  _TEMP_EXCEPTION_FLAG_1(HttpStatus.BAD_REQUEST, "TEMP4001", "에러 테스트_FLAG_1"),
-  _TEMP_EXCEPTION_FLAG_2(HttpStatus.BAD_REQUEST, "TEMP4002", "에러 테스트_FLAG_2"),
-  _TEMP_EXCEPTION_FLAG_3(HttpStatus.NOT_FOUND, "TEMP4041", "에러 테스트_FLAG_3"),
-  _TEMP_EXCEPTION_FLAG_4(HttpStatus.NOT_FOUND, "TEMP4042", "에러 테스트_FLAG_4");
+public enum AIErrorStatus implements BaseErrorCode {
+  _FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "AI4001", "존재하지 않는 이미지입니다."),
+  _FILE_SIZE_INVALID(HttpStatus.BAD_REQUEST, "AI4002", "파일 크기는 5MB를 초과할 수 없습니다."),
+  _FILE_TYPE_INVALID(HttpStatus.BAD_REQUEST, "AI4003", "이미지 파일만 업로드 가능합니다."),
+  _FILE_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "AI5001", "이미지 처리 중 서버 에러, 관리자에게 문의 바랍니다.");
 
   private final HttpStatus httpStatus;
   private final String code;
