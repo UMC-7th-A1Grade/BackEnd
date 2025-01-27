@@ -2,9 +2,10 @@ package com.umc7th.a1grade.domain.auth.controller;
 
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ public class AuthController {
             name = "code",
             description = "구글에서 발급된 인증 코드",
             required = true,
-            example = "%4adfasdfasgjhdlskkqwtjlk")
+            example = "4adfasdfasgjhdlskkqwtjlk")
       })
   @ApiResponses({
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -58,15 +59,13 @@ public class AuthController {
                 mediaType = "application/json",
                 schema = @Schema(implementation = LoginResponse.class)))
   })
-  public ResponseEntity<ApiResponse<LoginResponse>> processGoogleLogin(
-      @RequestParam("code") String code) {
-    LoginResponse response = googleTokenService.handleLogin(code);
+  public ApiResponse<LoginResponse> processGoogleLogin(
+      @RequestParam("code") String code, HttpServletResponse response) {
+    LoginResponse loginResponse = googleTokenService.handleLogin(code);
     ResponseCookie responseCookie =
-        cookieHelper.createHttpOnlyCookie("refreshToken", response.getRefreshToken());
-
-    return ResponseEntity.ok()
-        .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-        .body(ApiResponse.of(AuthSuccessStatus._LOGIN_SUCCESS, response));
+        cookieHelper.createHttpOnlyCookie("refreshToken", loginResponse.getRefreshToken());
+    response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+    return ApiResponse.of(AuthSuccessStatus._LOGIN_SUCCESS, loginResponse);
   }
 
   @PostMapping("/logout")
@@ -82,7 +81,7 @@ public class AuthController {
       parameters = {
         @Parameter(
             name = "Cookie",
-            description = "refreshToken=JWT_REFRESH_TOKEN 형식의 HttpOnly 쿠키",
+            description = "JWT_REFRESH_TOKEN 형식의 HttpOnly 쿠키",
             required = true,
             in = ParameterIn.HEADER)
       })
@@ -95,17 +94,17 @@ public class AuthController {
                 mediaType = "application/json",
                 schema = @Schema(implementation = String.class)))
   })
-  public ResponseEntity<ApiResponse<String>> refreshToken(
-      @RequestHeader(value = "Cookie", required = false) String cookieHeader) {
+  public ApiResponse<String> refreshToken(
+      @RequestHeader(value = "Cookie", required = false) String cookieHeader,
+      HttpServletResponse response) {
     String refreshToken = cookieHelper.extractRefreshToken(cookieHeader);
-    Map<String, String> response = tokenService.getSocialIdFronRefreshToken(refreshToken);
+    Map<String, String> tokenResponse = tokenService.getSocialIdFronRefreshToken(refreshToken);
 
     ResponseCookie responseCookie =
-        cookieHelper.createHttpOnlyCookie("refreshToken", response.get("refreshToken"));
+        cookieHelper.createHttpOnlyCookie("refreshToken", tokenResponse.get("refreshToken"));
 
-    return ResponseEntity.ok()
-        .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-        .body(
-            ApiResponse.of(AuthSuccessStatus._TOKEN_REFRESH_SUCCESS, response.get("accessToken")));
+    response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+    return ApiResponse.of(
+        AuthSuccessStatus._TOKEN_REFRESH_SUCCESS, tokenResponse.get("accessToken"));
   }
 }
