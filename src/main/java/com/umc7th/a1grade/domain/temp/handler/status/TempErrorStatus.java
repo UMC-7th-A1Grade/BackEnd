@@ -11,7 +11,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TempErrorStatus implements BaseErrorCode {
-  _TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "에러 테스트");
+  _TEMP_EXCEPTION_FLAG_1(HttpStatus.BAD_REQUEST, "TEMP4001", "에러 테스트_FLAG_1"),
+  _TEMP_EXCEPTION_FLAG_2(HttpStatus.BAD_REQUEST, "TEMP4002", "에러 테스트_FLAG_2"),
+  _TEMP_EXCEPTION_FLAG_3(HttpStatus.NOT_FOUND, "TEMP4041", "에러 테스트_FLAG_3"),
+  _TEMP_EXCEPTION_FLAG_4(HttpStatus.NOT_FOUND, "TEMP4042", "에러 테스트_FLAG_4");
 
   private final HttpStatus httpStatus;
   private final String code;
