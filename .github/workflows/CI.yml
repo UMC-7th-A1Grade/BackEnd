@@ -6,9 +6,11 @@ on:
 
 permissions:
   contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,6 +19,19 @@ jobs:
         with:
           token: ${{ secrets.GIT_ACTION_TOKEN }}
           submodules: true
+
+      - name: Update submodule
+        run: |
+          git submodule update --init
+
+      - name: Filtering changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            application:
+            - 'build.gradle'
+            - 'src/**'
 
       - name: Set up JDK 17
         if: steps.changes.outputs.application == 'true'
@@ -31,20 +46,17 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew clean build -Pprofile=local
 
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
+        with:
+          files: '**/build/test-results/test/TEST-com.umc7th.a1grade.unittest.*.xml'
+
   code-style:
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
-
-      - name: Filtering changes
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            application:
-            - 'build.gradle'
-            - 'src/**'
 
       - name: Set up JDK 17
         if: steps.changes.outputs.application == 'true'
