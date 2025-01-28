@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return userRepository
-        .findBySocailId(username)
+        .findBySocialId(username)
         .map(
             user ->
                 new org.springframework.security.core.userdetails.User(

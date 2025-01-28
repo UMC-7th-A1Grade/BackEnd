@@ -1,37 +1,41 @@
 package com.umc7th.a1grade.domain.auth.controller;
 
+import java.util.Map;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.umc7th.a1grade.domain.auth.dto.LoginResponse;
 import com.umc7th.a1grade.domain.auth.exception.status.AuthSuccessStatus;
 import com.umc7th.a1grade.domain.auth.service.CookieHelper;
 import com.umc7th.a1grade.domain.auth.service.OAuth2TokenService;
+import com.umc7th.a1grade.domain.auth.service.TokenService;
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Tag(name = "auth", description = "로그인 및 토큰 관련 API")
+@Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class AuthController {
   private final OAuth2TokenService googleTokenService;
   private final CookieHelper cookieHelper;
+  private final TokenService tokenService;
 
   @GetMapping("/google")
   @Operation(
@@ -44,7 +48,7 @@ public class AuthController {
             name = "code",
             description = "구글에서 발급된 인증 코드",
             required = true,
-            example = "%4adfasdfasgjhdlskkqwtjlk")
+            example = "4adfasdfasgjhdlskkqwtjlk")
       })
   @ApiResponses({
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -55,15 +59,13 @@ public class AuthController {
                 mediaType = "application/json",
                 schema = @Schema(implementation = LoginResponse.class)))
   })
-  public ResponseEntity<ApiResponse<LoginResponse>> processGoogleLogin(
-      @RequestParam("code") String code) {
-    LoginResponse response = googleTokenService.handleLogin(code);
+  public ApiResponse<LoginResponse> processGoogleLogin(
+      @RequestParam("code") String code, HttpServletResponse response) {
+    LoginResponse loginResponse = googleTokenService.handleLogin(code);
     ResponseCookie responseCookie =
-        cookieHelper.createHttpOnlyCookie("refreshToken", response.getRefreshToken());
-
-    return ResponseEntity.ok()
-        .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-        .body(ApiResponse.of(AuthSuccessStatus._LOGIN_SUCCESS, response));
+        cookieHelper.createHttpOnlyCookie("refreshToken", loginResponse.getRefreshToken());
+    response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+    return ApiResponse.of(AuthSuccessStatus._LOGIN_SUCCESS, loginResponse);
   }
 
   @PostMapping("/logout")
@@ -73,8 +75,36 @@ public class AuthController {
   }
 
   @PostMapping("/token")
-  @Operation(summary = "액세스 토큰 재발급", description = "리프레시 토큰을 사용하여 액세스 토큰을 재발급합니다.")
-  public ApiResponse<Object> refreshToken(@AuthenticationPrincipal UserDetails userDetails) {
-    return ApiResponse.of(AuthSuccessStatus._TOKEN_REFRESH_SUCCESS, null);
+  @Operation(
+      summary = "액세스 토큰 재발급",
+      description = "리프레시 토큰을 사용하여 새로운 액세스 토큰과 리프레시 토큰을 재발급합니다.",
+      parameters = {
+        @Parameter(
+            name = "Cookie",
+            description = "JWT_REFRESH_TOKEN 형식의 HttpOnly 쿠키",
+            required = true,
+            in = ParameterIn.HEADER)
+      })
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "토큰 재발급 성공. 새로운 액세스 토큰과 리프레시 토큰 반환 완료.",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = String.class)))
+  })
+  public ApiResponse<String> refreshToken(
+      @RequestHeader(value = "Cookie", required = false) String cookieHeader,
+      HttpServletResponse response) {
+    String refreshToken = cookieHelper.extractRefreshToken(cookieHeader);
+    Map<String, String> tokenResponse = tokenService.getSocialIdFronRefreshToken(refreshToken);
+
+    ResponseCookie responseCookie =
+        cookieHelper.createHttpOnlyCookie("refreshToken", tokenResponse.get("refreshToken"));
+
+    response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+    return ApiResponse.of(
+        AuthSuccessStatus._TOKEN_REFRESH_SUCCESS, tokenResponse.get("accessToken"));
   }
 }

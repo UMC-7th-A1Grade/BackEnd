@@ -75,7 +75,6 @@ public class OpenAIController {
   })
   @PostMapping(value = "/generate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ApiResponse<generateQuestionResponse> generateQuestion(
-      @Parameter(description = "유사 문제를 생성할 이미지") @RequestPart(value = "image", required = false)
           MultipartFile image) {
 
     generateQuestionResponse response = openAIService.generateQuestion(image);
