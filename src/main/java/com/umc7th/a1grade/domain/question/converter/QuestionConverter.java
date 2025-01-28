@@ -12,10 +12,8 @@ import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO.QuestionDTO;
 import com.umc7th.a1grade.domain.question.entity.Question;
 import com.umc7th.a1grade.domain.question.entity.mapping.QuestionLog;
-import com.umc7th.a1grade.domain.question.entity.mapping.QuestionReviewHistory;
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.question.repository.QuestionLogRepository;
-import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryRepository;
 import com.umc7th.a1grade.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class QuestionConverter {
 
   private final QuestionLogRepository questionLogRepository;
-  private final QuestionReviewHistoryRepository questionReviewHistoryRepository;
 
   public QuestionLog toQuestionLog(
       User user,
@@ -90,27 +87,5 @@ public class QuestionConverter {
     return QuestionResponseDTO.RandomFalseQuestionDTO.builder()
         .questions(falseQuestionDTOS)
         .build();
-  }
-
-  public QuestionReviewHistory toQuestionReviewHistory(UserQuestion userQuestion) {
-
-    QuestionReviewHistory history =
-        questionReviewHistoryRepository
-            .findByUserQuestionId(userQuestion.getId())
-            .map(
-                existingHistory -> {
-                  existingHistory.setReviewCount(existingHistory.getReviewCount() + 1);
-                  existingHistory.setLastReviewedAt(LocalDateTime.now());
-                  return existingHistory;
-                })
-            .orElseGet(
-                () ->
-                    QuestionReviewHistory.builder()
-                        .userQuestion(userQuestion)
-                        .reviewCount(1)
-                        .lastReviewedAt(LocalDateTime.now())
-                        .isForgotten(false)
-                        .build());
-    return history;
   }
 }
