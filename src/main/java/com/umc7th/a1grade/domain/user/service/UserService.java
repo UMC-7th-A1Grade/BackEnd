@@ -1,3 +1,8 @@
 package com.umc7th.a1grade.domain.user.service;
 
-public interface UserService {}
+import org.springframework.security.core.userdetails.UserDetails;
+
+public interface UserService {
+
+  void confirmNickName(UserDetails userDetails, String nickname);
+}

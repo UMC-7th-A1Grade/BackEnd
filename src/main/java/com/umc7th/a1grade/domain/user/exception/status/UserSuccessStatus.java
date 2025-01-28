@@ -11,7 +11,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UserSuccessStatus implements BaseCode {
-  _OK(HttpStatus.OK, "COMMON200", "응답에 성공했습니다.");
+  _NICKNAME_OK(HttpStatus.OK, "NINKNAME2000", "사용가능한 닉네임입니다."),
+  ;
 
   private final HttpStatus httpStatus;
   private final String code;
