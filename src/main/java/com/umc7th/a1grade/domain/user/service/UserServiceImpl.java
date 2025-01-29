@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     if (nickname == null || nickname.isBlank()) {
       throw new UserHandler(UserErrorStatus._USER_NICKNAME_NULL);
     }
-    boolean isDuplicate = userRepository.existsByNickName(nickname);
+    boolean isDuplicate = userRepository.existsByNickName(nickname.trim());
     if (isDuplicate) {
       throw new UserHandler(UserErrorStatus._USER_NICKNAME_EXIST);
     }

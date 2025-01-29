@@ -87,4 +87,17 @@ public class UserServiceTest {
     // then
     assertThrows(UserHandler.class, () -> userService.confirmNickName(userDetails, nickName));
   }
+
+  @Test
+  @DisplayName("[confirmNickName] - 닉네임 입력 시 앞뒤 공백이 제거된 후 중복 여부를 검사해야 함")
+  void confirmNickName_WithTrim_Success() {
+    /// given
+    String nickName = "existing-nickname                     ";
+    String socialId = "new-socialID";
+    UserDetails userDetails = new FakeUserDetails(socialId);
+
+    // when
+    // then
+    assertThrows(UserHandler.class, () -> userService.confirmNickName(userDetails, nickName));
+  }
 }

@@ -68,8 +68,8 @@ public class UserController {
   }
 
   @Operation(
-      summary = "닉네임 저장",
-      description = "사용자에게 입력받은 닉네임을 저장합니다.",
+      summary = "닉네임 및 선택한 캐릭터 정보 저장",
+      description = "사용자에게 입력받은 닉네임과 캐릭터 Id 를 저장합니다.",
       requestBody =
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
               description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
