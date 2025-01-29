@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/open-ai")
 @RestController
 public class OpenAIController {
+  
   private final OpenAIService openAIService;
 
   @Operation(summary = "수학 문제 판별", description = "문제 업로드 페이지에서 사진을 찍은 후 찍은 사진이 수학 문제 이미지인지 판별")
@@ -70,9 +71,7 @@ public class OpenAIController {
         description = "INTERNAL SERVER ERROR, 이미지 처리 중 서버 에러, 관리자에게 문의 바랍니다.")
   })
   @PostMapping(value = "/generate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ApiResponse<generateQuestionResponse> generateQuestion(
-      @Parameter(description = "유사 문제를 생성할 이미지") @RequestPart(value = "image", required = false)
-          MultipartFile image) {
+  public ApiResponse<generateQuestionResponse> generateQuestion(MultipartFile image) {
 
     generateQuestionResponse response = openAIService.generateQuestion(image);
     return ApiResponse.onSuccess(response);
