@@ -1,7 +1,7 @@
 package com.umc7th.a1grade.unittest.user.service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
+import com.umc7th.a1grade.domain.user.dto.UserInfoDto;
+import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
 import com.umc7th.a1grade.domain.user.entity.Role;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.domain.user.exception.UserHandler;
@@ -26,8 +28,10 @@ public class UserServiceTest {
   private UserRepository fakeUserRepository;
   private CharacterRepository fakeCharacterRepository;
   private UserCharacterRepository fakeUserCharacterRepository;
-  private final String socialId = "user1234";
+  private final String socialId1 = "user1234";
+  private final String socialId2 = "user2222";
   private User existingUser;
+  private User existingUser2;
 
   @BeforeEach
   void init() {
@@ -40,13 +44,21 @@ public class UserServiceTest {
 
     this.existingUser =
         User.builder()
-            .socialId(socialId)
+            .socialId(socialId1)
             .email("existing-test-email")
             .role(Role.ROLE_USER)
             .nickName("existing-nickname")
             .build();
 
+    this.existingUser2 =
+        User.builder()
+            .socialId(socialId2)
+            .email("existing-test-email2")
+            .role(Role.ROLE_USER)
+            .build();
+
     fakeUserRepository.save(existingUser);
+    fakeUserRepository.save(existingUser2);
   }
 
   @Test
@@ -99,5 +111,51 @@ public class UserServiceTest {
     // when
     // then
     assertThrows(UserHandler.class, () -> userService.confirmNickName(userDetails, nickName));
+  }
+
+  @Test
+  @DisplayName("[saveUserInfo] - 닉네임 및 선택한 캐릭터 정보 저장 성공")
+  void saveUserInfo_Success() {
+    // given
+    UserDetails userDetails = new FakeUserDetails(existingUser2.getSocialId());
+    UserInfoDto requestDto =
+        UserInfoDto.builder().nickname("test-nickname").characterId(1L).build();
+    // when
+    UserInfoResponseDto response = userService.saveUserInfo(userDetails, requestDto);
+
+    // then
+    assertAll(
+        () -> assertNotNull(response),
+        () -> assertEquals(response.getId(), 2L),
+        () -> assertEquals(response.getSocialId(), existingUser2.getSocialId()),
+        () -> assertEquals(response.getEmail(), existingUser2.getEmail()),
+        () -> assertEquals(response.getNickName(), requestDto.getNickname()),
+        () -> assertEquals(response.getSelectedCharacter(), requestDto.getCharacterId()));
+  }
+
+  @Test
+  @DisplayName("[saveUserInfo] - 닉네임 및 선택한 캐릭터 정보 저장 실패 ( 존재하지 않은 사용자일 경우 예외 발생 ) ")
+  void findUserBySocialId_Success() {
+    // given
+    String invalidSocialId = "invalid-social-id";
+    UserDetails userDetails = new FakeUserDetails(invalidSocialId);
+    UserInfoDto requestDto =
+        UserInfoDto.builder().nickname("test-nickname").characterId(1L).build();
+    // when
+    // then
+    assertThrows(UserHandler.class, () -> userService.saveUserInfo(userDetails, requestDto));
+  }
+
+  @Test
+  @DisplayName("[saveUserInfo] - 닉네임 및 선택한 캐릭터 정보 저장 실패 ( 존재하지 않는 캐릭터 조회 시 예외 발생 )")
+  void findCharacterById_NotFound() {
+    // given
+    Long invalidCharacterId = 222L;
+    UserDetails userDetails = new FakeUserDetails(socialId2);
+    UserInfoDto requestDto =
+        UserInfoDto.builder().nickname("test-nickname").characterId(invalidCharacterId).build();
+    // when
+    // then
+    assertThrows(UserHandler.class, () -> userService.saveUserInfo(userDetails, requestDto));
   }
 }

@@ -28,6 +28,7 @@ public class FakeCharacterRepository implements CharacterRepository {
   public List<Character> findAll() {
     return new ArrayList<>(data);
   }
+
   public Character save(Character character) {
     if (character.getId() == null || character.getId() == 0) {
       Character newCharacter =
