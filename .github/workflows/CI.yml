@@ -58,6 +58,15 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v4
 
+      - name: Filtering changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            application:
+            - 'build.gradle'
+            - 'src/**'
+
       - name: Set up JDK 17
         if: steps.changes.outputs.application == 'true'
         uses: actions/setup-java@v4
