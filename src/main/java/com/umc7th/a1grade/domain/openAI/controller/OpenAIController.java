@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/open-ai")
 @RestController
 public class OpenAIController {
-  
+
   private final OpenAIService openAIService;
 
   @Operation(summary = "수학 문제 판별", description = "문제 업로드 페이지에서 사진을 찍은 후 찍은 사진이 수학 문제 이미지인지 판별")
