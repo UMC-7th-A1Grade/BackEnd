@@ -8,25 +8,35 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
 import com.umc7th.a1grade.domain.user.entity.Role;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.domain.user.exception.UserHandler;
+import com.umc7th.a1grade.domain.user.repository.UserCharacterRepository;
 import com.umc7th.a1grade.domain.user.repository.UserRepository;
 import com.umc7th.a1grade.domain.user.service.UserService;
 import com.umc7th.a1grade.domain.user.service.UserServiceImpl;
+import com.umc7th.a1grade.unittest.user.fake.FakeCharacterRepository;
+import com.umc7th.a1grade.unittest.user.fake.FakeUserCharacterRepository;
 import com.umc7th.a1grade.unittest.user.fake.FakeUserDetails;
 import com.umc7th.a1grade.unittest.user.fake.FakeUserRepository;
 
 public class UserServiceTest {
   private UserService userService;
   private UserRepository fakeUserRepository;
+  private CharacterRepository fakeCharacterRepository;
+  private UserCharacterRepository fakeUserCharacterRepository;
   private final String socialId = "user1234";
   private User existingUser;
 
   @BeforeEach
   void init() {
     fakeUserRepository = new FakeUserRepository();
-    userService = new UserServiceImpl(fakeUserRepository);
+    fakeCharacterRepository = new FakeCharacterRepository();
+    fakeUserCharacterRepository = new FakeUserCharacterRepository();
+    userService =
+        new UserServiceImpl(
+            fakeUserRepository, fakeCharacterRepository, fakeUserCharacterRepository);
 
     this.existingUser =
         User.builder()

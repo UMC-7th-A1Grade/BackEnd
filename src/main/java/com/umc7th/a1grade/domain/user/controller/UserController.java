@@ -5,13 +5,14 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.umc7th.a1grade.domain.user.dto.UserInfoDto;
+import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
 import com.umc7th.a1grade.domain.user.exception.status.UserSuccessStatus;
 import com.umc7th.a1grade.domain.user.service.UserService;
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
@@ -66,10 +67,38 @@ public class UserController {
     return ApiResponse.of(UserSuccessStatus._NICKNAME_OK, true);
   }
 
-  @Operation(summary = "닉네임 저장", description = "사용자에게 입력받은 닉네임을 저장합니다.")
-  @PostMapping("")
-  public ApiResponse<Boolean> saveNickame(
-      @AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserInfoDto request) {
-    return ApiResponse.onSuccess(true);
+  @Operation(
+      summary = "닉네임 저장",
+      description = "사용자에게 입력받은 닉네임을 저장합니다.",
+      requestBody =
+          @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
+              required = true,
+              content =
+                  @Content(
+                      mediaType = "application/json",
+                      schema = @Schema(implementation = UserInfoDto.class))))
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "닉네임과 캐릭터 정보가 성공적으로 저장되었습니다.",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = UserInfoResponseDto.class))),
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "존재하지 않은 캐릭터 아이디 입니다.",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorReasonDTO.class)))
+  })
+  @PatchMapping("")
+  public ApiResponse<UserInfoResponseDto> saveUserInfo(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestBody @Valid UserInfoDto requestDto) {
+    UserInfoResponseDto response = userService.saveUserInfo(userDetails, requestDto);
+    return ApiResponse.of(UserSuccessStatus._USER_INFO_UPDATE, response);
   }
 }

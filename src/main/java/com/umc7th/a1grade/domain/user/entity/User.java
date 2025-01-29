@@ -1,5 +1,9 @@
 package com.umc7th.a1grade.domain.user.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,9 +11,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
+import com.umc7th.a1grade.domain.user.entity.mapping.UserCharacter;
 import com.umc7th.a1grade.global.common.BaseTimeEntity;
 
 import lombok.AllArgsConstructor;
@@ -41,14 +47,10 @@ public class User extends BaseTimeEntity {
 
   private String nickName;
 
-  private Long imageId;
-
   private String refreshToken;
 
-  // 필요한 항목들인지 확인 해야함
-  private String birth;
-  private String region;
-  private String phone;
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  private List<UserCharacter> userCharacters = new ArrayList<>();
 
   public void setRefreshToken(String refreshToken) {
     this.refreshToken = refreshToken;
@@ -56,5 +58,9 @@ public class User extends BaseTimeEntity {
 
   public void setRole(Role role) {
     this.role = role;
+  }
+
+  public void setNickName(String nickname) {
+    this.nickName = nickname;
   }
 }
