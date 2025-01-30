@@ -109,7 +109,7 @@ processResources {
 
 tasks.register('copyResources', Copy) {
     from './BackEnd_Config'
-    include('*.properties')
+    include '*.properties'
     into 'src/main/resources/'
 }
 

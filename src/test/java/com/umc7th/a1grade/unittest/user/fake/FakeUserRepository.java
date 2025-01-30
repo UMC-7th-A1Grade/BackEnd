@@ -47,6 +47,11 @@ public class FakeUserRepository implements UserRepository {
     }
   }
 
+  @Override
+  public boolean existsByNickName(String nickname) {
+    return data.stream().anyMatch(user -> Objects.equals(user.getNickName(), nickname));
+  }
+
   public List<User> findAll() {
     return new ArrayList<>(data);
   }
