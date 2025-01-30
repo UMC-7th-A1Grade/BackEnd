@@ -56,8 +56,10 @@ public class QuestionResponseDTO {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class QuestionDTO {
-
+    @Schema(description = " 문제 번호", example = "101")
     int num;
+
+    @Schema(description = " 문제 이미지", example = "https://questionImg.com")
     String questionImg;
   }
 
@@ -66,8 +68,13 @@ public class QuestionResponseDTO {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class FalseQuestionDTO {
+    @Schema(description = " 문제 번호", example = "101")
     int num;
+
+    @Schema(description = " 문제 이미지", example = "https://questionImg.com")
     String questionImg;
+
+    @Schema(description = "제출 여부", example = "false")
     boolean isSubmitted;
   }
 }

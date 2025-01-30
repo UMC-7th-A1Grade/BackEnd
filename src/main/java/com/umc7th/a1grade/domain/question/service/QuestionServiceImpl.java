@@ -16,7 +16,6 @@ import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.question.exception.status.QuestionErrorStatus;
 import com.umc7th.a1grade.domain.question.repository.QuestionLogRepository;
 import com.umc7th.a1grade.domain.question.repository.QuestionRepository;
-import com.umc7th.a1grade.domain.question.repository.QuestionReviewHistoryRepository;
 import com.umc7th.a1grade.domain.question.repository.UserQuestionRepository;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.global.common.Utils;
@@ -33,7 +32,6 @@ public class QuestionServiceImpl implements QuestionService {
   private final QuestionConverter questionConverter;
   private final UserQuestionRepository userQuestionRepository;
   private final Utils utils;
-  private final QuestionReviewHistoryRepository questionReviewHistoryRepository;
 
   @Override
   @Transactional(readOnly = true)
@@ -70,8 +68,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     questionLogRepository.save(
         questionConverter.toQuestionLog(user, userQuestion, answer, isCorrect));
-
-    questionReviewHistoryRepository.save(questionConverter.toQuestionReviewHistory(userQuestion));
 
     return questionConverter.toSubmitAnswerDTO(isCorrect);
   }
