@@ -1,6 +1,9 @@
 package com.umc7th.a1grade.global.s3;
 
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -50,6 +53,16 @@ public class S3Service {
         }
         + '/'
         + UUID.randomUUID().toString();
+  }
+
+  public InputStream getFile(String keyName){
+    if (!amazonS3.doesObjectExist(s3Config.getBucket(), keyName)) {
+      log.error("Error file not found: {}", keyName);
+      return null;
+    }
+    S3Object s3Object = amazonS3.getObject(s3Config.getBucket(), keyName);
+    S3ObjectInputStream inputStream = s3Object.getObjectContent();
+    return inputStream;
   }
 
   public boolean deleteFile(String keyName) {
