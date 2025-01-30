@@ -34,6 +34,7 @@ public class Character extends BaseTimeEntity {
 
   private String imageUrl;
 
+  @Builder.Default
   @OneToMany(mappedBy = "character", cascade = CascadeType.ALL)
   private List<UserCharacter> userCharacters = new ArrayList<>();
 }

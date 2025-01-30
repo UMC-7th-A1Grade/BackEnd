@@ -49,6 +49,7 @@ public class User extends BaseTimeEntity {
 
   private String refreshToken;
 
+  @Builder.Default
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<UserCharacter> userCharacters = new ArrayList<>();
 
