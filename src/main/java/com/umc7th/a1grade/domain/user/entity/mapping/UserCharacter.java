@@ -1,11 +1,6 @@
 package com.umc7th.a1grade.domain.user.entity.mapping;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import com.umc7th.a1grade.domain.character.entity.Character;
 import com.umc7th.a1grade.domain.user.entity.User;
@@ -21,6 +16,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name="unique_user_character",columnNames = {"user_id", "character_id"}),
+                @UniqueConstraint(name="unique_activate_character", columnNames = {"user_id", "isActive"})
+        }
+)
 public class UserCharacter extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
