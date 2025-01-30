@@ -1,4 +1,4 @@
-package com.umc7th.a1grade.domain.user.exception.status;
+package com.umc7th.a1grade.domain.character.exception.status;
 
 import org.springframework.http.HttpStatus;
 
@@ -10,9 +10,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum UserSuccessStatus implements BaseCode {
-  _NICKNAME_OK(HttpStatus.OK, "NINKNAME2000", "사용가능한 닉네임입니다."),
-  _USER_INFO_UPDATE(HttpStatus.OK, "USERINFO2001", "닉네임과 캐릭터 정보가 성공적으로 저장되었습니다.");
+public enum CharacterSuccessStatus implements BaseCode {
+  _INFO_OK(HttpStatus.OK, "INFO2000", "캐릭터 정보조회에 성공했습니다."),
+  ;
 
   private final HttpStatus httpStatus;
   private final String code;
