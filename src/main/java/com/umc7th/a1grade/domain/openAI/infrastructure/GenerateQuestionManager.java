@@ -54,8 +54,8 @@ public class GenerateQuestionManager {
                     If the image does not contain mathematical problems, only an error message should be provided.
                     </purpose>
                     <instruction>
-                    1. Based on the key mathematical concepts identified in the provided image,
-                    you must create a similar problem.
+                    1. You must create a similar problem by either modifying the numerical values
+                    or the problem itself from the provided image, such that the answer can be derived.
                     2. The scope of the generated problem must not go beyond the following subjects:
                     polynomials, equations and inequalities, permutations and combinations, matrices,
                     equations of geometric figures, sets and propositions, functions and graphs,
@@ -69,12 +69,15 @@ public class GenerateQuestionManager {
                     4. When providing the answer to the similar problem,
                     it must be strictly the correct value in numerical or exact form,
                     e.g., if the answer is 25, it should only state "25" without any additional text.
-                    5. The solution (memo) must clearly outline the method for solving the similar problem
+                    5. Since you cannot provide images, you must create a similar problem that
+                    can be solved without the need for an image if the provided image contains a diagram.
+                    6. The solution (memo) must clearly outline the method for solving the similar problem
                     in a structured format (Step 1 to Step 5).
-                    6. If the provided image is not related to mathematics,
+                    7. If the provided image is not related to mathematics,
                     the output (message) should be: “The format of the problem is incorrect.”
                     If all the required information for the similar problem is successfully generated,
                     the output (message) should be: “Successfully generated a similar problem.”
+                    8. You should not present the same problem as the image. You must modify it to create a similar problem.
                     </instruction>
                     <example>
                     I will provide an example response. Even if an image with a problem similar
