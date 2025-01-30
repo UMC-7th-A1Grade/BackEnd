@@ -17,11 +17,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(
-        uniqueConstraints = {
-                @UniqueConstraint(name="unique_user_character",columnNames = {"user_id", "character_id"}),
-                @UniqueConstraint(name="unique_activate_character", columnNames = {"user_id", "isActive"})
-        }
-)
+    uniqueConstraints = {
+      @UniqueConstraint(
+          name = "unique_user_character",
+          columnNames = {"user_id", "character_id"}),
+      @UniqueConstraint(
+          name = "unique_activate_character",
+          columnNames = {"user_id", "isActive"})
+    })
 public class UserCharacter extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
