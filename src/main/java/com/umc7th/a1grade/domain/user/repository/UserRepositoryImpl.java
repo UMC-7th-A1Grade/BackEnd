@@ -32,4 +32,9 @@ public class UserRepositoryImpl implements UserRepository {
   public boolean existsByNickName(String nickname) {
     return userJpaRepository.existsByNickName(nickname);
   }
+
+  @Override
+  public Long countCorrectAnswerByUserId(Long userId) {
+    return userJpaRepository.countCorrectAnswerByUserId(userId);
+  }
 }

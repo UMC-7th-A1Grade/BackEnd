@@ -12,4 +12,6 @@ public interface UserRepository {
   User save(User user);
 
   boolean existsByNickName(String nickname);
+
+  Long countCorrectAnswerByUserId(Long userId);
 }

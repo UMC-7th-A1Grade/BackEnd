@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.umc7th.a1grade.domain.character.entity.Character;
 import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
+import com.umc7th.a1grade.domain.user.dto.MypageResponseDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
 import com.umc7th.a1grade.domain.user.entity.User;
@@ -46,6 +47,13 @@ public class UserServiceImpl implements UserService {
     user.setNickName(requestDto.getNickname());
     User updatedUser = userRepository.save(user);
     return new UserInfoResponseDto(updatedUser, userCharacter.getCharacter().getId());
+  }
+
+  @Override
+  public MypageResponseDto findUserGrade(UserDetails userDetails) {
+    User user = findUserBySocialId(userDetails.getUsername());
+    Long grade = userRepository.countCorrectAnswerByUserId(user.getId());
+    return new MypageResponseDto(user.getNickName(), Math.toIntExact(grade));
   }
 
   private UserCharacter createUserCharacter(User user, Character character) {

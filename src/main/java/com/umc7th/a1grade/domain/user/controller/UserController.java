@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.umc7th.a1grade.domain.user.dto.MypageResponseDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
 import com.umc7th.a1grade.domain.user.exception.status.UserSuccessStatus;
@@ -26,7 +27,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "user", description = "회원 관리 API")
+@Tag(name = "user", description = "회원 관리 및 마이페이지 관련 API")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -100,5 +101,22 @@ public class UserController {
       @RequestBody @Valid UserInfoDto requestDto) {
     UserInfoResponseDto response = userService.saveUserInfo(userDetails, requestDto);
     return ApiResponse.of(UserSuccessStatus._USER_INFO_UPDATE, response);
+  }
+
+  @Operation(summary = "오늘의 정답률", description = "사용자의 닉네임과 오답 정답의 개수를 조회합니다.")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "사용자의 오답 정답 개수를 성공적으로 조회하였습니다.",
+        content =
+            @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = MypageResponseDto.class)))
+  })
+  @GetMapping("/grade")
+  public ApiResponse<MypageResponseDto> findUserGrade(
+      @AuthenticationPrincipal UserDetails userDetails) {
+    MypageResponseDto response = userService.findUserGrade(userDetails);
+    return ApiResponse.of(UserSuccessStatus._USER_GRADE_OK, response);
   }
 }
