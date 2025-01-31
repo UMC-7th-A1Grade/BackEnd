@@ -21,9 +21,6 @@ public class QuestionStorageResponseDTO {
     @Schema(description = " 문제 id", example = "1")
     private Long id;
 
-    @Schema(description = " 문제 풀이", example = "함수 및 도함수 어쩌구 저쩌구")
-    private String memo;
-
     @Schema(description = " 문제 이미지", example = "https://questionImg.com")
     private String imageUrl;
 
@@ -32,9 +29,6 @@ public class QuestionStorageResponseDTO {
         example = "AI",
         allowableValues = {"AI", "USER"})
     private QuestionType type;
-
-    @Schema(description = " 문제 정답", example = "3")
-    private String answer;
   }
 
   @Builder

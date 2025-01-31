@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.umc7th.a1grade.domain.question.dto.QuestionStorageResponseDTO;
 import com.umc7th.a1grade.domain.question.entity.QuestionType;
 import com.umc7th.a1grade.domain.question.exception.status.QuestionStorageErrorStatus;
+import com.umc7th.a1grade.domain.question.exception.status.QuestionStorageSuccessStatus;
 import com.umc7th.a1grade.domain.question.service.QuestionStorageService;
 import com.umc7th.a1grade.global.annotation.ApiErrorCodeExample;
+import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,7 +29,7 @@ public class QuestionStorageController {
   @Operation(summary = "저장소 문제 조회하기", description = "사용자가 저장한 전체 문제, 틀린 문제, 유사 문제를 조회하는 API")
   @ApiErrorCodeExample(QuestionStorageErrorStatus.class)
   @GetMapping("/questions")
-  public QuestionStorageResponseDTO.QuestionListDTO getStorageQuestionsByQuestionType(
+  public ApiResponse<QuestionStorageResponseDTO.QuestionListDTO> getStorageQuestionsByQuestionType(
       @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
           @AuthenticationPrincipal
           UserDetails userDetails,
@@ -42,6 +44,10 @@ public class QuestionStorageController {
           questionStorageService.getStorageQuestionsByQuestionType(userDetails, questionType);
     }
 
-    return response;
+    if (response.getQuestions().isEmpty()) {
+      return ApiResponse.of(QuestionStorageSuccessStatus._NULL_QUESTION_SUCCESS, response);
+    } else {
+      return ApiResponse.of(QuestionStorageSuccessStatus._QUESTION_STORAGE_SUCCESS, response);
+    }
   }
 }

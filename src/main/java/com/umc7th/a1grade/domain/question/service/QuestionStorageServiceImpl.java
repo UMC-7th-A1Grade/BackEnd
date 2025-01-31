@@ -33,21 +33,18 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
 
     User user = utils.getUserByUsername(userDetails.getUsername());
 
-    List<UserQuestion> UserQuestions;
+    List<UserQuestion> userQuestions;
     try {
-      UserQuestions = userQuestionRepository.findByUserId(user.getId());
+      userQuestions = userQuestionRepository.findByUserId(user.getId());
     } catch (DataAccessException e) {
       throw new GeneralException(QuestionErrorStatus.QUESTION_DATABASE_ERROR);
     }
 
-    if (UserQuestions.isEmpty()) {
+    if (userQuestions.isEmpty()) {
       throw new GeneralException(QuestionStorageErrorStatus.QUESTION_NOT_FOUND);
     }
 
-    List<QuestionStorageResponseDTO.QuestionDTO> questionDTOList =
-        QuestionStorageConverter.toQuestionsForList(UserQuestions);
-
-    return QuestionStorageConverter.toQuestionListDTO(questionDTOList);
+    return QuestionStorageConverter.toQuestionListDTO(userQuestions);
   }
 
   @Override
@@ -56,9 +53,9 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
 
     User user = utils.getUserByUsername(userDetails.getUsername());
 
-    List<UserQuestion> UserQuestions;
+    List<UserQuestion> userQuestions;
     try {
-      UserQuestions =
+      userQuestions =
           userQuestionRepository.findByUserIdAndQuestionType(user.getId(), questionType);
     } catch (DataAccessException e) {
       throw new GeneralException(QuestionStorageErrorStatus.QUESTION_DATABASE_ERROR);
@@ -68,13 +65,6 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
       throw new GeneralException(QuestionStorageErrorStatus.INVALID_QUESTION_TYPE);
     }
 
-    if (UserQuestions.isEmpty()) {
-      throw new GeneralException(QuestionStorageErrorStatus.NO_QUESTIONS_FOUND);
-    }
-
-    List<QuestionStorageResponseDTO.QuestionDTO> questionDTOList =
-        QuestionStorageConverter.toQuestionsForList(UserQuestions);
-
-    return QuestionStorageConverter.toQuestionListDTO(questionDTOList);
+    return QuestionStorageConverter.toQuestionListDTO(userQuestions);
   }
 }
