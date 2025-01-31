@@ -27,7 +27,7 @@ public class ApiResponse<T> {
   private final String message;
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  @Schema(description = "응답 결과", example = "Result")
+  @Schema(description = "응답 결과")
   private T result;
 
   public static <T> ApiResponse<T> onSuccess(T result) {
