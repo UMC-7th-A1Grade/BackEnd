@@ -106,6 +106,14 @@ public class QuestionServiceImpl implements QuestionService {
     return questionConverter.toRandomFalseQuestionDTO(falseQuestionDTO);
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public QuestionResponseDTO.GetQuestionDTO getQuestion(Long id, UserDetails userDetails) {
+    Question question = getQuestionById(id);
+    User user = utils.getUserByUsername(userDetails.getUsername());
+    return questionConverter.toGetQuestionDTO(question, user);
+  }
+
   private Question getQuestionById(Long id) {
     if (id <= 0) {
       throw new GeneralException(QuestionErrorStatus.INVALID_QUESTION_ID);

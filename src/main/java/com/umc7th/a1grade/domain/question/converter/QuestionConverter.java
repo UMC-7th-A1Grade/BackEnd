@@ -13,8 +13,10 @@ import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO.QuestionDTO;
 import com.umc7th.a1grade.domain.question.entity.Question;
 import com.umc7th.a1grade.domain.question.entity.mapping.QuestionLog;
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
+import com.umc7th.a1grade.domain.question.exception.status.QuestionErrorStatus;
 import com.umc7th.a1grade.domain.question.repository.QuestionLogRepository;
 import com.umc7th.a1grade.domain.user.entity.User;
+import com.umc7th.a1grade.global.exception.GeneralException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -86,6 +88,22 @@ public class QuestionConverter {
       List<QuestionResponseDTO.FalseQuestionDTO> falseQuestionDTOS) {
     return QuestionResponseDTO.RandomFalseQuestionDTO.builder()
         .questions(falseQuestionDTOS)
+        .build();
+  }
+
+  public QuestionResponseDTO.GetQuestionDTO toGetQuestionDTO(Question question, User user) {
+    List<QuestionLog> questionLog =
+        questionLogRepository.findByUserIdAndQuestionId(user.getId(), question.getId());
+    if (questionLog.isEmpty()) {
+      throw new GeneralException(QuestionErrorStatus.QUESTIONLOG_NOT_FOUND);
+    }
+
+    List<String> memos = questionLog.stream().map(QuestionLog::getNote).toList();
+    return QuestionResponseDTO.GetQuestionDTO.builder()
+        .answer(question.getAnswer())
+        .memo(question.getMemo())
+        .note(memos)
+        .questionImg(question.getImageUrl())
         .build();
   }
 }

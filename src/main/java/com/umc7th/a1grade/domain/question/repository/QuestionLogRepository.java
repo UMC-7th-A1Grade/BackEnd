@@ -16,4 +16,11 @@ public interface QuestionLogRepository extends JpaRepository<QuestionLog, Long> 
           + "JOIN ql.userQuestion uq "
           + "WHERE uq.question.id IN :questionIds")
   Set<Long> findQuestionIdsWithLogs(@Param("questionIds") List<Long> questionIds);
+
+  @Query(
+      "SELECT ql FROM QuestionLog ql "
+          + "JOIN ql.userQuestion uq "
+          + "WHERE uq.user.id = :userId AND uq.question.id = :questionId")
+  List<QuestionLog> findByUserIdAndQuestionId(
+      @Param("userId") Long userId, @Param("questionId") Long questionId);
 }
