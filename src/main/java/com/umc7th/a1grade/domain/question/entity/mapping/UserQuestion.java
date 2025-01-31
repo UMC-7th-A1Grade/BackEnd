@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import com.umc7th.a1grade.domain.question.entity.Question;
 import com.umc7th.a1grade.domain.user.entity.User;
@@ -28,6 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "question_id"}))
 public class UserQuestion extends BaseTimeEntity {
 
   @Id
@@ -42,6 +45,7 @@ public class UserQuestion extends BaseTimeEntity {
   @JoinColumn(name = "question_id", nullable = false)
   private Question question;
 
+  @Builder.Default
   @OneToMany(mappedBy = "userQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<QuestionLog> questionLogs = new ArrayList<>();
 }

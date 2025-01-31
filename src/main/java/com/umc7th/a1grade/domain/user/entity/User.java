@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
+import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.user.entity.mapping.UserCharacter;
 import com.umc7th.a1grade.global.common.BaseTimeEntity;
 
@@ -52,6 +53,10 @@ public class User extends BaseTimeEntity {
   @Builder.Default
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<UserCharacter> userCharacters = new ArrayList<>();
+
+  @Builder.Default
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<UserQuestion> userQuestions = new ArrayList<>();
 
   public void setRefreshToken(String refreshToken) {
     this.refreshToken = refreshToken;

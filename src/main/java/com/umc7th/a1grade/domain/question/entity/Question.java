@@ -35,13 +35,9 @@ public class Question extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Comment("문제번호")
-  @Column(nullable = false)
-  private Integer num;
-
   @Comment("풀이")
   @Column(nullable = false, columnDefinition = "TEXT")
-  private String content;
+  private String memo;
 
   @Comment("문제 이미지 URL")
   @Column(nullable = false)
@@ -55,6 +51,7 @@ public class Question extends BaseTimeEntity {
   @Column(nullable = false)
   private String answer;
 
+  @Builder.Default
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<UserQuestion> userQuestions = new ArrayList<>();
 }
