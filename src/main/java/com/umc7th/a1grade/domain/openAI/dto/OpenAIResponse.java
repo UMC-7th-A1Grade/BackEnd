@@ -13,7 +13,7 @@ public class OpenAIResponse {
   @AllArgsConstructor
   public static class confirmQuestionResponse {
     @Schema(description = "판별 결과", example = "true")
-    Boolean success;
+    Boolean result;
   }
 
   @Builder

@@ -4,11 +4,9 @@ import java.io.IOException;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.generateQuestionResponse;
 import com.umc7th.a1grade.domain.openAI.exception.AIErrorStatus;
@@ -21,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class GenerateQuestionManager {
   private final ChatClient chatClient;
 
-  public generateQuestionResponse generateQuestion(MultipartFile image) {
+  public generateQuestionResponse generateQuestion(String imageUrl) {
 
     BeanOutputConverter<generateQuestionResponse> parser =
         new BeanOutputConverter<>(generateQuestionResponse.class);
@@ -32,10 +30,6 @@ public class GenerateQuestionManager {
             .user(
                 userSpec -> {
                   try {
-                    byte[] imageBytes = image.getBytes(); // MultipartFile에서 바이트 배열을 얻음
-                    Resource imageResource =
-                        new ByteArrayResource(imageBytes); // 바이트 배열로부터 Resource 생성
-
                     userSpec
                         .text(
                             """
@@ -99,7 +93,7 @@ public class GenerateQuestionManager {
                     The format is as follows. 모든 값은 한국어로 저장되어야 합니다. 한국어로 번역하여 보내주세요.
                     """
                                 + parser.getFormat())
-                        .media(MimeTypeUtils.IMAGE_JPEG, imageResource);
+                        .media(MimeTypeUtils.IMAGE_JPEG, new UrlResource(imageUrl));
                   } catch (IOException e) {
                     throw new GeneralException(AIErrorStatus._FILE_SERVER_ERROR);
                   }
