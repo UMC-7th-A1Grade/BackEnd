@@ -16,13 +16,18 @@ import org.hibernate.annotations.Comment;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.global.common.BaseTimeEntity;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 @Entity
 public class QuestionLog extends BaseTimeEntity {
 
@@ -44,9 +49,10 @@ public class QuestionLog extends BaseTimeEntity {
 
   @Column(nullable = true)
   @Comment("메모")
-  private String memo;
+  private String note;
 
   @Column(nullable = false)
   @Comment("정답 여부")
-  private boolean isCorrect;
+  @Builder.Default
+  private boolean isCorrect = false;
 }

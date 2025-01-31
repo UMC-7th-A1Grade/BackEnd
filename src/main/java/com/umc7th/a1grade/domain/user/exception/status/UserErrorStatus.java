@@ -12,6 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserErrorStatus implements BaseErrorCode {
   _USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4001", "존재하지 않는 사용자입니다."),
+  _USER_INVALID(HttpStatus.BAD_REQUEST, "USER4002", "유효하지 않은 사용자입니다."),
 
   _USER_NICKNAME_EXIST(HttpStatus.BAD_REQUEST, "NICKNAME4002", "이미 존재하는 닉네임입니다."),
   _USER_NICKNAME_NULL(HttpStatus.BAD_REQUEST, "NICKNAME4003", "닉네임은 필수로 입력해야 합니다."),

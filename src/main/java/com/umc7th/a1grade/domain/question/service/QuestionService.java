@@ -1,9 +1,17 @@
 package com.umc7th.a1grade.domain.question.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO;
+import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
+
 public interface QuestionService {
-  void getRandomQuestions();
+  QuestionResponseDTO.RandomQuestionDTO getRecentQuestions(UserDetails userDetails);
 
-  void submitAnswer();
+  QuestionResponseDTO.SubmitAnswerDTO submitAnswer(
+      Long id, QuestionRequestDTO.submitAnswerDTO answer, UserDetails userDetails);
 
-  void getAnswer();
+  QuestionResponseDTO.GetAnswerDTO getAnswer(Long id);
+
+  QuestionResponseDTO.RandomFalseQuestionDTO getRandomFalseQuestions(UserDetails userDetails);
 }

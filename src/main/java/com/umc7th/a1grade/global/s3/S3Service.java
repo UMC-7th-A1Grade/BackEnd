@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class S3Service {
 
   private final AmazonS3 amazonS3;
-
   private final S3Config s3Config;
 
   public String uploadFile(PathName pathName, MultipartFile file) {
