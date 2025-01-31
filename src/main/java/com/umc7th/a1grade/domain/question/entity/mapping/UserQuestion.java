@@ -1,7 +1,5 @@
 package com.umc7th.a1grade.domain.question.entity.mapping;
 
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import com.umc7th.a1grade.domain.question.entity.Question;
 import com.umc7th.a1grade.domain.user.entity.User;
@@ -30,9 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "question_id"})
-)
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "question_id"}))
 public class UserQuestion extends BaseTimeEntity {
 
   @Id

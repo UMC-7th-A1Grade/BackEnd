@@ -49,7 +49,6 @@ class QuestionRepositoryTest {
                 i -> {
                   Question question =
                       Question.builder()
-                          .num(i + 1)
                           .memo("Test Question Memo " + i)
                           .imageUrl("http://example.com/image" + i + ".jpg")
                           .type(QuestionType.USER)
