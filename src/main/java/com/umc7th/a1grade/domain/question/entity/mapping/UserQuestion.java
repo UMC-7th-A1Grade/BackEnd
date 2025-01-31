@@ -1,5 +1,7 @@
 package com.umc7th.a1grade.domain.question.entity.mapping;
 
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Table(
+    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "question_id"})
+)
 public class UserQuestion extends BaseTimeEntity {
 
   @Id
