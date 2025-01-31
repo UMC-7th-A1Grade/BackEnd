@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import com.umc7th.a1grade.domain.question.entity.Question;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-  Optional<Question> findByNum(Integer num);
+  Optional<Question> findById(Long id);
 
   @Query(
       value =

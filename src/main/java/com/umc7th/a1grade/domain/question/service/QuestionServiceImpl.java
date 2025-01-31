@@ -54,8 +54,8 @@ public class QuestionServiceImpl implements QuestionService {
 
   @Override
   public QuestionResponseDTO.SubmitAnswerDTO submitAnswer(
-      int questionNum, QuestionRequestDTO.submitAnswerDTO answer, UserDetails userDetails) {
-    Question question = getQuestionById(questionNum);
+      Long id, QuestionRequestDTO.submitAnswerDTO answer, UserDetails userDetails) {
+    Question question = getQuestionById(id);
 
     User user = utils.getUserByUsername(userDetails.getUsername());
 
@@ -74,8 +74,8 @@ public class QuestionServiceImpl implements QuestionService {
 
   @Override
   @Transactional(readOnly = true)
-  public QuestionResponseDTO.GetAnswerDTO getAnswer(int questionNum) {
-    Question question = getQuestionById(questionNum);
+  public QuestionResponseDTO.GetAnswerDTO getAnswer(Long id) {
+    Question question = getQuestionById(id);
     return questionConverter.toGetAnswerDTO(question);
   }
 
@@ -106,12 +106,12 @@ public class QuestionServiceImpl implements QuestionService {
     return questionConverter.toRandomFalseQuestionDTO(falseQuestionDTO);
   }
 
-  private Question getQuestionById(int questionNum) {
-    if (questionNum <= 0) {
+  private Question getQuestionById(Long id) {
+    if (id <= 0) {
       throw new GeneralException(QuestionErrorStatus.INVALID_QUESTION_ID);
     }
     return questionRepository
-        .findByNum(questionNum)
+        .findById(id)
         .orElseThrow(() -> new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND));
   }
 }

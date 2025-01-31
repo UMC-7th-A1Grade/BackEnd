@@ -54,7 +54,7 @@ public class QuestionConverter {
         .map(
             question ->
                 QuestionResponseDTO.QuestionDTO.builder()
-                    .num(question.getNum())
+                    .id(question.getId())
                     .questionImg(question.getImageUrl())
                     .build())
         .collect(Collectors.toList());
@@ -72,7 +72,7 @@ public class QuestionConverter {
                 QuestionResponseDTO.FalseQuestionDTO.builder()
                     .isSubmitted(questionLogExistsIds.contains(question.getId()))
                     .questionImg(question.getImageUrl())
-                    .num(question.getNum())
+                    .id(question.getId())
                     .build())
         .collect(Collectors.toList());
   }

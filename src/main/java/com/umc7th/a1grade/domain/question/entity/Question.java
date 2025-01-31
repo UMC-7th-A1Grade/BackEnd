@@ -35,10 +35,6 @@ public class Question extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Comment("문제번호")
-  @Column(nullable = false)
-  private Integer num;
-
   @Comment("풀이")
   @Column(nullable = false, columnDefinition = "TEXT")
   private String memo;

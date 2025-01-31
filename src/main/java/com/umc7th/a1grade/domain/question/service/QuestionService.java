@@ -9,9 +9,9 @@ public interface QuestionService {
   QuestionResponseDTO.RandomQuestionDTO getRecentQuestions(UserDetails userDetails);
 
   QuestionResponseDTO.SubmitAnswerDTO submitAnswer(
-      int questionNum, QuestionRequestDTO.submitAnswerDTO answer, UserDetails userDetails);
+      Long id, QuestionRequestDTO.submitAnswerDTO answer, UserDetails userDetails);
 
-  QuestionResponseDTO.GetAnswerDTO getAnswer(int questionNum);
+  QuestionResponseDTO.GetAnswerDTO getAnswer(Long id);
 
   QuestionResponseDTO.RandomFalseQuestionDTO getRandomFalseQuestions(UserDetails userDetails);
 }

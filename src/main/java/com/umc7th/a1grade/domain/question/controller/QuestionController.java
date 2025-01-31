@@ -66,7 +66,7 @@ public class QuestionController {
     return ApiResponse.onSuccess(result);
   }
 
-  @PostMapping("{questionNum}/submit/")
+  @PostMapping("{questionId}/submit/")
   @Operation(summary = "답안 입력하기 컨트롤러 구현", description = "사용자가 푼 문제를 제출하는 API")
   @ApiResponses({
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -76,24 +76,20 @@ public class QuestionController {
   })
   @ApiErrorCodeExample(QuestionErrorStatus.class)
   public ApiResponse<QuestionResponseDTO.SubmitAnswerDTO> submitAnswer(
-      @Parameter(
-              name = "questionNum",
-              description = "제출할 문제의 Num",
-              example = "123",
-              required = true)
+      @Parameter(name = "questionId", description = "제출할 문제의 Id", example = "1", required = true)
           @PathVariable
-          int questionNum,
+          Long questionId,
       @Parameter(description = "사용자가 제출한 답안 정보", required = true) @Valid @RequestBody
           QuestionRequestDTO.submitAnswerDTO answer,
       @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
           @AuthenticationPrincipal
           UserDetails userDetails) {
     QuestionResponseDTO.SubmitAnswerDTO result =
-        questionService.submitAnswer(questionNum, answer, userDetails);
+        questionService.submitAnswer(questionId, answer, userDetails);
     return ApiResponse.onSuccess(result);
   }
 
-  @GetMapping("/answer/{questionNum}")
+  @GetMapping("/answer/{questionId}")
   @Operation(summary = "풀이 및 정답 확인하기 API", description = "풀이 및 정답 확인하기 API")
   @ApiResponses({
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -103,8 +99,8 @@ public class QuestionController {
   })
   @ApiErrorCodeExample(QuestionErrorStatus.class)
   public ApiResponse<QuestionResponseDTO.GetAnswerDTO> getAnswer(
-      @Parameter(description = "질문 번호", example = "1") @PathVariable Integer questionNum) {
-    QuestionResponseDTO.GetAnswerDTO answer = questionService.getAnswer(questionNum);
+      @Parameter(description = "질문 번호", example = "1") @PathVariable Long questionId) {
+    QuestionResponseDTO.GetAnswerDTO answer = questionService.getAnswer(questionId);
     return ApiResponse.onSuccess(answer);
   }
 }
