@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema(title = "OpenAI 실행 결과 응답 DTO")
 public class OpenAIResponse {
   @Builder
   @Getter
