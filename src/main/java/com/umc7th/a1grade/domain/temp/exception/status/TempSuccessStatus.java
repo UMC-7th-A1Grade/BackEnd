@@ -1,4 +1,4 @@
-package com.umc7th.a1grade.domain.temp.handler.status;
+package com.umc7th.a1grade.domain.temp.exception.status;
 
 import org.springframework.http.HttpStatus;
 

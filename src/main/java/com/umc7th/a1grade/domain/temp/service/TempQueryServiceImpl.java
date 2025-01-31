@@ -2,8 +2,8 @@ package com.umc7th.a1grade.domain.temp.service;
 
 import org.springframework.stereotype.Service;
 
+import com.umc7th.a1grade.domain.temp.exception.status.TempErrorStatus;
 import com.umc7th.a1grade.domain.temp.handler.TempHandler;
-import com.umc7th.a1grade.domain.temp.handler.status.TempErrorStatus;
 
 import lombok.RequiredArgsConstructor;
 
