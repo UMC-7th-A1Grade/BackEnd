@@ -12,13 +12,9 @@ import com.umc7th.a1grade.domain.question.entity.QuestionType;
 import com.umc7th.a1grade.domain.question.exception.status.QuestionStorageErrorStatus;
 import com.umc7th.a1grade.domain.question.service.QuestionStorageService;
 import com.umc7th.a1grade.global.annotation.ApiErrorCodeExample;
-import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,15 +25,9 @@ public class QuestionStorageController {
   private final QuestionStorageService questionStorageService;
 
   @Operation(summary = "저장소 문제 조회하기", description = "사용자가 저장한 전체 문제, 틀린 문제, 유사 문제를 조회하는 API")
-  @ApiResponses({
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "OK, 성공",
-        content = @Content(schema = @Schema(implementation = ApiResponse.class)))
-  })
   @ApiErrorCodeExample(QuestionStorageErrorStatus.class)
   @GetMapping("/questions")
-  public ApiResponse<QuestionStorageResponseDTO.QuestionListDTO> getStorageQuestionsByQuestionType(
+  public QuestionStorageResponseDTO.QuestionListDTO getStorageQuestionsByQuestionType(
       @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
           @AuthenticationPrincipal
           UserDetails userDetails,
@@ -52,6 +42,6 @@ public class QuestionStorageController {
           questionStorageService.getStorageQuestionsByQuestionType(userDetails, questionType);
     }
 
-    return ApiResponse.onSuccess(response);
+    return response;
   }
 }
