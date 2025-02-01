@@ -17,15 +17,11 @@ public enum QuestionErrorStatus implements BaseErrorCode {
   INVALID_ANSWER(HttpStatus.BAD_REQUEST, "QUESTION4006", "답안이 유효하지 않습니다."),
   INVALID_MEMO(HttpStatus.BAD_REQUEST, "QUESTION4007", "메모가 유효하지 않습니다."),
   INSUFFICENT_QUESTIONS(HttpStatus.BAD_REQUEST, "QUESTION4008", "저장된 문제가 3개 미만입니다."),
+  INVALID_QUESTION_TYPE(HttpStatus.BAD_REQUEST, "QUESTION4009", "유효하지 않은 문제 타입입니다."),
   NO_QUESTIONS_FOUND(HttpStatus.NOT_FOUND, "QUESTION4010", "조건에 맞는 문제가 없습니다."),
 
-  INVALID_QUESTION_TYPE(HttpStatus.BAD_REQUEST, "QUESTION4009", "유효하지 않은 문제 타입입니다."),
-  INVALID_QUESTION_INPUT(HttpStatus.BAD_REQUEST, "QUESTION_SAVE4006", "잘못된 입력 값입니다."),
-
   QUESTION_DATABASE_ERROR(
-      HttpStatus.INTERNAL_SERVER_ERROR, "QUESTION5000", "문제 조회 중 데이터베이스 오류가 발생하였습니다."),
-  QUESTION_SAVE_ERROR(
-      HttpStatus.INTERNAL_SERVER_ERROR, "QUESTION_SAVE5000", "문제 저장 중 데이터베이스 오류가 발생하였습니다.");
+      HttpStatus.INTERNAL_SERVER_ERROR, "QUESTION5000", "문제 조회 중 데이터베이스 오류가 발생하였습니다.");
 
   private final HttpStatus httpStatus;
   private final String code;

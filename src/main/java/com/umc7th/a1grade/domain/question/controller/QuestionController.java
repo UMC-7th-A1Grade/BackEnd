@@ -108,19 +108,10 @@ public class QuestionController {
 
   @PostMapping("/save")
   @Operation(summary = "문제 저장하기", description = "문제 이미지, 풀이, 정답 저장 API")
-  @ApiResponses({
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "COMMON200",
-        description = "OK, 응답에 성공했습니다."),
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "QUESTION4009",
-        description = "INVALID_QUESTION_TYPE, 유효하지 않은 문제 타입입니다."),
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "QUESTION_SAVE5000",
-        description = "QUESTION_SAVE_ERROR, 문제 저장 중 데이터베이스 오류가 발생하였습니다."),
-  })
+  @ApiErrorCodeExample(QuestionErrorStatus.class)
   public ApiResponse<QuestionResponseDTO.SaveUserQuestionDTO> saveUserQuestion(
       @RequestBody QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO,
+      @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
       @AuthenticationPrincipal UserDetails userDetails) {
 
     QuestionResponseDTO.SaveUserQuestionDTO response =

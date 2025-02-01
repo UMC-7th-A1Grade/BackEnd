@@ -133,7 +133,7 @@ public class QuestionServiceImpl implements QuestionService {
     try {
       questionRepository.save(question);
     } catch (DataAccessException e) {
-      throw new GeneralException(QuestionErrorStatus.QUESTION_SAVE_ERROR);
+      throw new GeneralException(QuestionErrorStatus.QUESTION_DATABASE_ERROR);
     }
 
     UserQuestion userQuestion =
@@ -146,7 +146,7 @@ public class QuestionServiceImpl implements QuestionService {
     try {
       userQuestionRepository.save(userQuestion);
     } catch (DataAccessException e) {
-      throw new GeneralException(QuestionErrorStatus.QUESTION_SAVE_ERROR);
+      throw new GeneralException(QuestionErrorStatus.QUESTION_DATABASE_ERROR);
     }
 
     return QuestionConverter.toUserQuestionDTO(userQuestion);
