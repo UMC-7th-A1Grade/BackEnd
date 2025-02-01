@@ -65,7 +65,7 @@ public class QuestionResponseDTO {
     @Schema(description = "문제 풀이", example = " 함수 및 도함수 어쩌구 저쩌구")
     String memo;
 
-    @Schema(description = "사용자가 작성한 필기", example = "https://note.com")
+    @Schema(description = "사용자가 작성한 필기", example = "[\"https://note1.com\", \"https://note2.com\"]")
     List<String> note;
   }
 
