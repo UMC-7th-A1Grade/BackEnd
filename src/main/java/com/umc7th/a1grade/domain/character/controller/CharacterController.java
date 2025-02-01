@@ -35,7 +35,7 @@ public class CharacterController {
                 mediaType = "application/json",
                 schema = @Schema(implementation = CharacterListResponseDto.class)))
   })
-  @GetMapping("")
+  @GetMapping(value = "", produces = "application/json")
   public ApiResponse<CharacterListResponseDto> findAllCharacters(
       @AuthenticationPrincipal UserDetails userDetails) {
     CharacterListResponseDto response = characterService.findAll();

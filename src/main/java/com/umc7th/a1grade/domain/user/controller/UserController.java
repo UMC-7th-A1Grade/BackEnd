@@ -1,5 +1,7 @@
 package com.umc7th.a1grade.domain.user.controller;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,16 +13,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.umc7th.a1grade.domain.user.dto.MypageResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserInfoDto;
+import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
+import com.umc7th.a1grade.domain.user.dto.UserGradeResponseDto;
+import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
+import com.umc7th.a1grade.domain.user.exception.status.UserErrorStatus;
 import com.umc7th.a1grade.domain.user.exception.status.UserSuccessStatus;
 import com.umc7th.a1grade.domain.user.service.UserService;
+import com.umc7th.a1grade.global.annotation.ApiErrorCodeExample;
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 import com.umc7th.a1grade.global.apiPayload.code.ErrorReasonDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -61,7 +67,8 @@ public class UserController {
                 mediaType = "application/json",
                 schema = @Schema(implementation = ErrorReasonDTO.class)))
   })
-  @GetMapping("")
+  @ApiErrorCodeExample(UserErrorStatus.class)
+  @GetMapping(value = "", produces = "application/json")
   public ApiResponse<Boolean> confirmNickName(
       @AuthenticationPrincipal UserDetails userDetails, @RequestParam("nickname") String nickname) {
     userService.confirmNickName(userDetails, nickname);
@@ -78,7 +85,7 @@ public class UserController {
               content =
                   @Content(
                       mediaType = "application/json",
-                      schema = @Schema(implementation = UserInfoDto.class))))
+                      schema = @Schema(implementation = UserInfoRequestDto.class))))
   @ApiResponses({
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
         responseCode = "200",
@@ -98,7 +105,7 @@ public class UserController {
   @PatchMapping("")
   public ApiResponse<UserInfoResponseDto> saveUserInfo(
       @AuthenticationPrincipal UserDetails userDetails,
-      @RequestBody @Valid UserInfoDto requestDto) {
+      @RequestBody @Valid UserInfoRequestDto requestDto) {
     UserInfoResponseDto response = userService.saveUserInfo(userDetails, requestDto);
     return ApiResponse.of(UserSuccessStatus._USER_INFO_UPDATE, response);
   }
@@ -111,12 +118,32 @@ public class UserController {
         content =
             @Content(
                 mediaType = "application/json",
-                schema = @Schema(implementation = MypageResponseDto.class)))
+                schema = @Schema(implementation = UserGradeResponseDto.class)))
   })
-  @GetMapping("/grade")
-  public ApiResponse<MypageResponseDto> findUserGrade(
+  @ApiErrorCodeExample(UserErrorStatus.class)
+  @GetMapping(value = "/grade", produces = "application/json")
+  public ApiResponse<UserGradeResponseDto> findUserGrade(
       @AuthenticationPrincipal UserDetails userDetails) {
-    MypageResponseDto response = userService.findUserGrade(userDetails);
+    UserGradeResponseDto response = userService.findUserGrade(userDetails);
     return ApiResponse.of(UserSuccessStatus._USER_GRADE_OK, response);
+  }
+
+  @Operation(summary = "1등급 경쟁 랭킹 조회", description = "정답 및 오답 개수가 가장 많은 TOP 3 사용자의 정보를 조회합니다.")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "TOP 3 사용자의 정답 및 오답 개수를 성공적으로 조회했습니다.",
+        content =
+            @Content(
+                mediaType = "application/json",
+                array = @ArraySchema(schema = @Schema(implementation = AllGradeResponseDto.class))))
+  })
+  @ApiErrorCodeExample(UserErrorStatus.class)
+  @GetMapping(value = "/allgrade", produces = "application/json")
+  public ApiResponse<List<AllGradeResponseDto>> findTop3UserGrade(
+      @AuthenticationPrincipal UserDetails userDetails) {
+
+    List<AllGradeResponseDto> response = userService.findTop3UserGrade(userDetails);
+    return ApiResponse.of(UserSuccessStatus._ALLUSER_GRADE_OK, response);
   }
 }

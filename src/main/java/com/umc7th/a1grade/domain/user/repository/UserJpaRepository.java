@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.domain.user.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,14 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
               + "WHERE ql.is_correct = TRUE AND uq.user_id = :userId",
       nativeQuery = true)
   Long countCorrectAnswerByUserId(@Param("userId") Long userId);
+
+  @Query(
+      "SELECT u FROM User u "
+          + "WHERE u.id IN ("
+          + "    SELECT ql.user.id "
+          + "    FROM QuestionLog ql "
+          + "    WHERE ql.isCorrect = true "
+          + "    GROUP BY ql.user.id "
+          + "    HAVING COUNT(DISTINCT ql.userQuestion.id) >= 50)")
+  List<User> findUserWithCorrectAnswers();
 }

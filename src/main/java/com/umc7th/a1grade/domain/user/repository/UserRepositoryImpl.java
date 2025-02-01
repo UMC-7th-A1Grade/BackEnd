@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.domain.user.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -36,5 +37,10 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public Long countCorrectAnswerByUserId(Long userId) {
     return userJpaRepository.countCorrectAnswerByUserId(userId);
+  }
+
+  @Override
+  public List<User> findUserWithCorrectAnswers() {
+    return userJpaRepository.findUserWithCorrectAnswers();
   }
 }

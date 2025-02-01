@@ -7,11 +7,11 @@ import lombok.*;
 @Getter
 @Builder
 @AllArgsConstructor
-@Schema(title = "마이페이지 - 사용자의 정답률 조회 응답 객체")
-public class MypageResponseDto {
+@Schema(title = "UserGradeResponseDto - 사용자의 등급 조회 응답 DTO")
+public class UserGradeResponseDto {
   @Schema(description = "사용자의 닉네임", example = "일급등")
   private String nickName;
 
-  @Schema(description = "사용자의 정답률", example = "30")
+  @Schema(description = "사용자의 오답 정답 개수", example = "30")
   private int grade;
 }

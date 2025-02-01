@@ -11,10 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import com.umc7th.a1grade.domain.auth.dto.LoginResponse;
+import com.umc7th.a1grade.domain.auth.exception.status.AuthErrorStatus;
 import com.umc7th.a1grade.domain.auth.exception.status.AuthSuccessStatus;
 import com.umc7th.a1grade.domain.auth.service.CookieHelper;
 import com.umc7th.a1grade.domain.auth.service.OAuth2TokenService;
 import com.umc7th.a1grade.domain.auth.service.TokenService;
+import com.umc7th.a1grade.global.annotation.ApiErrorCodeExample;
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +39,6 @@ public class AuthController {
   private final CookieHelper cookieHelper;
   private final TokenService tokenService;
 
-  @GetMapping("/google")
   @Operation(
       summary = "구글 로그인",
       description =
@@ -59,6 +60,8 @@ public class AuthController {
                 mediaType = "application/json",
                 schema = @Schema(implementation = LoginResponse.class)))
   })
+  @ApiErrorCodeExample(AuthErrorStatus.class)
+  @GetMapping(value = "/google", produces = "application/json")
   public ApiResponse<LoginResponse> processGoogleLogin(
       @RequestParam("code") String code, HttpServletResponse response) {
     LoginResponse loginResponse = googleTokenService.handleLogin(code);
@@ -69,12 +72,12 @@ public class AuthController {
   }
 
   @PostMapping("/logout")
+  @ApiErrorCodeExample(AuthErrorStatus.class)
   @Operation(summary = "로그아웃", description = "사용자 로그아웃 입니다.")
   public ApiResponse logout(@AuthenticationPrincipal UserDetails userDetails) {
     return ApiResponse.of(AuthSuccessStatus._LOGOUT_SUCCESS, null);
   }
 
-  @PostMapping("/token")
   @Operation(
       summary = "액세스 토큰 재발급",
       description = "리프레시 토큰을 사용하여 새로운 액세스 토큰과 리프레시 토큰을 재발급합니다.",
@@ -94,6 +97,8 @@ public class AuthController {
                 mediaType = "application/json",
                 schema = @Schema(implementation = String.class)))
   })
+  @PostMapping("/token")
+  @ApiErrorCodeExample(AuthErrorStatus.class)
   public ApiResponse<String> refreshToken(
       @RequestHeader(value = "Cookie", required = false) String cookieHeader,
       HttpServletResponse response) {
