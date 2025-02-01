@@ -49,6 +49,17 @@ public class QuestionConverter {
         .build();
   }
 
+  public List<QuestionResponseDTO.QuestionDTO> toQuestionDTO(List<Question> questions) {
+    return questions.stream()
+        .map(
+            question ->
+                QuestionResponseDTO.QuestionDTO.builder()
+                    .id(question.getId())
+                    .questionImg(question.getImageUrl())
+                    .build())
+        .collect(Collectors.toList());
+  }
+
   public List<QuestionResponseDTO.FalseQuestionDTO> toFalseQuestionDTO(List<Question> questions) {
 
     List<Long> questionIds = questions.stream().map(Question::getId).collect(Collectors.toList());
@@ -78,25 +89,41 @@ public class QuestionConverter {
         .build();
   }
 
-  public QuestionResponseDTO.GetQuestionDTO toGetQuestionDTO(
-      Question question, List<String> memos) {
+    public static Question toQuestion(QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO) {
+        return Question.builder()
+                .memo(requestSaveQuestionDTO.getMemo())
+                .imageUrl(requestSaveQuestionDTO.getImageUrl())
+                .type(requestSaveQuestionDTO.getType())
+                .answer(requestSaveQuestionDTO.getAnswer())
+                .build();
+    }
 
-    return QuestionResponseDTO.GetQuestionDTO.builder()
-        .answer(question.getAnswer())
-        .memo(question.getMemo())
-        .note(memos)
-        .questionImg(question.getImageUrl())
-        .build();
-  }
+    public static QuestionResponseDTO.SaveUserQuestionDTO toUserQuestionDTO(
+            UserQuestion userQuestion) {
+        return QuestionResponseDTO.SaveUserQuestionDTO.builder()
+                .userQuestionId(userQuestion.getId())
+                .build();
+    }
 
-  public List<QuestionDTO> toQuestionDTO(List<UserQuestion> userQuestions) {
-    return userQuestions.stream()
-        .map(
-            userQuestion ->
-                QuestionDTO.builder()
-                    .id(userQuestion.getId())
-                    .questionImg(userQuestion.getQuestion().getImageUrl())
-                    .build())
-        .collect(Collectors.toList());
-  }
+    public QuestionResponseDTO.GetQuestionDTO toGetQuestionDTO(
+            Question question, List<String> memos) {
+
+        return QuestionResponseDTO.GetQuestionDTO.builder()
+                .answer(question.getAnswer())
+                .memo(question.getMemo())
+                .note(memos)
+                .questionImg(question.getImageUrl())
+                .build();
+    }
+
+    public List<QuestionDTO> toQuestionDTO(List<UserQuestion> userQuestions) {
+        return userQuestions.stream()
+                .map(
+                        userQuestion ->
+                                QuestionDTO.builder()
+                                        .id(userQuestion.getId())
+                                        .questionImg(userQuestion.getQuestion().getImageUrl())
+                                        .build())
+                .collect(Collectors.toList());
+    }
 }
