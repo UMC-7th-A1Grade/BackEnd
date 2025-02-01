@@ -46,7 +46,7 @@ public class QuestionServiceImpl implements QuestionService {
       throw new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND);
     }
 
-    if (RecentQuestions.size()<5) {
+    if (RecentQuestions.size() < 5) {
       throw new GeneralException(QuestionErrorStatus.INSUFFICENT_QUESTIONS);
     }
 
