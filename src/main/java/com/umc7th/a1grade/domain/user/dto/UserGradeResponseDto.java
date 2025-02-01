@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Builder
 @AllArgsConstructor
-@Schema(title = "UserGradeResponseDto - 사용자의 등급 조회 응답 DTO")
+@Schema(title = "UserGradeResponseDto : 사용자의 등급 조회 응답 DTO")
 public class UserGradeResponseDto {
   @Schema(description = "사용자의 닉네임", example = "일급등")
   private String nickName;

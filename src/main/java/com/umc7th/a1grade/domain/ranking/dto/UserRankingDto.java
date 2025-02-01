@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(title = "UserRankingDto", description = "사용자 랭킹 정보 DTO")
+@Schema(title = "UserRankingDto : 사용자 랭킹 정보 DTO")
 public class UserRankingDto {
 
   @Schema(description = "사용자 정보 객체", implementation = User.class)

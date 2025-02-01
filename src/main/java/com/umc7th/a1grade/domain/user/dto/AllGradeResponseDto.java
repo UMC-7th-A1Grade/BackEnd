@@ -12,7 +12,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-@Schema(title = "AllGradeResponseDto - 3순위 사용자 조회 응답 DTO")
+@Schema(title = "AllGradeResponseDto : 3순위 사용자 조회 응답 DTO")
 public class AllGradeResponseDto {
   @Schema(description = "사용자 ID", example = "1")
   private Long userId;

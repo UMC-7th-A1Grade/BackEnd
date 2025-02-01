@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-@Schema(title = "LoginResponse - 구글 소셜 로그인 응답 객체")
+@Schema(title = "LoginResponse : 구글 소셜 로그인 응답 객체")
 public class LoginResponse {
   @Schema(description = "사용자 이메일", example = "user@example.com")
   private String email;

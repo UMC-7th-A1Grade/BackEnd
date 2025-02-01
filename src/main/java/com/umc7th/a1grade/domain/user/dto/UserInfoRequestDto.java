@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(title = "UserInfoRequestDto - 사용자가 입력한 닉네임, 캐릭터 정보 저장을 위한 데이터 전송 DTO")
+@Schema(title = "UserInfoRequestDto : 사용자가 입력한 닉네임, 캐릭터 정보 저장을 위한 데이터 전송 DTO")
 public class UserInfoRequestDto {
   @NotBlank(message = "닉네임은 필수 입력 항목입니다. 최대 5자 까지 입력 가능")
   @Size(max = 5)
