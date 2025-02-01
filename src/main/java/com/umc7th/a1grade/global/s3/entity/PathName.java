@@ -1,4 +1,4 @@
-package com.umc7th.a1grade.global.s3;
+package com.umc7th.a1grade.global.s3.entity;
 
 public enum PathName {
   AI_QUESTION,
