@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.umc7th.a1grade.domain.question.converter.QuestionConverter;
 import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO;
@@ -20,6 +21,8 @@ import com.umc7th.a1grade.domain.question.repository.UserQuestionRepository;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.global.common.Utils;
 import com.umc7th.a1grade.global.exception.GeneralException;
+import com.umc7th.a1grade.global.s3.PathName;
+import com.umc7th.a1grade.global.s3.S3Service;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
   private final QuestionLogRepository questionLogRepository;
   private final QuestionConverter questionConverter;
   private final UserQuestionRepository userQuestionRepository;
+  private final S3Service s3Service;
   private final Utils utils;
 
   @Override
@@ -113,5 +117,13 @@ public class QuestionServiceImpl implements QuestionService {
     return questionRepository
         .findById(id)
         .orElseThrow(() -> new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND));
+  }
+
+  @Override
+  public QuestionResponseDTO.ImgUrlDTO ImgUpload(PathName pathName, MultipartFile file) {
+
+    String ImgUrl = s3Service.uploadFile(pathName, file);
+
+    return questionConverter.toImgUrlDTO(ImgUrl);
   }
 }

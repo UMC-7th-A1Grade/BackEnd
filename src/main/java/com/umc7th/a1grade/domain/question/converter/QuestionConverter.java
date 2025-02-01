@@ -88,4 +88,8 @@ public class QuestionConverter {
         .questions(falseQuestionDTOS)
         .build();
   }
+
+  public QuestionResponseDTO.ImgUrlDTO toImgUrlDTO(String imgUrl) {
+    return QuestionResponseDTO.ImgUrlDTO.builder().imageUrl(imgUrl).build();
+  }
 }

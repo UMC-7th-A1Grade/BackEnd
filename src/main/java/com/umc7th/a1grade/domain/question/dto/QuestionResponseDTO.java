@@ -77,4 +77,14 @@ public class QuestionResponseDTO {
     @Schema(description = "제출 여부", example = "false")
     boolean isSubmitted;
   }
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Schema(title = "Question : 문제 이미지 URL DTO")
+  public static class ImgUrlDTO {
+    @Schema(description = "문제 이미지 URL", example = "https://questionImg.com")
+    String imageUrl;
+  }
 }
