@@ -14,4 +14,7 @@ public interface QuestionService {
   QuestionResponseDTO.GetAnswerDTO getAnswer(Long id);
 
   QuestionResponseDTO.RandomFalseQuestionDTO getRandomFalseQuestions(UserDetails userDetails);
+
+  QuestionResponseDTO.SaveUserQuestionDTO saveQuestion(
+      QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO, UserDetails userDetails);
 }

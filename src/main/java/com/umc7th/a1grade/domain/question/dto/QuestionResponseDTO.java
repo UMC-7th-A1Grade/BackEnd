@@ -77,4 +77,15 @@ public class QuestionResponseDTO {
     @Schema(description = "제출 여부", example = "false")
     boolean isSubmitted;
   }
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Schema(title = "Question : 사용자 문제 저장 DTO")
+  public static class SaveUserQuestionDTO {
+
+    @Schema(description = " 문제 id", example = "1")
+    Long userQuestionId;
+  }
 }

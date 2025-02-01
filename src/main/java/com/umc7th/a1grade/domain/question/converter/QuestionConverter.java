@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO;
+import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO.RequestSaveQuestionDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO.QuestionDTO;
 import com.umc7th.a1grade.domain.question.entity.Question;
@@ -86,6 +87,22 @@ public class QuestionConverter {
       List<QuestionResponseDTO.FalseQuestionDTO> falseQuestionDTOS) {
     return QuestionResponseDTO.RandomFalseQuestionDTO.builder()
         .questions(falseQuestionDTOS)
+        .build();
+  }
+
+  public static Question toQuestion(RequestSaveQuestionDTO requestSaveQuestionDTO) {
+    return Question.builder()
+        .memo(requestSaveQuestionDTO.getMemo())
+        .imageUrl(requestSaveQuestionDTO.getImageUrl())
+        .type(requestSaveQuestionDTO.getType())
+        .answer(requestSaveQuestionDTO.getAnswer())
+        .build();
+  }
+
+  public static QuestionResponseDTO.SaveUserQuestionDTO toUserQuestionDTO(
+      UserQuestion userQuestion) {
+    return QuestionResponseDTO.SaveUserQuestionDTO.builder()
+        .userQuestionId(userQuestion.getId())
         .build();
   }
 }

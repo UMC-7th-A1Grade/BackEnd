@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.domain.question.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
@@ -12,6 +13,7 @@ import com.umc7th.a1grade.domain.question.converter.QuestionConverter;
 import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
 import com.umc7th.a1grade.domain.question.entity.Question;
+import com.umc7th.a1grade.domain.question.entity.QuestionType;
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.question.exception.status.QuestionErrorStatus;
 import com.umc7th.a1grade.domain.question.repository.QuestionLogRepository;
@@ -113,5 +115,40 @@ public class QuestionServiceImpl implements QuestionService {
     return questionRepository
         .findById(id)
         .orElseThrow(() -> new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND));
+  }
+
+  @Override
+  public QuestionResponseDTO.SaveUserQuestionDTO saveQuestion(
+      QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO, UserDetails userDetails) {
+
+    User user = utils.getUserByUsername(userDetails.getUsername());
+
+    if (requestSaveQuestionDTO.getType() != QuestionType.AI
+        && requestSaveQuestionDTO.getType() != QuestionType.USER) {
+      throw new GeneralException(QuestionErrorStatus.INVALID_QUESTION_TYPE);
+    }
+
+    Question question = QuestionConverter.toQuestion(requestSaveQuestionDTO);
+
+    try {
+      questionRepository.save(question);
+    } catch (DataAccessException e) {
+      throw new GeneralException(QuestionErrorStatus.QUESTION_SAVE_ERROR);
+    }
+
+    UserQuestion userQuestion =
+        UserQuestion.builder()
+            .user(user)
+            .question(question)
+            .questionLogs(new ArrayList<>())
+            .build();
+
+    try {
+      userQuestionRepository.save(userQuestion);
+    } catch (DataAccessException e) {
+      throw new GeneralException(QuestionErrorStatus.QUESTION_SAVE_ERROR);
+    }
+
+    return QuestionConverter.toUserQuestionDTO(userQuestion);
   }
 }
