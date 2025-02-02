@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.domain.question.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
@@ -42,16 +43,10 @@ public class QuestionServiceImpl implements QuestionService {
 
     List<Question> RecentQuestions = questionRepository.findRecentQuestion(user.getId());
 
-    if (RecentQuestions.isEmpty()) {
-      throw new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND);
-    }
-
-    if (RecentQuestions.size() < 5) {
-      throw new GeneralException(QuestionErrorStatus.INSUFFICENT_QUESTIONS);
-    }
-
     List<QuestionResponseDTO.QuestionDTO> questionDTOList =
-        questionConverter.toQuestionDTO(RecentQuestions);
+        RecentQuestions.isEmpty()
+            ? Collections.emptyList()
+            : questionConverter.toQuestionDTO(RecentQuestions);
 
     return questionConverter.randomQuestionDTO(questionDTOList);
   }
