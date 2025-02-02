@@ -55,8 +55,26 @@ public class QuestionResponseDTO {
   @Getter
   @NoArgsConstructor
   @AllArgsConstructor
+  public static class GetQuestionDTO {
+    @Schema(description = " 문제 이미지", example = "https://questionImg.com")
+    String questionImg;
+
+    @Schema(description = " 문제 정답", example = "3")
+    String answer;
+
+    @Schema(description = "문제 풀이", example = " 함수 및 도함수 어쩌구 저쩌구")
+    String memo;
+
+    @Schema(description = "사용자가 작성한 필기", example = "[\"https://note1.com\", \"https://note2.com\"]")
+    List<String> note;
+  }
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
   public static class QuestionDTO {
-    @Schema(description = " 문제 id", example = "1")
+    @Schema(description = " userQuestion id", example = "1")
     Long id;
 
     @Schema(description = " 문제 이미지", example = "https://questionImg.com")

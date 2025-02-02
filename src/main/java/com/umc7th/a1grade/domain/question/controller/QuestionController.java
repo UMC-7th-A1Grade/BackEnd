@@ -105,4 +105,24 @@ public class QuestionController {
     QuestionResponseDTO.GetAnswerDTO answer = questionService.getAnswer(questionId);
     return ApiResponse.onSuccess(answer);
   }
+
+  @GetMapping("/{userQuestionId}")
+  @Operation(summary = "개별 문제 조회 API", description = "개별 문제 조회 API (사진, 풀이, 필기)")
+  @ApiResponses({
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "OK, 성공",
+        content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+  })
+  @ApiErrorCodeExample(QuestionErrorStatus.class)
+  public ApiResponse<QuestionResponseDTO.GetQuestionDTO> getQuestion(
+      @Parameter(description = "userQuestion Id 값", example = "1") @PathVariable
+          Long userQuestionId,
+      @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
+          @AuthenticationPrincipal
+          UserDetails userDetails) {
+    QuestionResponseDTO.GetQuestionDTO answer =
+        questionService.getQuestion(userQuestionId, userDetails);
+    return ApiResponse.onSuccess(answer);
+  }
 }

@@ -55,14 +55,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
   // ID 값만 rand()함수를 적용하여 쿼리 최적화 진행
   // TIMESTAMPDIFF 대신에 INTERVAL을 사용하여 가독성 개선
   List<Question> findQuestionsByUserAndType(@Param("userId") Long userId);
-
-  @Query(
-      value =
-          "SELECT q.* FROM question q "
-              + "JOIN user_question uq ON q.id = uq.question_id "
-              + "WHERE uq.user_id = :userId "
-              + "ORDER BY q.created_date DESC "
-              + "LIMIT 5",
-      nativeQuery = true)
-  List<Question> findRecentQuestion(@Param("userId") Long userId);
 }
