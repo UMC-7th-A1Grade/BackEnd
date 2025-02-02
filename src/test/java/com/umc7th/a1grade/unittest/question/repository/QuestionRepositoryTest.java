@@ -86,6 +86,7 @@ class QuestionRepositoryTest {
   @DisplayName("1회 시도 후 10분이 지나지 않은 문제는 한 번이라도 조회되면 실패")
   void shouldNotReturnQuestionsWithinTenMinutes() {
     // Given
+
     Question targetQuestion = questions.get(0);
     createQuestionLog(targetQuestion, LocalDateTime.now().minusMinutes(5), true);
 
