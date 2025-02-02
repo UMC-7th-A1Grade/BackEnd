@@ -18,6 +18,13 @@ public interface UserQuestionRepository extends JpaRepository<UserQuestion, Long
       @Param("userId") Long userId, @Param("questionId") Long questionId);
 
   @Query(
+      "SELECT uq FROM UserQuestion uq WHERE uq.user.id = :userId AND uq.question.type = :questionType")
+  List<UserQuestion> findByUserIdAndQuestionType(
+      @Param("userId") Long userId, @Param("questionType") QuestionType questionType);
+
+  List<UserQuestion> findByUserId(Long id);
+
+  @Query(
       "SELECT uq FROM UserQuestion uq "
           + "JOIN FETCH uq.question q "
           + "WHERE uq.user.id = :userId "
