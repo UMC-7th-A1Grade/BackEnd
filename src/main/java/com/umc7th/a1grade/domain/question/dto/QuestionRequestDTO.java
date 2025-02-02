@@ -29,8 +29,8 @@ public class QuestionRequestDTO {
   @Schema(title = "Question : 문제 저장을 위한 요청 DTO")
   public static class RequestSaveQuestionDTO {
 
-    @Schema(description = "문제 풀이 이미지", example = "https://memoImg.com")
-    private String memoImageUrl;
+    @Schema(description = "문제 메모(해설, 핵심 키워드 등)", example = "함수 및 도함수 어쩌구 저쩌구")
+    private String memo;
 
     @Schema(description = " 문제 이미지", example = "https://questionImg.com")
     private String imageUrl;
