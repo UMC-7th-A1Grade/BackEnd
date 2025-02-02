@@ -1,5 +1,7 @@
 package com.umc7th.a1grade.domain.openAI.service;
 
+import static com.umc7th.a1grade.global.s3.entity.PathName.AI_QUESTION;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -12,6 +14,8 @@ import com.umc7th.a1grade.domain.openAI.exception.AIErrorStatus;
 import com.umc7th.a1grade.domain.openAI.infrastructure.ConfirmQuestionManager;
 import com.umc7th.a1grade.domain.openAI.infrastructure.GenerateQuestionManager;
 import com.umc7th.a1grade.global.exception.GeneralException;
+import com.umc7th.a1grade.global.s3.dto.S3ResponseDTO;
+import com.umc7th.a1grade.global.s3.service.S3Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OpenAIService {
   @Autowired private GenerateQuestionManager generateQuestionManager;
   @Autowired private ConfirmQuestionManager confirmQuestionManager;
+  private final S3Service s3Service;
 
   @Retryable(maxAttempts = 2, backoff = @Backoff(delay = 1000))
   public confirmQuestionResponse confirmQuestion(MultipartFile image) {
@@ -29,22 +34,24 @@ public class OpenAIService {
     try {
       validateFile(image);
 
-      return confirmQuestionManager.confirmQuestion(image);
+      if (confirmQuestionManager.confirmQuestion(image).getResult()) {
+        S3ResponseDTO.ImgUrlDTO response = s3Service.ImgUpload(AI_QUESTION, image);
+
+        return confirmQuestionResponse
+            .builder()
+            .result(true)
+            .imageUrl(response.getImageUrl())
+            .build();
+      }
+      return confirmQuestionResponse.builder().result(false).build();
     } catch (Exception e) {
       throw new GeneralException(AIErrorStatus._FILE_SERVER_ERROR);
     }
   }
 
   @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
-  public generateQuestionResponse generateQuestion(MultipartFile image) {
-
-    try {
-      validateFile(image);
-
-      return generateQuestionManager.generateQuestion(image);
-    } catch (Exception e) {
-      throw new GeneralException(AIErrorStatus._FILE_SERVER_ERROR);
-    }
+  public generateQuestionResponse generateQuestion(String imageUrl) {
+    return generateQuestionManager.generateQuestion(imageUrl);
   }
 
   private void validateFile(MultipartFile file) {
