@@ -11,7 +11,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum QuestionStorageErrorStatus implements BaseErrorCode {
-  QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "STORAGE4004", "저장소에 문제가 존재하지 않습니다."),
   INVALID_QUESTION_TYPE(HttpStatus.BAD_REQUEST, "STORAGE4005", "유효하지 않은 문제 TYPE입니다."),
   NO_QUESTION_TYPE(HttpStatus.BAD_REQUEST, "STORAGE4006", "문제 TYPE이 null 입니다."),
   NO_QUESTIONS_FOUND(HttpStatus.NOT_FOUND, "STORAGE4010", "조건에 맞는 문제가 저장소에 존재하지 않습니다."),
