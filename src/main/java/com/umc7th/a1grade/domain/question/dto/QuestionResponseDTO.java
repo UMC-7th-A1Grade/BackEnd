@@ -74,7 +74,7 @@ public class QuestionResponseDTO {
   @NoArgsConstructor
   @AllArgsConstructor
   public static class QuestionDTO {
-    @Schema(description = " 문제 id", example = "1")
+    @Schema(description = " userQuestion id", example = "1")
     Long id;
 
     @Schema(description = " 문제 이미지", example = "https://questionImg.com")

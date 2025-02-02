@@ -1,8 +1,12 @@
 package com.umc7th.a1grade.domain.question.service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import com.umc7th.a1grade.domain.question.converter.QuestionConverter;
 import com.umc7th.a1grade.domain.question.dto.QuestionRequestDTO;
 import com.umc7th.a1grade.domain.question.dto.QuestionResponseDTO;
 import com.umc7th.a1grade.domain.question.entity.Question;
+import com.umc7th.a1grade.domain.question.entity.mapping.QuestionLog;
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.question.exception.status.QuestionErrorStatus;
 import com.umc7th.a1grade.domain.question.repository.QuestionLogRepository;
@@ -40,16 +45,13 @@ public class QuestionServiceImpl implements QuestionService {
 
     User user = utils.getUserByUsername(userDetails.getUsername());
 
-    List<Question> RecentQuestions = questionRepository.findRecentQuestion(user.getId());
+    Pageable pageable = PageRequest.of(0, 5);
 
-    if (RecentQuestions.isEmpty()) {
-      throw new GeneralException(QuestionErrorStatus.QUESTION_NOT_FOUND);
-    }
+    List<QuestionResponseDTO.QuestionDTO> recentQuestions =
+        questionConverter.toQuestionDTO(
+            userQuestionRepository.findRecentQuestions(user.getId(), pageable));
 
-    List<QuestionResponseDTO.QuestionDTO> questionDTOList =
-        questionConverter.toQuestionDTO(RecentQuestions);
-
-    return questionConverter.randomQuestionDTO(questionDTOList);
+    return questionConverter.randomQuestionDTO(recentQuestions);
   }
 
   @Override
@@ -108,10 +110,21 @@ public class QuestionServiceImpl implements QuestionService {
 
   @Override
   @Transactional(readOnly = true)
-  public QuestionResponseDTO.GetQuestionDTO getQuestion(Long id, UserDetails userDetails) {
-    Question question = getQuestionById(id);
-    User user = utils.getUserByUsername(userDetails.getUsername());
-    return questionConverter.toGetQuestionDTO(question, user);
+  public QuestionResponseDTO.GetQuestionDTO getQuestion(
+      Long userQuestionId, UserDetails userDetails) {
+    UserQuestion userQuestion =
+        userQuestionRepository
+            .findUserQuestion(userQuestionId)
+            .orElseThrow(() -> new GeneralException(QuestionErrorStatus.USER_QUESTION_NOT_FOUND));
+
+    Question question = userQuestion.getQuestion();
+
+    List<String> memos =
+        userQuestion.getQuestionLogs().stream()
+            .map(QuestionLog::getNote)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    return questionConverter.toGetQuestionDTO(question, memos);
   }
 
   private Question getQuestionById(Long id) {
