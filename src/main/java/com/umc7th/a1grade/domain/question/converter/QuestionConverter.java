@@ -78,6 +78,23 @@ public class QuestionConverter {
         .build();
   }
 
+  public static Question toQuestion(
+      QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO) {
+    return Question.builder()
+        .memo(requestSaveQuestionDTO.getMemoImageUrl())
+        .imageUrl(requestSaveQuestionDTO.getImageUrl())
+        .type(requestSaveQuestionDTO.getType())
+        .answer(requestSaveQuestionDTO.getAnswer())
+        .build();
+  }
+
+  public static QuestionResponseDTO.SaveUserQuestionDTO toUserQuestionDTO(
+      UserQuestion userQuestion) {
+    return QuestionResponseDTO.SaveUserQuestionDTO.builder()
+        .userQuestionId(userQuestion.getId())
+        .build();
+  }
+
   public QuestionResponseDTO.GetQuestionDTO toGetQuestionDTO(
       Question question, List<String> memos) {
 
