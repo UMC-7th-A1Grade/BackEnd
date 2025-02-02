@@ -40,10 +40,6 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
       throw new GeneralException(QuestionErrorStatus.QUESTION_DATABASE_ERROR);
     }
 
-    if (userQuestions.isEmpty()) {
-      throw new GeneralException(QuestionStorageErrorStatus.QUESTION_NOT_FOUND);
-    }
-
     return QuestionStorageConverter.toQuestionListDTO(userQuestions);
   }
 

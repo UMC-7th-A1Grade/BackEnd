@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "question-storage-controller", description = "저장소 문제 조회 API")
+@Tag(name = "question-storage-controller", description = "저장소 문제 관리 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/storage")
