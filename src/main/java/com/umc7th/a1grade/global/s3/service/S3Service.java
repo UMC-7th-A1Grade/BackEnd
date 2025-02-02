@@ -1,4 +1,4 @@
-package com.umc7th.a1grade.global.s3;
+package com.umc7th.a1grade.global.s3.service;
 
 import java.util.UUID;
 
@@ -11,6 +11,9 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.umc7th.a1grade.global.config.S3Config;
 import com.umc7th.a1grade.global.exception.GeneralException;
+import com.umc7th.a1grade.global.s3.converter.S3Converter;
+import com.umc7th.a1grade.global.s3.dto.S3ResponseDTO;
+import com.umc7th.a1grade.global.s3.entity.PathName;
 import com.umc7th.a1grade.global.s3.exception.status.S3ErrorStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -90,5 +93,11 @@ public class S3Service {
     if (contentType == null || !contentType.startsWith("image/")) {
       throw new GeneralException(S3ErrorStatus._FILE_TYPE_INVALID);
     }
+  }
+
+  public S3ResponseDTO.ImgUrlDTO ImgUpload(PathName pathName, MultipartFile file) {
+    String imgUrl = uploadFile(pathName, file);
+
+    return S3Converter.toImgUrlDTO(imgUrl);
   }
 }

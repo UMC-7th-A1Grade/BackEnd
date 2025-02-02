@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.umc7th.a1grade.domain.question.entity.QuestionType;
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 
 public interface UserQuestionRepository extends JpaRepository<UserQuestion, Long> {

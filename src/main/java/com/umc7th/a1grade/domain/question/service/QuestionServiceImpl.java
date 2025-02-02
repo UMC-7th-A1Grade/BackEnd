@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.domain.question.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,9 +48,12 @@ public class QuestionServiceImpl implements QuestionService {
 
     Pageable pageable = PageRequest.of(0, 5);
 
+
     List<QuestionResponseDTO.QuestionDTO> recentQuestions =
         questionConverter.toQuestionDTO(
             userQuestionRepository.findRecentQuestions(user.getId(), pageable));
+
+           
 
     return questionConverter.randomQuestionDTO(recentQuestions);
   }
