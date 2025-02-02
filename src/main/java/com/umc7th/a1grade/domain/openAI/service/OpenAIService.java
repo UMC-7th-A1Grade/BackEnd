@@ -1,20 +1,24 @@
 package com.umc7th.a1grade.domain.openAI.service;
 
-import com.umc7th.a1grade.domain.openAI.exception.AIErrorStatus;
-import com.umc7th.a1grade.global.exception.GeneralException;
+import static com.umc7th.a1grade.global.s3.entity.PathName.AI_QUESTION;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.confirmQuestionResponse;
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.generateQuestionResponse;
+import com.umc7th.a1grade.domain.openAI.exception.AIErrorStatus;
 import com.umc7th.a1grade.domain.openAI.infrastructure.ConfirmQuestionManager;
 import com.umc7th.a1grade.domain.openAI.infrastructure.GenerateQuestionManager;
+import com.umc7th.a1grade.global.exception.GeneralException;
+import com.umc7th.a1grade.global.s3.dto.S3ResponseDTO;
+import com.umc7th.a1grade.global.s3.service.S3Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class OpenAIService {
   @Autowired private GenerateQuestionManager generateQuestionManager;
   @Autowired private ConfirmQuestionManager confirmQuestionManager;
+  private final S3Service s3Service;
 
   @Retryable(maxAttempts = 2, backoff = @Backoff(delay = 1000))
   public confirmQuestionResponse confirmQuestion(MultipartFile image) {
@@ -29,7 +34,16 @@ public class OpenAIService {
     try {
       validateFile(image);
 
-      return confirmQuestionManager.confirmQuestion(image);
+      if (confirmQuestionManager.confirmQuestion(image).getResult()) {
+        S3ResponseDTO.ImgUrlDTO response = s3Service.ImgUpload(AI_QUESTION, image);
+
+        return confirmQuestionResponse
+            .builder()
+            .result(true)
+            .imageUrl(response.getImageUrl())
+            .build();
+      }
+      return confirmQuestionResponse.builder().result(false).build();
     } catch (Exception e) {
       throw new GeneralException(AIErrorStatus._FILE_SERVER_ERROR);
     }
