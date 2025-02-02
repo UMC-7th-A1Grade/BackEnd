@@ -81,7 +81,7 @@ public class QuestionConverter {
   public static Question toQuestion(
       QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO) {
     return Question.builder()
-        .memo(requestSaveQuestionDTO.getMemoImageUrl())
+        .memo(requestSaveQuestionDTO.getMemo())
         .imageUrl(requestSaveQuestionDTO.getImageUrl())
         .type(requestSaveQuestionDTO.getType())
         .answer(requestSaveQuestionDTO.getAnswer())
