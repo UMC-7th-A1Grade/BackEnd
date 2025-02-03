@@ -8,10 +8,8 @@ import com.umc7th.a1grade.domain.question.entity.QuestionType;
 
 public interface QuestionStorageService {
 
-  UserQuestionListDTO getStorageQuestions(UserDetails userDetails);
-
   UserQuestionListDTO getStorageQuestionsByQuestionType(
-      UserDetails userDetails, QuestionType questionType);
+      UserDetails userDetails, QuestionType questionType, Long cursor, boolean isOverLimit);
 
   boolean deleteStorageQuestions(
       UserDetails userDetails, UserQuestionIdListDTO userQuestionIdListDTO);

@@ -35,10 +35,13 @@ public class QuestionStorageResponseDTO {
   @Getter
   @NoArgsConstructor
   @AllArgsConstructor
-  @Schema(title = "Storage : 문제 리스트 DTO")
+  @Schema(title = "Storage : 문제 리스트 Response DTO")
   public static class UserQuestionListDTO {
-    @Schema(description = " 문제 리스트")
+    @Schema(description = "문제 리스트")
     List<UserQuestionDTO> questions;
+
+    @Schema(description = "조회한 리스트의 마지막 ID 값(커서)")
+    Long cursor;
   }
 
   @Builder
@@ -47,7 +50,7 @@ public class QuestionStorageResponseDTO {
   @AllArgsConstructor
   @Schema(title = "Storage : 문제 아이디 리스트 DTO")
   public static class UserQuestionIdListDTO {
-    @Schema(description = " 문제 아이디 리스트")
+    @Schema(description = "문제 아이디 리스트")
     List<Long> userQuestionIds;
   }
 }

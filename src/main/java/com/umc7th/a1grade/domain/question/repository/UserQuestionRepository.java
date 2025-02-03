@@ -18,11 +18,24 @@ public interface UserQuestionRepository extends JpaRepository<UserQuestion, Long
       @Param("userId") Long userId, @Param("questionId") Long questionId);
 
   @Query(
-      "SELECT uq FROM UserQuestion uq WHERE uq.user.id = :userId AND uq.question.type = :questionType")
+      "SELECT uq FROM UserQuestion uq WHERE uq.user.id = :userId "
+          + "AND uq.id < :cursor "
+          + "AND (:questionType IS NULL OR uq.question.type = :questionType) "
+          + "AND size(uq.questionLogs) < 6 "
+          + "ORDER BY uq.id DESC")
   List<UserQuestion> findByUserIdAndQuestionType(
-      @Param("userId") Long userId, @Param("questionType") QuestionType questionType);
+      @Param("userId") Long userId,
+      @Param("questionType") QuestionType questionType,
+      @Param("cursor") Long cursor,
+      Pageable pageable);
 
-  List<UserQuestion> findByUserId(Long id);
+  @Query(
+      "SELECT uq FROM UserQuestion uq WHERE uq.user.id = :userId "
+          + "AND uq.id < :cursor "
+          + "AND size(uq.questionLogs) >= 6 "
+          + "ORDER BY uq.id DESC")
+  List<UserQuestion> findByUserIdAndOld(
+      @Param("userId") Long userId, @Param("cursor") Long cursor, Pageable pageable);
 
   @Query(
       "SELECT uq FROM UserQuestion uq "
