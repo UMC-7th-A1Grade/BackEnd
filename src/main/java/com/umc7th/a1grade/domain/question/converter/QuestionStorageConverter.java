@@ -27,6 +27,8 @@ public class QuestionStorageConverter {
                             .type(userQuestion.getQuestion().getType())
                             .build())
                 .collect(Collectors.toList()))
+        .cursor(
+            userQuestions.isEmpty() ? null : userQuestions.get(userQuestions.size() - 1).getId())
         .build();
   }
 }

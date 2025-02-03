@@ -31,7 +31,9 @@ public class QuestionStorageController {
 
   private final QuestionStorageService questionStorageService;
 
-  @Operation(summary = "저장소 문제 조회하기", description = "사용자가 저장한 전체 문제, 틀린 문제, 유사 문제를 조회하는 API")
+  @Operation(
+      summary = "저장소 문제 조회하기",
+      description = "사용자가 저장한 전체 문제, 틀린 문제, 유사 문제를 조회하는 API. 최신 저장된 순서로 정렬되므로 작은 숫자의 ID 값을 커서로 사용.")
   @ApiErrorCodeExample(QuestionStorageErrorStatus.class)
   @GetMapping("/questions")
   public ApiResponse<UserQuestionListDTO> getStorageQuestionsByQuestionType(
@@ -40,20 +42,24 @@ public class QuestionStorageController {
           UserDetails userDetails,
       @Parameter(name = "type", description = "문제 유형")
           @RequestParam(value = "type", required = false)
-          QuestionType questionType) {
-    UserQuestionListDTO response;
-    if (questionType == null) {
-      response = questionStorageService.getStorageQuestions(userDetails);
-    } else {
-      response =
-          questionStorageService.getStorageQuestionsByQuestionType(userDetails, questionType);
-    }
+          QuestionType questionType,
+      @Parameter(name = "cursor", description = "페이징 커서")
+          @RequestParam(value = "cursor", defaultValue = Long.MAX_VALUE + "")
+          Long cursor,
+      @Parameter(name = "isOverLimit", description = "장기기억저장소 조회 = true")
+          @RequestParam(value = "isOverLimit", defaultValue = "false")
+          boolean isOverLimit) {
 
-    if (response.getQuestions().isEmpty()) {
-      return ApiResponse.of(QuestionStorageSuccessStatus._NULL_QUESTION_SUCCESS, response);
-    } else {
-      return ApiResponse.of(QuestionStorageSuccessStatus._QUESTION_STORAGE_SUCCESS, response);
-    }
+    UserQuestionListDTO response =
+        questionStorageService.getStorageQuestionsByQuestionType(
+            userDetails, questionType, cursor, isOverLimit);
+
+    QuestionStorageSuccessStatus status =
+        response.getQuestions().isEmpty()
+            ? QuestionStorageSuccessStatus._NULL_QUESTION_SUCCESS
+            : QuestionStorageSuccessStatus._QUESTION_STORAGE_SUCCESS;
+
+    return ApiResponse.of(status, response);
   }
 
   @Operation(summary = "저장소 문제 삭제하기", description = "선택한 문제의 아이디를 받아 저장소 문제를 삭제하는 API")
