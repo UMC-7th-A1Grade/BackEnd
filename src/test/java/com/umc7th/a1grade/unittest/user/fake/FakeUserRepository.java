@@ -52,6 +52,16 @@ public class FakeUserRepository implements UserRepository {
     return data.stream().anyMatch(user -> Objects.equals(user.getNickName(), nickname));
   }
 
+  @Override
+  public Long countCorrectAnswerByUserId(Long userId) {
+    return null;
+  }
+
+  @Override
+  public List<User> findUserWithCorrectAnswers() {
+    return null;
+  }
+
   public List<User> findAll() {
     return new ArrayList<>(data);
   }

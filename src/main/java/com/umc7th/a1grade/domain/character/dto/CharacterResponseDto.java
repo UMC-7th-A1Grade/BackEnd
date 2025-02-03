@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-@Schema(description = "캐릭터 정보 조회 응답 DTO")
+@Schema(title = "CharacterResponseDto : 캐릭터 정보 조회 응답 DTO")
 public class CharacterResponseDto {
   @Schema(description = "캐릭터 ID", example = "1")
   private Long id;

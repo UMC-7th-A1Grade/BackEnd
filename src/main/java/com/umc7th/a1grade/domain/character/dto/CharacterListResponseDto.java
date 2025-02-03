@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-@Schema(description = "캐릭터 목록 응답 DTO")
+@Schema(title = "CharacterListResponseDto : 캐릭터 목록 응답 DTO")
 public class CharacterListResponseDto {
   @Schema(description = "전체 캐릭터 개수", example = "10")
   private int totalCount;

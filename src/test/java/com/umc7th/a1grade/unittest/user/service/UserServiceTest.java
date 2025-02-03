@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
-import com.umc7th.a1grade.domain.user.dto.UserInfoDto;
+import com.umc7th.a1grade.domain.ranking.repository.RankingRepository;
+import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
 import com.umc7th.a1grade.domain.user.entity.Role;
 import com.umc7th.a1grade.domain.user.entity.User;
@@ -19,6 +20,7 @@ import com.umc7th.a1grade.domain.user.repository.UserRepository;
 import com.umc7th.a1grade.domain.user.service.UserService;
 import com.umc7th.a1grade.domain.user.service.UserServiceImpl;
 import com.umc7th.a1grade.unittest.user.fake.FakeCharacterRepository;
+import com.umc7th.a1grade.unittest.user.fake.FakeRankingRepository;
 import com.umc7th.a1grade.unittest.user.fake.FakeUserCharacterRepository;
 import com.umc7th.a1grade.unittest.user.fake.FakeUserDetails;
 import com.umc7th.a1grade.unittest.user.fake.FakeUserRepository;
@@ -28,6 +30,7 @@ public class UserServiceTest {
   private UserRepository fakeUserRepository;
   private CharacterRepository fakeCharacterRepository;
   private UserCharacterRepository fakeUserCharacterRepository;
+  private RankingRepository fakeRankingRepository;
   private final String socialId1 = "user1234";
   private final String socialId2 = "user2222";
   private User existingUser;
@@ -38,9 +41,13 @@ public class UserServiceTest {
     fakeUserRepository = new FakeUserRepository();
     fakeCharacterRepository = new FakeCharacterRepository();
     fakeUserCharacterRepository = new FakeUserCharacterRepository();
+    fakeRankingRepository = new FakeRankingRepository();
     userService =
         new UserServiceImpl(
-            fakeUserRepository, fakeCharacterRepository, fakeUserCharacterRepository);
+            fakeUserRepository,
+            fakeCharacterRepository,
+            fakeUserCharacterRepository,
+            fakeRankingRepository);
 
     this.existingUser =
         User.builder()
@@ -118,8 +125,8 @@ public class UserServiceTest {
   void saveUserInfo_Success() {
     // given
     UserDetails userDetails = new FakeUserDetails(existingUser2.getSocialId());
-    UserInfoDto requestDto =
-        UserInfoDto.builder().nickname("test-nickname").characterId(1L).build();
+    UserInfoRequestDto requestDto =
+        UserInfoRequestDto.builder().nickname("test-nickname").characterId(1L).build();
     // when
     UserInfoResponseDto response = userService.saveUserInfo(userDetails, requestDto);
 
@@ -139,8 +146,8 @@ public class UserServiceTest {
     // given
     String invalidSocialId = "invalid-social-id";
     UserDetails userDetails = new FakeUserDetails(invalidSocialId);
-    UserInfoDto requestDto =
-        UserInfoDto.builder().nickname("test-nickname").characterId(1L).build();
+    UserInfoRequestDto requestDto =
+        UserInfoRequestDto.builder().nickname("test-nickname").characterId(1L).build();
     // when
     // then
     assertThrows(UserHandler.class, () -> userService.saveUserInfo(userDetails, requestDto));
@@ -152,8 +159,11 @@ public class UserServiceTest {
     // given
     Long invalidCharacterId = 222L;
     UserDetails userDetails = new FakeUserDetails(socialId2);
-    UserInfoDto requestDto =
-        UserInfoDto.builder().nickname("test-nickname").characterId(invalidCharacterId).build();
+    UserInfoRequestDto requestDto =
+        UserInfoRequestDto.builder()
+            .nickname("test-nickname")
+            .characterId(invalidCharacterId)
+            .build();
     // when
     // then
     assertThrows(UserHandler.class, () -> userService.saveUserInfo(userDetails, requestDto));
