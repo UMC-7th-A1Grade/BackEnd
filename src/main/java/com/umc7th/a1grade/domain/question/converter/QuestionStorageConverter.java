@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.umc7th.a1grade.domain.question.dto.QuestionStorageResponseDTO;
+import com.umc7th.a1grade.domain.question.dto.QuestionStorageResponseDTO.UserQuestionListDTO;
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QuestionStorageConverter {
 
-  public static QuestionStorageResponseDTO.QuestionListDTO toQuestionListDTO(
-      List<UserQuestion> userQuestions) {
-    return QuestionStorageResponseDTO.QuestionListDTO.builder()
+  public static UserQuestionListDTO toQuestionListDTO(List<UserQuestion> userQuestions) {
+    return UserQuestionListDTO.builder()
         .questions(
             userQuestions.stream()
                 .map(

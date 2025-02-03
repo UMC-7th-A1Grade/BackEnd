@@ -8,7 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.umc7th.a1grade.domain.question.converter.QuestionStorageConverter;
-import com.umc7th.a1grade.domain.question.dto.QuestionStorageResponseDTO;
+import com.umc7th.a1grade.domain.question.dto.QuestionStorageResponseDTO.UserQuestionIdListDTO;
+import com.umc7th.a1grade.domain.question.dto.QuestionStorageResponseDTO.UserQuestionListDTO;
 import com.umc7th.a1grade.domain.question.entity.QuestionType;
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.question.exception.status.QuestionErrorStatus;
@@ -28,8 +29,7 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
   private final Utils utils;
 
   @Override
-  public QuestionStorageResponseDTO.QuestionListDTO getStorageQuestions(
-      @AuthenticationPrincipal UserDetails userDetails) {
+  public UserQuestionListDTO getStorageQuestions(@AuthenticationPrincipal UserDetails userDetails) {
 
     User user = utils.getUserByUsername(userDetails.getUsername());
 
@@ -44,7 +44,7 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
   }
 
   @Override
-  public QuestionStorageResponseDTO.QuestionListDTO getStorageQuestionsByQuestionType(
+  public UserQuestionListDTO getStorageQuestionsByQuestionType(
       @AuthenticationPrincipal UserDetails userDetails, QuestionType questionType) {
 
     User user = utils.getUserByUsername(userDetails.getUsername());
@@ -62,5 +62,34 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
     }
 
     return QuestionStorageConverter.toQuestionListDTO(userQuestions);
+  }
+
+  @Override
+  public boolean deleteStorageQuestions(
+      @AuthenticationPrincipal UserDetails userDetails,
+      UserQuestionIdListDTO userQuestionIdListDTO) {
+
+    if (userQuestionIdListDTO == null || userQuestionIdListDTO.getUserQuestionIds().isEmpty()) {
+      throw new GeneralException(QuestionStorageErrorStatus.EMPTY_LIST_REQUEST);
+    }
+
+    User user = utils.getUserByUsername(userDetails.getUsername());
+
+    List<UserQuestion> userQuestionList =
+        userQuestionRepository.findAllById(userQuestionIdListDTO.getUserQuestionIds());
+
+    if (!(userQuestionIdListDTO.getUserQuestionIds().size() == userQuestionList.size())) {
+      throw new GeneralException(QuestionStorageErrorStatus.RESOURCE_NOT_FOUND);
+    }
+
+    boolean isSuccess =
+        userQuestionList.stream().allMatch(userQuestion -> userQuestion.getUser().equals(user));
+
+    if (!isSuccess) {
+      throw new GeneralException(QuestionStorageErrorStatus.FORBIDDEN_DELETE_REQUEST);
+    }
+
+    userQuestionRepository.deleteAll(userQuestionList);
+    return true;
   }
 }
