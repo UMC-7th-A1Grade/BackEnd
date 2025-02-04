@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/redis")
+@RequestMapping("/api/redis")
 @RequiredArgsConstructor
 @Tag(name = "Redis", description = "Redis 테스트용 API")
 public class RedisHealthCheckController {
