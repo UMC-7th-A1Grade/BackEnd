@@ -2,9 +2,6 @@ package com.umc7th.a1grade.domain.user.controller;
 
 import java.util.List;
 
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +25,7 @@ import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,20 +39,19 @@ public class UserController {
 
   private final UserService userService;
 
-    @Operation(
-            summary = "닉네임 중복 확인",
-            description = """
+  @Operation(
+      summary = "닉네임 중복 확인",
+      description = """
         사용자가 입력한 닉네임이 이미 존재하는지 확인합니다.
-        """
-    )
-    @Parameters({
-            @Parameter(
-                    name = "nickname",
-                    description = "중복 확인을 요청할 닉네임",
-                    required = true,
-                    example = "testUser")
-    })
-    @ApiErrorCodeExample(UserErrorStatus.class)
+        """)
+  @Parameters({
+    @Parameter(
+        name = "nickname",
+        description = "중복 확인을 요청할 닉네임",
+        required = true,
+        example = "testUser")
+  })
+  @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "", produces = "application/json")
   public ApiResponse<Boolean> confirmNickName(
       @AuthenticationPrincipal UserDetails userDetails, @RequestParam("nickname") String nickname) {
@@ -63,21 +60,20 @@ public class UserController {
   }
 
   @Operation(
-          summary = "닉네임 및 선택한 캐릭터 정보 저장",
-          description = """
+      summary = "닉네임 및 선택한 캐릭터 정보 저장",
+      description = """
       사용자에게 입력받은 닉네임과 캐릭터 Id 를 저장합니다.
       """,
-          requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                  description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
-                  required = true,
-                  content = @Content(
-                          mediaType = "application/json",
-                          schema = @Schema(implementation = UserInfoRequestDto.class)
-                  )
-          )
-  )
+      requestBody =
+          @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
+              required = true,
+              content =
+                  @Content(
+                      mediaType = "application/json",
+                      schema = @Schema(implementation = UserInfoRequestDto.class))))
   @ApiErrorCodeExample(UserErrorStatus.class)
-  @PatchMapping(value ="" ,consumes = "application/json", produces = "application/json")
+  @PatchMapping(value = "", consumes = "application/json", produces = "application/json")
   public ApiResponse<UserInfoResponseDto> saveUserInfo(
       @AuthenticationPrincipal UserDetails userDetails,
       @RequestBody @Valid UserInfoRequestDto requestDto) {
@@ -85,9 +81,7 @@ public class UserController {
     return ApiResponse.of(UserSuccessStatus._USER_INFO_UPDATE, response);
   }
 
-  @Operation(
-      summary = "오늘의 정답률",
-      description = """
+  @Operation(summary = "오늘의 정답률", description = """
       사용자의 닉네임과 오답 정답의 개수를 조회합니다. \n
       """)
   @ApiErrorCodeExample(UserErrorStatus.class)
