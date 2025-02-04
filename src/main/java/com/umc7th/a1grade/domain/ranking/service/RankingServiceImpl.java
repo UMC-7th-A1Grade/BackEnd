@@ -8,21 +8,20 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc7th.a1grade.domain.question.repository.QuestionLogRepository;
 import com.umc7th.a1grade.domain.ranking.dto.UserRankingDto;
+import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -32,6 +31,7 @@ public class RankingServiceImpl implements RankingService {
   private final UserRepository userRepository;
   private final RedisTemplate<String, String> redisTemplate;
   private final ObjectMapper objectMapper;
+
   @Scheduled(cron = "0 0 0 * * ?")
   public void scheduleDailyRankingUpdate() {
     log.info("갱신 실행");
@@ -57,7 +57,6 @@ public class RankingServiceImpl implements RankingService {
             .collect(Collectors.toList());
 
     saveRankingToRedis(top3Users);
-
   }
 
   private void saveRankingToRedis(List<UserRankingDto> top3Users) {
@@ -66,7 +65,8 @@ public class RankingServiceImpl implements RankingService {
     for (int i = 0; i < top3Users.size(); i++) {
       UserRankingDto ranking = top3Users.get(i);
       String rankKey = "RANK:" + (i + 1);
-      AllGradeResponseDto dto = AllGradeResponseDto.builder()
+      AllGradeResponseDto dto =
+          AllGradeResponseDto.builder()
               .userId(ranking.getUser().getId())
               .nickName(ranking.getUser().getNickName())
               .correctCount(ranking.getCorrectCount())
@@ -87,7 +87,8 @@ public class RankingServiceImpl implements RankingService {
 
   private Duration getRemainingTime() {
     LocalDateTime now = LocalDateTime.now();
-    LocalDateTime night = LocalDateTime.of(now.toLocalDate().plusDays(1), LocalDateTime.MIN.toLocalTime());
+    LocalDateTime night =
+        LocalDateTime.of(now.toLocalDate().plusDays(1), LocalDateTime.MIN.toLocalTime());
     return Duration.between(now, night);
   }
 
@@ -113,5 +114,4 @@ public class RankingServiceImpl implements RankingService {
 
     return new UserRankingDto(user, finalCorrectCount, totalCount, accuracy);
   }
-
 }

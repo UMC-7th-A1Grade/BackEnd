@@ -25,5 +25,4 @@ public class AllGradeResponseDto {
 
   @Schema(description = "정답률 (소수점 포함)", example = "0.75")
   private BigDecimal accuracy;
-
 }

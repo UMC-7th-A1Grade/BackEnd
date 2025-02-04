@@ -3,7 +3,6 @@ package com.umc7th.a1grade.unittest.user.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.umc7th.a1grade.unittest.user.fake.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ import com.umc7th.a1grade.domain.user.repository.UserCharacterRepository;
 import com.umc7th.a1grade.domain.user.repository.UserRepository;
 import com.umc7th.a1grade.domain.user.service.UserService;
 import com.umc7th.a1grade.domain.user.service.UserServiceImpl;
+import com.umc7th.a1grade.unittest.user.fake.*;
 
 public class UserServiceTest {
   private UserService userService;
@@ -43,8 +43,7 @@ public class UserServiceTest {
             fakeUserRepository,
             fakeCharacterRepository,
             fakeUserCharacterRepository,
-                fakeRedisTemplate
-        );
+            fakeRedisTemplate);
 
     this.existingUser =
         User.builder()
