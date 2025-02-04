@@ -2,6 +2,9 @@ package com.umc7th.a1grade.domain.user.controller;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,14 +25,11 @@ import com.umc7th.a1grade.domain.user.exception.status.UserSuccessStatus;
 import com.umc7th.a1grade.domain.user.service.UserService;
 import com.umc7th.a1grade.global.annotation.ApiErrorCodeExample;
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
-import com.umc7th.a1grade.global.apiPayload.code.ErrorReasonDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -41,33 +41,20 @@ public class UserController {
 
   private final UserService userService;
 
-  @Operation(
-      summary = "닉네임 중복 확인",
-      description = "사용자가 입력한 닉네임이 이미 존재하는지 확인합니다.",
-      parameters = {
-        @Parameter(
-            name = "nickname",
-            description = "중복 확인을 요청할 닉네임",
-            required = true,
-            example = "testUser")
-      })
-  @ApiResponses({
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "사용가능한 닉네임입니다.",
-        content =
-            @Content(
-                mediaType = "application/json",
-                schema = @Schema(type = "boolean", example = "true"))),
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "400",
-        description = "이미 존재하는 닉네임입니다.",
-        content =
-            @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorReasonDTO.class)))
-  })
-  @ApiErrorCodeExample(UserErrorStatus.class)
+    @Operation(
+            summary = "닉네임 중복 확인",
+            description = """
+        사용자가 입력한 닉네임이 이미 존재하는지 확인합니다.
+        """
+    )
+    @Parameters({
+            @Parameter(
+                    name = "nickname",
+                    description = "중복 확인을 요청할 닉네임",
+                    required = true,
+                    example = "testUser")
+    })
+    @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "", produces = "application/json")
   public ApiResponse<Boolean> confirmNickName(
       @AuthenticationPrincipal UserDetails userDetails, @RequestParam("nickname") String nickname) {
@@ -76,33 +63,21 @@ public class UserController {
   }
 
   @Operation(
-      summary = "닉네임 및 선택한 캐릭터 정보 저장",
-      description = "사용자에게 입력받은 닉네임과 캐릭터 Id 를 저장합니다.",
-      requestBody =
-          @io.swagger.v3.oas.annotations.parameters.RequestBody(
-              description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
-              required = true,
-              content =
-                  @Content(
-                      mediaType = "application/json",
-                      schema = @Schema(implementation = UserInfoRequestDto.class))))
-  @ApiResponses({
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "닉네임과 캐릭터 정보가 성공적으로 저장되었습니다.",
-        content =
-            @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = UserInfoResponseDto.class))),
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "400",
-        description = "존재하지 않은 캐릭터 아이디 입니다.",
-        content =
-            @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorReasonDTO.class)))
-  })
-  @PatchMapping("")
+          summary = "닉네임 및 선택한 캐릭터 정보 저장",
+          description = """
+      사용자에게 입력받은 닉네임과 캐릭터 Id 를 저장합니다.
+      """,
+          requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                  description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
+                  required = true,
+                  content = @Content(
+                          mediaType = "application/json",
+                          schema = @Schema(implementation = UserInfoRequestDto.class)
+                  )
+          )
+  )
+  @ApiErrorCodeExample(UserErrorStatus.class)
+  @PatchMapping(value ="" ,consumes = "application/json", produces = "application/json")
   public ApiResponse<UserInfoResponseDto> saveUserInfo(
       @AuthenticationPrincipal UserDetails userDetails,
       @RequestBody @Valid UserInfoRequestDto requestDto) {
@@ -110,16 +85,11 @@ public class UserController {
     return ApiResponse.of(UserSuccessStatus._USER_INFO_UPDATE, response);
   }
 
-  @Operation(summary = "오늘의 정답률", description = "사용자의 닉네임과 오답 정답의 개수를 조회합니다.")
-  @ApiResponses({
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "사용자의 오답 정답 개수를 성공적으로 조회하였습니다.",
-        content =
-            @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = UserGradeResponseDto.class)))
-  })
+  @Operation(
+      summary = "오늘의 정답률",
+      description = """
+      사용자의 닉네임과 오답 정답의 개수를 조회합니다. \n
+      """)
   @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "/grade", produces = "application/json")
   public ApiResponse<UserGradeResponseDto> findUserGrade(
@@ -128,16 +98,11 @@ public class UserController {
     return ApiResponse.of(UserSuccessStatus._USER_GRADE_OK, response);
   }
 
-  @Operation(summary = "1등급 경쟁 랭킹 조회", description = "정답 및 오답 개수가 가장 많은 TOP 3 사용자의 정보를 조회합니다.")
-  @ApiResponses({
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "TOP 3 사용자의 정답 및 오답 개수를 성공적으로 조회했습니다.",
-        content =
-            @Content(
-                mediaType = "application/json",
-                array = @ArraySchema(schema = @Schema(implementation = AllGradeResponseDto.class))))
-  })
+  @Operation(
+      summary = "1등급 경쟁 랭킹 조회",
+      description = """
+      오답정답의 개수가 가장 많은 TOP 3 사용자의 정보를 조회합니다.  \n
+      """)
   @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "/allgrade", produces = "application/json")
   public ApiResponse<List<AllGradeResponseDto>> findTop3UserGrade(
