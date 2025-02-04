@@ -24,5 +24,5 @@ public class AllGradeResponseDto {
   private Long correctCount;
 
   @Schema(description = "정답률 (소수점 포함)", example = "0.75")
-  private BigDecimal answerRate;
+  private BigDecimal accuracy;
 }

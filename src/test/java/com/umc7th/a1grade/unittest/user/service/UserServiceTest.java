@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
-import com.umc7th.a1grade.domain.ranking.repository.RankingRepository;
 import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
 import com.umc7th.a1grade.domain.user.entity.Role;
@@ -19,18 +19,14 @@ import com.umc7th.a1grade.domain.user.repository.UserCharacterRepository;
 import com.umc7th.a1grade.domain.user.repository.UserRepository;
 import com.umc7th.a1grade.domain.user.service.UserService;
 import com.umc7th.a1grade.domain.user.service.UserServiceImpl;
-import com.umc7th.a1grade.unittest.user.fake.FakeCharacterRepository;
-import com.umc7th.a1grade.unittest.user.fake.FakeRankingRepository;
-import com.umc7th.a1grade.unittest.user.fake.FakeUserCharacterRepository;
-import com.umc7th.a1grade.unittest.user.fake.FakeUserDetails;
-import com.umc7th.a1grade.unittest.user.fake.FakeUserRepository;
+import com.umc7th.a1grade.unittest.user.fake.*;
 
 public class UserServiceTest {
   private UserService userService;
   private UserRepository fakeUserRepository;
   private CharacterRepository fakeCharacterRepository;
   private UserCharacterRepository fakeUserCharacterRepository;
-  private RankingRepository fakeRankingRepository;
+  private RedisTemplate fakeRedisTemplate;
   private final String socialId1 = "user1234";
   private final String socialId2 = "user2222";
   private User existingUser;
@@ -41,13 +37,13 @@ public class UserServiceTest {
     fakeUserRepository = new FakeUserRepository();
     fakeCharacterRepository = new FakeCharacterRepository();
     fakeUserCharacterRepository = new FakeUserCharacterRepository();
-    fakeRankingRepository = new FakeRankingRepository();
+    fakeRedisTemplate = new FakeRedisTemplate();
     userService =
         new UserServiceImpl(
             fakeUserRepository,
             fakeCharacterRepository,
             fakeUserCharacterRepository,
-            fakeRankingRepository);
+            fakeRedisTemplate);
 
     this.existingUser =
         User.builder()

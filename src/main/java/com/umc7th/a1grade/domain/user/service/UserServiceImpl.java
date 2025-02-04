@@ -1,16 +1,17 @@
 package com.umc7th.a1grade.domain.user.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc7th.a1grade.domain.character.entity.Character;
 import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
-import com.umc7th.a1grade.domain.ranking.entity.Ranking;
-import com.umc7th.a1grade.domain.ranking.repository.RankingRepository;
 import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
 import com.umc7th.a1grade.domain.user.dto.UserGradeResponseDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
@@ -23,15 +24,18 @@ import com.umc7th.a1grade.domain.user.repository.UserCharacterRepository;
 import com.umc7th.a1grade.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final CharacterRepository characterRepository;
   private final UserCharacterRepository userCharacterRepository;
-  private final RankingRepository rankingRepository;
+  private final RedisTemplate<String, String> redisTemplate;
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
   public void confirmNickName(UserDetails userDetails, String nickname) {
@@ -66,18 +70,22 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<AllGradeResponseDto> findTop3UserGrade(UserDetails userDetails) {
     findUserBySocialId(userDetails.getUsername());
-    List<Ranking> top3Users = rankingRepository.findAll();
+    List<AllGradeResponseDto> top3Users = new ArrayList<>();
 
-    return top3Users.stream()
-        .map(
-            ranking ->
-                AllGradeResponseDto.builder()
-                    .userId(ranking.getUser().getId())
-                    .nickName(ranking.getUser().getNickName())
-                    .correctCount(ranking.getSolvedCount())
-                    .answerRate(ranking.getAnswerRate())
-                    .build())
-        .collect(Collectors.toList());
+    for (int i = 1; i <= 3; i++) {
+      String rankKey = "RANK:" + i;
+      String rankingJson = redisTemplate.opsForValue().get(rankKey);
+
+      if (rankingJson != null) {
+        try {
+          AllGradeResponseDto dto = objectMapper.readValue(rankingJson, AllGradeResponseDto.class);
+          top3Users.add(dto);
+        } catch (JsonProcessingException e) {
+          log.info("JSON 변환 오류: " + e.getMessage());
+        }
+      }
+    }
+    return top3Users;
   }
 
   private UserCharacter createUserCharacter(User user, Character character) {
