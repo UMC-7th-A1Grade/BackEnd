@@ -14,11 +14,17 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-@Schema(title = "LoginResponse - 구글 소셜 로그인 응답 객체")
+@Schema(title = "LoginResponse : 구글 소셜 로그인 응답 DTO")
 public class LoginResponse {
+  @Schema(description = "사용자 이메일", example = "user@example.com")
   private String email;
+
+  @Schema(description = "JWT 액세스 토큰", example = "eyJhbGciOiJIUzI1...")
   private String accessToken;
+
+  @Schema(description = "구글 소셜 로그인 ID", example = "1234567890")
   private String socialId;
+
   @JsonIgnore private String refreshToken;
 
   public LoginResponse(String email, String accessToken, String socialId) {

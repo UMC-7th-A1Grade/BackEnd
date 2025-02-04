@@ -12,9 +12,6 @@ import com.umc7th.a1grade.domain.character.service.CharacterService;
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -25,17 +22,12 @@ import lombok.RequiredArgsConstructor;
 public class CharacterController {
   private final CharacterService characterService;
 
-  @Operation(summary = "캐릭터 정보 조회", description = "캐릭터의 정보를 전부 조회합니다.")
-  @ApiResponses({
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-        responseCode = "200",
-        description = "캐릭터 정보조회에 성공했습니다.",
-        content =
-            @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = CharacterListResponseDto.class)))
-  })
-  @GetMapping("")
+  @Operation(
+      summary = "캐릭터 정보 조회",
+      description = """
+          캐릭터의 정보를 전부 조회합니다.  \n
+          """)
+  @GetMapping(value = "", produces = "application/json")
   public ApiResponse<CharacterListResponseDto> findAllCharacters(
       @AuthenticationPrincipal UserDetails userDetails) {
     CharacterListResponseDto response = characterService.findAll();

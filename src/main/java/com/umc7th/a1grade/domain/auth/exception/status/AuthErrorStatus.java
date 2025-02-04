@@ -13,7 +13,7 @@ import lombok.Getter;
 public enum AuthErrorStatus implements BaseErrorCode {
   _LOGIN_FAIL(HttpStatus.BAD_REQUEST, "AUTH4001", "구글 로그인 처리 중 오류 발생"),
   _TOKEN_FAIL(HttpStatus.UNAUTHORIZED, "AUTH4002", "구글 액세스 토큰 요청 실패"),
-  _USER_INFO_FAIL(HttpStatus.BAD_REQUEST, "AUTH4003", "구글 사용자 정보 요청 실패"),
+  _USER_INFO_FAIL(HttpStatus.UNAUTHORIZED, "AUTH4003", "구글 사용자 정보 요청 실패"),
 
   _INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4004", "유효하지 않은 토큰입니다."),
   _TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4005", "토큰이 만료되었습니다."),
