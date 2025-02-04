@@ -32,7 +32,7 @@ public class RankingServiceImpl implements RankingService {
   private final UserRepository userRepository;
   private final RedisTemplate<String, String> redisTemplate;
   private final ObjectMapper objectMapper;
-  @Scheduled(cron = "*/5 * * * * *")
+  @Scheduled(cron = "0 0 0 * * ?")
   public void scheduleDailyRankingUpdate() {
     log.info("갱신 실행");
     updateDailyRanking();
