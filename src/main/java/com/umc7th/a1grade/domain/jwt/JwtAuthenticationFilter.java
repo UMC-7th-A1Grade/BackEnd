@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       if (token != null && tokenService.isBlacklisted(token)) {
         log.warn("블랙리스트에 등록된 토큰입니다.");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("This token is blacklisted.");
+        response.getWriter().write("만료된 토큰입니다.");
         return;
       }
 

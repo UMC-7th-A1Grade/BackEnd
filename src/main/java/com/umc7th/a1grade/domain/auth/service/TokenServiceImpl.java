@@ -3,11 +3,9 @@ package com.umc7th.a1grade.domain.auth.service;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.umc7th.a1grade.domain.auth.exception.AuthHandler;
 import com.umc7th.a1grade.domain.auth.exception.status.AuthErrorStatus;
@@ -31,6 +29,8 @@ public class TokenServiceImpl implements TokenService {
 
   private static final String REFRESH_TOKEN_PREFIX = "REFRESH:";
   private static final String BLACKLIST_PREFIX = "BLACKLIST:";
+  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;
+  private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 2;
 
   @Override
   public void addToBlacklist(String accessToken) {
@@ -53,37 +53,40 @@ public class TokenServiceImpl implements TokenService {
 
   @Override
   public Map<String, String> getSocialIdFronRefreshToken(String refreshToken) {
-    validateRefreshToken(refreshToken);
-    String socialId = jwtProvider.extractSocialId(refreshToken);
+    String socialId = validateAndExtractSocialId(refreshToken);
     log.info("socialId 출력: {}", socialId);
 
-    User user = findUserBySocialId(socialId);
-    boolean isProfileComplete = user.getNickName() != null;
+    User user =
+        userRepository
+            .findBySocialId(socialId)
+            .orElseThrow(() -> new AuthHandler(UserErrorStatus._USER_NOT_FOUND));
 
+    boolean isProfileComplete = user.getNickName() != null;
     Map<String, String> newTokens = createNewTokens(socialId, isProfileComplete);
 
-    saveRefreshTokenToRedis(socialId, newTokens.get("refreshToken"));
+    redisTemplate
+        .opsForValue()
+        .set(
+            REFRESH_TOKEN_PREFIX + socialId,
+            newTokens.get("refreshToken"),
+            REFRESH_TOKEN_EXPIRE_TIME,
+            TimeUnit.MILLISECONDS);
     return newTokens;
   }
 
-  public void validateRefreshToken(String refreshToken) {
+  public String validateAndExtractSocialId(String refreshToken) {
     if (refreshToken == null) {
       throw new AuthHandler(AuthErrorStatus._REFRESH_TOKEN_REQUIRED);
     }
+
     jwtProvider.validateToken(refreshToken);
-
     String socialId = jwtProvider.extractSocialId(refreshToken);
-    String storedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + socialId);
 
-    if (storedToken == null || !storedToken.equals(refreshToken)) {
+    String storedToken = redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + socialId);
+    if (!refreshToken.equals(storedToken)) {
       throw new AuthHandler(AuthErrorStatus._TOKEN_FAIL);
     }
-  }
-
-  public User findUserBySocialId(String socialId) {
-    return userRepository
-        .findBySocialId(socialId)
-        .orElseThrow(() -> new AuthHandler(UserErrorStatus._USER_NOT_FOUND));
+    return socialId;
   }
 
   public Map<String, String> createNewTokens(String socialId, boolean isProfileComplete) {
@@ -101,20 +104,8 @@ public class TokenServiceImpl implements TokenService {
       throw new AuthHandler(AuthErrorStatus._TOKEN_FAIL);
     }
     String socialId = userDetails.getUsername();
-    deleteRefreshToken(socialId);
+    redisTemplate.delete(REFRESH_TOKEN_PREFIX + socialId);
 
     log.info("로그아웃 {} Refresh Token 삭제됨", socialId);
-  }
-
-  @Transactional
-  public void saveRefreshTokenToRedis(String socialId, String newRefreshToken) {
-    redisTemplate
-        .opsForValue()
-        .set(REFRESH_TOKEN_PREFIX + socialId, newRefreshToken, 7, TimeUnit.DAYS);
-  }
-
-  @Transactional
-  public void deleteRefreshToken(String socialId) {
-    redisTemplate.delete(REFRESH_TOKEN_PREFIX + socialId);
   }
 }

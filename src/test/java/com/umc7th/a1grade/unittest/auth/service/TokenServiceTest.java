@@ -96,16 +96,16 @@ public class TokenServiceTest {
   //    tokenService.validateRefreshToken(mockRefreshToken);
   //  }
 
-  @Test
-  @DisplayName("[findUserBySocialId] - 정상 요청")
-  void findUserBySocialId_Success() {
-    // When
-    User user = tokenService.findUserBySocialId(socialId);
-
-    // Then
-    assertThat(user).isNotNull();
-    assertThat(user.getSocialId()).isEqualTo(socialId);
-  }
+  //  @Test
+  //  @DisplayName("[findUserBySocialId] - 정상 요청")
+  //  void findUserBySocialId_Success() {
+  //    // When
+  //    User user = tokenService.findUserBySocialId(socialId);
+  //
+  //    // Then
+  //    assertThat(user).isNotNull();
+  //    assertThat(user.getSocialId()).isEqualTo(socialId);
+  //  }
 
   //  @Test
   //  @DisplayName("[createNewTokens] - 정상 요청")

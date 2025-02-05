@@ -214,13 +214,15 @@ public class AuthController {
         AuthSuccessStatus._TOKEN_REFRESH_SUCCESS, tokenResponse.get("accessToken"));
   }
 
-    @PostMapping("/logout")
-    @Operation(summary = "로그아웃", description = "사용자 로그아웃 입니다.")
-    public ApiResponse logout(@AuthenticationPrincipal UserDetails userDetails,
-                              @RequestHeader("Authorization") String accessToken) {
-        tokenService.addToBlacklist(accessToken);
-        tokenService.logout(userDetails);
+  @PostMapping("/logout")
+  @Operation(summary = "로그아웃", description = "사용자 로그아웃 입니다.")
+  @ApiErrorCodeExample(AuthErrorStatus.class)
+  public ApiResponse logout(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestHeader("Authorization") String accessToken) {
+    tokenService.addToBlacklist(accessToken);
+    tokenService.logout(userDetails);
 
-        return ApiResponse.of(AuthSuccessStatus._LOGOUT_SUCCESS, null);
-    }
+    return ApiResponse.of(AuthSuccessStatus._LOGOUT_SUCCESS, null);
+  }
 }

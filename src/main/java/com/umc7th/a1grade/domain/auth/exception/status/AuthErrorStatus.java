@@ -1,6 +1,5 @@
 package com.umc7th.a1grade.domain.auth.exception.status;
 
-import com.umc7th.a1grade.global.apiPayload.code.BaseCode;
 import org.springframework.http.HttpStatus;
 
 import com.umc7th.a1grade.global.apiPayload.code.BaseErrorCode;
@@ -28,7 +27,7 @@ public enum AuthErrorStatus implements BaseErrorCode {
   INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "JWT_INVALID_SIGNATURE4004", "JWT 서명이 유효하지 않습니다."),
   ILLEGAL_ARGUMENT(HttpStatus.UNAUTHORIZED, "JWT_ILLEGAL_ARGUMENT4005", "JWT 토큰 값이 잘못되었습니다.");
 
-    private final HttpStatus httpStatus;
+  private final HttpStatus httpStatus;
   private final String code;
   private final String message;
 
