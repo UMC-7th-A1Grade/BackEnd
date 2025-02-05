@@ -134,13 +134,6 @@ public class AuthController {
     return ApiResponse.of(AuthSuccessStatus._LOGIN_SUCCESS, loginResponse);
   }
 
-  @PostMapping("/logout")
-  @ApiErrorCodeExample(AuthErrorStatus.class)
-  @Operation(summary = "로그아웃", description = "사용자 로그아웃 입니다.")
-  public ApiResponse logout(@AuthenticationPrincipal UserDetails userDetails) {
-    return ApiResponse.of(AuthSuccessStatus._LOGOUT_SUCCESS, null);
-  }
-
   @Operation(
       summary = "액세스 토큰 재발급",
       description = """
@@ -219,5 +212,23 @@ public class AuthController {
     response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     return ApiResponse.of(
         AuthSuccessStatus._TOKEN_REFRESH_SUCCESS, tokenResponse.get("accessToken"));
+  }
+
+  @PostMapping("/logout")
+  @Operation(summary = "로그아웃", description = "사용자 로그아웃을 수행합니다.")
+  @ApiErrorCodeExample(AuthErrorStatus.class)
+  public ApiResponse logout(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @Parameter(
+              name = "Authorization",
+              description = "Bearer 액세스 토큰을 입력하세요.",
+              required = true,
+              example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...")
+          @RequestHeader("Authorization")
+          String accessToken) {
+    tokenService.addToBlacklist(accessToken);
+    tokenService.logout(userDetails);
+
+    return ApiResponse.of(AuthSuccessStatus._LOGOUT_SUCCESS, null);
   }
 }

@@ -94,7 +94,6 @@ public class FakeOAuth2TokenService implements OAuth2TokenService {
 
     String jwtAccessToken = jwtProvider.createAccessToken(user.getSocialId());
     String jwtRefreshToken = jwtProvider.createRefreshToken(user.getSocialId());
-    user.setRefreshToken(jwtRefreshToken);
 
     return new LoginResponse(user.getEmail(), jwtAccessToken, user.getSocialId(), jwtRefreshToken);
   }
