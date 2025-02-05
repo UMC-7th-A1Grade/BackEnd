@@ -86,6 +86,7 @@ public class TokenServiceImpl implements TokenService {
     if (!refreshToken.equals(storedToken)) {
       throw new AuthHandler(AuthErrorStatus._TOKEN_FAIL);
     }
+    redisTemplate.delete(REFRESH_TOKEN_PREFIX + socialId);
     return socialId;
   }
 
