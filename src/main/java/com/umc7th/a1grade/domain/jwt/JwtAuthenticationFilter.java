@@ -7,26 +7,28 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.JwtException;
+import com.umc7th.a1grade.domain.auth.service.TokenService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final String AUTHORIZATION_HEADER = "Authorization";
   private static final String BEARER_PREFIX = "Bearer ";
 
   private final JwtProvider jwtProvider;
+  private final TokenService tokenService;
   private final UserDetailsService userDetailsService;
 
   @Override
@@ -35,6 +37,14 @@ public class JwtFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     try {
       String token = resolveToken(request);
+
+      if (token != null && tokenService.isBlacklisted(token)) {
+        log.warn("블랙리스트에 등록된 토큰입니다.");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("This token is blacklisted.");
+        return;
+      }
+
       if (token != null && jwtProvider.validateToken(token)) {
         String socialId = jwtProvider.extractSocialId(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(socialId);
@@ -49,7 +59,9 @@ public class JwtFilter extends OncePerRequestFilter {
     } catch (JwtException | IllegalArgumentException e) {
       log.error("JWT 검증 실패 : {}", e.getMessage());
       SecurityContextHolder.clearContext();
-      throw new AuthenticationServiceException("JWT 인증 실패", e);
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.getWriter().write("JWT 인증 실패");
+      return;
     }
     filterChain.doFilter(request, response);
   }

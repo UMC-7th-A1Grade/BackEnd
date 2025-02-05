@@ -64,21 +64,30 @@ public class GoogleTokenService implements OAuth2TokenService {
     User user =
         userRepository
             .findBySocialId(attributes.getSub())
-            .orElseGet(
-                () -> {
-                  User newUser = attributes.toEntity();
-                  newUser.setRole(Role.ROLE_USER);
-                  return userRepository.save(newUser);
-                });
+            .orElseGet(() -> createNewUser(attributes));
 
-    String jwtAccessToken = jwtProvider.createAccessToken(user.getSocialId());
-    String jwtRefreshToken = jwtProvider.createRefreshToken(user.getSocialId());
-    user.setRefreshToken(jwtRefreshToken);
+    Map<String, String> tokens = generateTokens(user);
 
-    log.info("JWT 액세스 토큰 생성: {}", jwtAccessToken);
-    log.info("JWT 리프레시 토큰 생성: {}", jwtRefreshToken);
+    log.info("JWT 액세스 토큰 생성: {}", tokens.get("accessToken"));
+    log.info("JWT 리프레시 토큰 생성: {}", tokens.get("refreshToken"));
 
-    return new LoginResponse(user.getEmail(), jwtAccessToken, user.getSocialId(), jwtRefreshToken);
+    return new LoginResponse(
+        user.getEmail(), tokens.get("accessToken"), user.getSocialId(), tokens.get("refreshToken"));
+  }
+
+  @Transactional
+  public User createNewUser(OAuthAttributes attributes) {
+    User newUser = attributes.toEntity();
+    newUser.setRole(Role.ROLE_USER);
+    return userRepository.save(newUser);
+  }
+
+  @Transactional
+  public Map<String, String> generateTokens(User user) {
+    boolean isProfileComplete = user.getNickName() != null;
+    return Map.of(
+        "accessToken", jwtProvider.createAccessToken(user.getSocialId(), isProfileComplete),
+        "refreshToken", jwtProvider.createRefreshToken(user.getSocialId()));
   }
 
   @Transactional
@@ -109,8 +118,8 @@ public class GoogleTokenService implements OAuth2TokenService {
   public OAuthAttributes getUserInfo(String accessToken) {
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(accessToken);
-
     HttpEntity<String> request = new HttpEntity<>(headers);
+
     ResponseEntity<Map<String, Object>> response;
     try {
       response =

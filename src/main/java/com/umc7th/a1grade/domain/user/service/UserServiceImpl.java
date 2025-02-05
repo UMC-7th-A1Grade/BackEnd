@@ -88,6 +88,11 @@ public class UserServiceImpl implements UserService {
     return top3Users;
   }
 
+  @Override
+  public void logout(UserDetails userDetails) {
+    User user = findUserBySocialId(userDetails.getUsername());
+  }
+
   private UserCharacter createUserCharacter(User user, Character character) {
     UserCharacter userCharacter =
         UserCharacter.builder().user(user).character(character).isActive(true).build();

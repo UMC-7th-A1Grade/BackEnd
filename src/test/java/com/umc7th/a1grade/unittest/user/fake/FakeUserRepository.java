@@ -36,7 +36,6 @@ public class FakeUserRepository implements UserRepository {
               .email(user.getEmail())
               .socialId(user.getSocialId())
               .nickName(user.getNickName())
-              .refreshToken(user.getRefreshToken())
               .build();
       data.add(newUser);
       return newUser;

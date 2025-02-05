@@ -30,4 +30,14 @@ public class FakeJwtProvider implements JwtProvider {
   public String extractSocialId(String token) {
     return tokenStore.getOrDefault(token, "unknown-user");
   }
+
+  @Override
+  public String createAccessToken(String socialId, boolean idProfileComplete) {
+    return null;
+  }
+
+  @Override
+  public long getExpiration(String accessToken) {
+    return 0;
+  }
 }
