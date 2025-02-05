@@ -215,11 +215,17 @@ public class AuthController {
   }
 
   @PostMapping("/logout")
-  @Operation(summary = "로그아웃", description = "사용자 로그아웃 입니다.")
+  @Operation(summary = "로그아웃", description = "사용자 로그아웃을 수행합니다.")
   @ApiErrorCodeExample(AuthErrorStatus.class)
   public ApiResponse logout(
       @AuthenticationPrincipal UserDetails userDetails,
-      @RequestHeader("Authorization") String accessToken) {
+      @Parameter(
+              name = "Authorization",
+              description = "Bearer 액세스 토큰을 입력하세요.",
+              required = true,
+              example = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...")
+          @RequestHeader("Authorization")
+          String accessToken) {
     tokenService.addToBlacklist(accessToken);
     tokenService.logout(userDetails);
 

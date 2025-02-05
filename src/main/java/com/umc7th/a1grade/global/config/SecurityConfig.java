@@ -48,6 +48,8 @@ public class SecurityConfig {
                         "/auth/google",
                         "/auth/google/**")
                     .permitAll()
+                    .requestMatchers("/auth/logout")
+                    .authenticated()
                     .anyRequest()
                     .permitAll())
         .exceptionHandling(
