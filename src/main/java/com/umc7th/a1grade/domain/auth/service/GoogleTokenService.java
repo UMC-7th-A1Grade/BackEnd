@@ -3,9 +3,11 @@ package com.umc7th.a1grade.domain.auth.service;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,6 +38,9 @@ public class GoogleTokenService implements OAuth2TokenService {
   private final RestTemplate restTemplate;
   private final UserRepository userRepository;
   private final JwtProvider jwtProvider;
+  private final RedisTemplate<String, String> redisTemplate;
+  private static final String REFRESH_TOKEN_PREFIX = "REFRESH:";
+  private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 2;
 
   @Value("${spring.security.oauth2.client.registration.google.client-id}")
   private String clientId;
@@ -85,9 +90,22 @@ public class GoogleTokenService implements OAuth2TokenService {
   @Transactional
   public Map<String, String> generateTokens(User user) {
     boolean isProfileComplete = user.getNickName() != null;
+    String socialId = user.getSocialId();
+
+    String accessToken = jwtProvider.createAccessToken(socialId, isProfileComplete);
+    String refreshToken = jwtProvider.createRefreshToken(user.getSocialId());
+
+    redisTemplate
+            .opsForValue()
+            .set(
+                    REFRESH_TOKEN_PREFIX + socialId,
+                    refreshToken,
+                    REFRESH_TOKEN_EXPIRE_TIME,
+                    TimeUnit.MILLISECONDS);
+
     return Map.of(
-        "accessToken", jwtProvider.createAccessToken(user.getSocialId(), isProfileComplete),
-        "refreshToken", jwtProvider.createRefreshToken(user.getSocialId()));
+        "accessToken", accessToken,
+        "refreshToken", refreshToken);
   }
 
   @Transactional
