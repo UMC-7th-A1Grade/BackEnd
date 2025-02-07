@@ -96,12 +96,12 @@ public class GoogleTokenService implements OAuth2TokenService {
     String refreshToken = jwtProvider.createRefreshToken(user.getSocialId());
 
     redisTemplate
-            .opsForValue()
-            .set(
-                    REFRESH_TOKEN_PREFIX + socialId,
-                    refreshToken,
-                    REFRESH_TOKEN_EXPIRE_TIME,
-                    TimeUnit.MILLISECONDS);
+        .opsForValue()
+        .set(
+            REFRESH_TOKEN_PREFIX + socialId,
+            refreshToken,
+            REFRESH_TOKEN_EXPIRE_TIME,
+            TimeUnit.MILLISECONDS);
 
     return Map.of(
         "accessToken", accessToken,
