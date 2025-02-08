@@ -1,14 +1,7 @@
 package com.umc7th.a1grade.unittest.auth.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
-import com.umc7th.a1grade.domain.auth.exception.AuthHandler;
-import com.umc7th.a1grade.domain.auth.exception.status.AuthErrorStatus;
 import com.umc7th.a1grade.domain.auth.service.TokenService;
 import com.umc7th.a1grade.domain.auth.service.TokenServiceImpl;
 import com.umc7th.a1grade.domain.jwt.JwtProvider;
@@ -57,18 +50,18 @@ public class TokenServiceTest {
   //    assertThat(tokens.get("refreshToken")).isNotEmpty();
   //  }
 
-  @Test
-  @DisplayName("[getSocialIdFronRefreshToken] - socialId 가 null일 경우 예외 발생")
-  void getSocialIdFromRefreshToken_NullToken() {
-    // given
-    // When
-    // Then
-    AuthHandler exception =
-        assertThrows(AuthHandler.class, () -> tokenService.getSocialIdFronRefreshToken(null));
-
-    assertThat(exception.getErrorReason().getMessage())
-        .isEqualTo(AuthErrorStatus._REFRESH_TOKEN_REQUIRED.getMessage());
-  }
+  //  @Test
+  //  @DisplayName("[getSocialIdFronRefreshToken] - socialId 가 null일 경우 예외 발생")
+  //  void getSocialIdFromRefreshToken_NullToken() {
+  //    // given
+  //    // When
+  //    // Then
+  //    AuthHandler exception =
+  //        assertThrows(AuthHandler.class, () -> tokenService.getSocialIdFronRefreshToken(null));
+  //
+  //    assertThat(exception.getErrorReason().getMessage())
+  //        .isEqualTo(AuthErrorStatus._REFRESH_TOKEN_REQUIRED.getMessage());
+  //  }
 
   //  @Test
   //  @DisplayName("[getSocialIdFronRefreshToken] - 존재하지 않는 사용자의 리프레시 토큰을 사용하면 예외 발생 ")

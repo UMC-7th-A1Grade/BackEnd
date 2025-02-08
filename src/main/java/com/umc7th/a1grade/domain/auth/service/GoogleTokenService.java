@@ -66,6 +66,7 @@ public class GoogleTokenService implements OAuth2TokenService {
     String decode = URLDecoder.decode(code, StandardCharsets.UTF_8);
     String accessToken = getAccessToken(decode).getAccessToken();
     OAuthAttributes attributes = getUserInfo(accessToken);
+
     User user =
         userRepository
             .findBySocialId(attributes.getSub())
@@ -98,10 +99,11 @@ public class GoogleTokenService implements OAuth2TokenService {
     redisTemplate
         .opsForValue()
         .set(
-            REFRESH_TOKEN_PREFIX + socialId,
-            refreshToken,
+            REFRESH_TOKEN_PREFIX + refreshToken,
+            socialId,
             REFRESH_TOKEN_EXPIRE_TIME,
             TimeUnit.MILLISECONDS);
+    log.info("Refresh Token 저장 완료 {}", REFRESH_TOKEN_PREFIX + refreshToken);
 
     return Map.of(
         "accessToken", accessToken,

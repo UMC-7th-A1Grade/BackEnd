@@ -18,6 +18,8 @@ public enum AuthErrorStatus implements BaseErrorCode {
   _INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH4004", "유효하지 않은 토큰입니다."),
   _TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH4005", "토큰이 만료되었습니다."),
   _REFRESH_TOKEN_REQUIRED(HttpStatus.FORBIDDEN, "AUTH4006", "리프레시 토큰이 필요합니다."),
+  _RTR_FAIL(HttpStatus.BAD_REQUEST, "AUTH4007", "리프레시 토큰 재발급 실패"),
+  _RTR_FAIL_DELETE(HttpStatus.BAD_REQUEST, "AUTH4007", "리프레시 토큰 삭제 실패"),
 
   _LOGOUT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5000", "로그아웃 처리 중 오류가 발생했습니다."),
 
