@@ -48,7 +48,11 @@ public class TokenServiceImpl implements TokenService {
 
     redisTemplate
         .opsForValue()
-        .set(refreshTokenKey, newTokens.get("refreshToken"), REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
+        .set(
+            refreshTokenKey,
+            newTokens.get("refreshToken"),
+            REFRESH_TOKEN_EXPIRE_TIME,
+            TimeUnit.MILLISECONDS);
 
     log.info(" Refresh Token 갱신 완료: 전{} -> 후{}", refreshToken, newTokens.get("refreshToken"));
     return newTokens;

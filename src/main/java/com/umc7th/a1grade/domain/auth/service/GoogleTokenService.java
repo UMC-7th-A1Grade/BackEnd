@@ -78,7 +78,7 @@ public class GoogleTokenService implements OAuth2TokenService {
     if (existingRefreshToken != null) {
       log.info("기존 RefreshToken 존재 - 삭제 {}", existingRefreshToken);
       redisTemplate.delete(refreshTokenKey);
-    }else{
+    } else {
       log.info("기존 rt 없음 - 새로운 rt 발급 진행 ");
     }
 
