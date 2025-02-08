@@ -72,6 +72,16 @@ public class GoogleTokenService implements OAuth2TokenService {
             .findBySocialId(attributes.getSub())
             .orElseGet(() -> createNewUser(attributes));
 
+    String refreshTokenKey = REFRESH_TOKEN_PREFIX + user.getSocialId();
+    String existingRefreshToken = redisTemplate.opsForValue().get(refreshTokenKey);
+
+    if (existingRefreshToken != null) {
+      log.info("기존 RefreshToken 존재 - 삭제 {}", existingRefreshToken);
+      redisTemplate.delete(refreshTokenKey);
+    }else{
+      log.info("기존 rt 없음 - 새로운 rt 발급 진행 ");
+    }
+
     Map<String, String> tokens = generateTokens(user);
 
     log.info("JWT 액세스 토큰 생성: {}", tokens.get("accessToken"));
@@ -99,8 +109,8 @@ public class GoogleTokenService implements OAuth2TokenService {
     redisTemplate
         .opsForValue()
         .set(
-            REFRESH_TOKEN_PREFIX + refreshToken,
-            socialId,
+            REFRESH_TOKEN_PREFIX + socialId,
+            refreshToken,
             REFRESH_TOKEN_EXPIRE_TIME,
             TimeUnit.MILLISECONDS);
     log.info("Refresh Token 저장 완료 {}", REFRESH_TOKEN_PREFIX + refreshToken);

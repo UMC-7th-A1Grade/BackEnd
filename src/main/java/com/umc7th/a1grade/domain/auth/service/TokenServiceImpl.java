@@ -44,11 +44,11 @@ public class TokenServiceImpl implements TokenService {
 
     boolean isProfileComplete = user.getNickName() != null;
     Map<String, String> newTokens = createNewTokens(socialId, isProfileComplete);
-    String refreshTokenKey = REFRESH_TOKEN_PREFIX + newTokens.get("refreshToken");
+    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId;
 
     redisTemplate
         .opsForValue()
-        .set(refreshTokenKey, socialId, REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
+        .set(refreshTokenKey, newTokens.get("refreshToken"), REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
 
     log.info(" Refresh Token 갱신 완료: 전{} -> 후{}", refreshToken, newTokens.get("refreshToken"));
     return newTokens;
@@ -64,7 +64,8 @@ public class TokenServiceImpl implements TokenService {
       throw new AuthHandler(AuthErrorStatus._LOGOUT_FAILED);
     }
 
-    String refreshTokenKey = REFRESH_TOKEN_PREFIX + refreshToken;
+    String socialId = userDetails.getUsername();
+    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId;
     String storedToken = redisTemplate.opsForValue().get(refreshTokenKey);
 
     if (storedToken == null) {
@@ -84,15 +85,10 @@ public class TokenServiceImpl implements TokenService {
     jwtProvider.validateToken(refreshToken);
     String socialId = jwtProvider.extractSocialId(refreshToken);
     log.info("아이디 {}", socialId);
-    String refreshTokenKey = REFRESH_TOKEN_PREFIX + refreshToken;
+    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId;
 
     String storedToken = redisTemplate.opsForValue().get(refreshTokenKey);
     log.error("저장된 토큰 {}", storedToken);
-
-    if (!storedToken.equals(socialId)) {
-      log.error("RTR 실패 - Redis에 저장된 Refresh Token이 일치하지 않음 : {}", refreshTokenKey);
-      throw new AuthHandler(AuthErrorStatus._RTR_FAIL_DELETE);
-    }
 
     redisTemplate.delete(refreshTokenKey);
     log.info("Refresh Token 삭제 완료 : {}", refreshTokenKey);
