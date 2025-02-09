@@ -3,9 +3,12 @@ package com.umc7th.a1grade.domain.auth.service;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,6 +39,9 @@ public class GoogleTokenService implements OAuth2TokenService {
   private final RestTemplate restTemplate;
   private final UserRepository userRepository;
   private final JwtProvider jwtProvider;
+  private final RedisTemplate<String, String> redisTemplate;
+  private static final String REFRESH_TOKEN_PREFIX = "REFRESH:";
+  private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 2;
 
   @Value("${spring.security.oauth2.client.registration.google.client-id}")
   private String clientId;
@@ -61,24 +67,49 @@ public class GoogleTokenService implements OAuth2TokenService {
     String decode = URLDecoder.decode(code, StandardCharsets.UTF_8);
     String accessToken = getAccessToken(decode).getAccessToken();
     OAuthAttributes attributes = getUserInfo(accessToken);
+
     User user =
         userRepository
             .findBySocialId(attributes.getSub())
-            .orElseGet(
-                () -> {
-                  User newUser = attributes.toEntity();
-                  newUser.setRole(Role.ROLE_USER);
-                  return userRepository.save(newUser);
-                });
+            .orElseGet(() -> createNewUser(attributes));
 
-    String jwtAccessToken = jwtProvider.createAccessToken(user.getSocialId());
-    String jwtRefreshToken = jwtProvider.createRefreshToken(user.getSocialId());
-    user.setRefreshToken(jwtRefreshToken);
+    Map<String, String> tokens = generateTokens(user);
 
-    log.info("JWT 액세스 토큰 생성: {}", jwtAccessToken);
-    log.info("JWT 리프레시 토큰 생성: {}", jwtRefreshToken);
+    log.info("JWT 액세스 토큰 생성: {}", tokens.get("accessToken"));
+    log.info("JWT 리프레시 토큰 생성: {}", tokens.get("refreshToken"));
 
-    return new LoginResponse(user.getEmail(), jwtAccessToken, user.getSocialId(), jwtRefreshToken);
+    return new LoginResponse(
+        user.getEmail(), tokens.get("accessToken"), user.getSocialId(), tokens.get("refreshToken"));
+  }
+
+  @Transactional
+  public User createNewUser(OAuthAttributes attributes) {
+    User newUser = attributes.toEntity();
+    newUser.setRole(Role.ROLE_USER);
+    return userRepository.save(newUser);
+  }
+
+  @Transactional
+  public Map<String, String> generateTokens(User user) {
+    boolean isProfileComplete = user.getNickName() != null;
+    String socialId = user.getSocialId();
+    String tokenId = UUID.randomUUID().toString();
+
+    String accessToken = jwtProvider.createAccessToken(socialId, isProfileComplete);
+    String refreshToken = jwtProvider.createRefreshToken(socialId, tokenId);
+
+    redisTemplate
+        .opsForValue()
+        .set(
+            REFRESH_TOKEN_PREFIX + socialId + ":" + tokenId,
+            refreshToken,
+            REFRESH_TOKEN_EXPIRE_TIME,
+            TimeUnit.MILLISECONDS);
+    log.info("Refresh Token 저장 완료 {}", REFRESH_TOKEN_PREFIX + socialId + ":" + tokenId);
+
+    return Map.of(
+        "accessToken", accessToken,
+        "refreshToken", refreshToken);
   }
 
   @Transactional
@@ -109,8 +140,8 @@ public class GoogleTokenService implements OAuth2TokenService {
   public OAuthAttributes getUserInfo(String accessToken) {
     HttpHeaders headers = new HttpHeaders();
     headers.setBearerAuth(accessToken);
-
     HttpEntity<String> request = new HttpEntity<>(headers);
+
     ResponseEntity<Map<String, Object>> response;
     try {
       response =

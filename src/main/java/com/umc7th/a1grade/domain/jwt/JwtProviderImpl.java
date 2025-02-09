@@ -9,11 +9,7 @@ import org.springframework.stereotype.Component;
 import com.umc7th.a1grade.domain.auth.exception.AuthHandler;
 import com.umc7th.a1grade.domain.auth.exception.status.AuthErrorStatus;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,21 +25,43 @@ public class JwtProviderImpl implements JwtProvider {
     this.key = Keys.hmacShaKeyFor(keyBytes);
   }
 
-  public String createAccessToken(String socialId) {
+  @Override
+  public String createAccessToken(String socialId, boolean idProfileComplete) {
     Date now = new Date();
     return Jwts.builder()
         .setSubject(socialId)
         .setId(String.valueOf(socialId))
-        .setIssuedAt(new Date())
+        .setIssuedAt(now)
         .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
+        .claim("idProfileComplete", idProfileComplete)
         .signWith(key, SignatureAlgorithm.HS256)
         .compact();
   }
 
-  public String createRefreshToken(String socialId) {
+  @Override
+  public long getExpiration(String accessToken) {
+    Claims claims =
+        Jwts.parserBuilder()
+            .setSigningKey(getSigningKey())
+            .build()
+            .parseClaimsJws(accessToken)
+            .getBody();
+
+    Date expiration = claims.getExpiration();
+    long now = System.currentTimeMillis();
+    return expiration.getTime() - now;
+  }
+
+  private Key getSigningKey() {
+    return key;
+  }
+
+  @Override
+  public String createRefreshToken(String socialId, String tokenId) {
     Date now = new Date();
     return Jwts.builder()
         .setSubject(socialId)
+        .setId(tokenId)
         .setIssuedAt(now)
         .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME))
         .signWith(key, SignatureAlgorithm.HS256)
@@ -67,6 +85,7 @@ public class JwtProviderImpl implements JwtProvider {
     }
   }
 
+  @Override
   public String extractSocialId(String token) {
     return Jwts.parserBuilder()
         .setSigningKey(key)
@@ -74,5 +93,10 @@ public class JwtProviderImpl implements JwtProvider {
         .parseClaimsJws(token)
         .getBody()
         .getSubject();
+  }
+
+  @Override
+  public String extractTokenId(String token) {
+    return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getId();
   }
 }

@@ -134,13 +134,6 @@ public class AuthController {
     return ApiResponse.of(AuthSuccessStatus._LOGIN_SUCCESS, loginResponse);
   }
 
-  @PostMapping("/logout")
-  @ApiErrorCodeExample(AuthErrorStatus.class)
-  @Operation(summary = "로그아웃", description = "사용자 로그아웃 입니다.")
-  public ApiResponse logout(@AuthenticationPrincipal UserDetails userDetails) {
-    return ApiResponse.of(AuthSuccessStatus._LOGOUT_SUCCESS, null);
-  }
-
   @Operation(
       summary = "액세스 토큰 재발급",
       description = """
@@ -211,7 +204,7 @@ public class AuthController {
       @RequestHeader(value = "Cookie", required = false) String cookieHeader,
       HttpServletResponse response) {
     String refreshToken = cookieHelper.extractRefreshToken(cookieHeader);
-    Map<String, String> tokenResponse = tokenService.getSocialIdFronRefreshToken(refreshToken);
+    Map<String, String> tokenResponse = tokenService.rotateRefreshToken(refreshToken);
 
     ResponseCookie responseCookie =
         cookieHelper.createHttpOnlyCookie("refreshToken", tokenResponse.get("refreshToken"));
@@ -219,5 +212,28 @@ public class AuthController {
     response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     return ApiResponse.of(
         AuthSuccessStatus._TOKEN_REFRESH_SUCCESS, tokenResponse.get("accessToken"));
+  }
+
+  @Operation(
+      summary = "로그아웃",
+      description = """
+      리프레시 토큰을 사용하여 사용자 로그아웃을 수행합니다.
+      """,
+      parameters = {
+        @Parameter(
+            name = "Cookie",
+            description = "JWT_REFRESH_TOKEN 형식의 HttpOnly 쿠키",
+            required = true,
+            in = ParameterIn.HEADER)
+      })
+  @PostMapping("/logout")
+  @ApiErrorCodeExample(AuthErrorStatus.class)
+  public ApiResponse logout(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestHeader(value = "Cookie", required = false) String cookieHeader) {
+    String refreshToken = cookieHelper.extractRefreshToken(cookieHeader);
+    tokenService.logout(userDetails, refreshToken);
+
+    return ApiResponse.of(AuthSuccessStatus._LOGOUT_SUCCESS, null);
   }
 }

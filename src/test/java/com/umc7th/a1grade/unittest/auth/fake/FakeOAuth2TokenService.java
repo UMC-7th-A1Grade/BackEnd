@@ -92,10 +92,11 @@ public class FakeOAuth2TokenService implements OAuth2TokenService {
                   return userRepository.save(newUser);
                 });
 
-    String jwtAccessToken = jwtProvider.createAccessToken(user.getSocialId());
-    String jwtRefreshToken = jwtProvider.createRefreshToken(user.getSocialId());
-    user.setRefreshToken(jwtRefreshToken);
+    //    String jwtAccessToken = jwtProvider.createAccessToken(user.getSocialId());
+    //    String jwtRefreshToken = jwtProvider.createRefreshToken(user.getSocialId());
 
-    return new LoginResponse(user.getEmail(), jwtAccessToken, user.getSocialId(), jwtRefreshToken);
+    //    return new LoginResponse(user.getEmail(), jwtAccessToken, user.getSocialId(),
+    // jwtRefreshToken);
+    return null;
   }
 }

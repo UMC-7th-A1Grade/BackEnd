@@ -48,8 +48,6 @@ public class User extends BaseTimeEntity {
 
   private String nickName;
 
-  private String refreshToken;
-
   @Builder.Default
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<UserCharacter> userCharacters = new ArrayList<>();
@@ -57,10 +55,6 @@ public class User extends BaseTimeEntity {
   @Builder.Default
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<UserQuestion> userQuestions = new ArrayList<>();
-
-  public void setRefreshToken(String refreshToken) {
-    this.refreshToken = refreshToken;
-  }
 
   public void setRole(Role role) {
     this.role = role;

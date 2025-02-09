@@ -2,16 +2,14 @@ package com.umc7th.a1grade.domain.auth.service;
 
 import java.util.Map;
 
-import com.umc7th.a1grade.domain.user.entity.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface TokenService {
-  Map<String, String> getSocialIdFronRefreshToken(String refreshToken);
+  Map<String, String> rotateRefreshToken(String refreshToke);
 
-  void validateRefreshToken(String mockRefreshToken);
+  Map<String, String> validateAndExtractSocialId(String refreshToken);
 
-  User findUserBySocialId(String socialId);
+  Map<String, String> createNewTokens(String socialId, boolean isProfileComplete, String tokenId);
 
-  Map<String, String> createNewTokens(String socialId);
-
-  void updateUserRefreshToken(User user, String newRefreshToken);
+  void logout(UserDetails userDetails, String refreshToken);
 }

@@ -18,4 +18,6 @@ public interface UserService {
   UserGradeResponseDto findUserGrade(UserDetails userDetails);
 
   List<AllGradeResponseDto> findTop3UserGrade(UserDetails userDetails);
+
+  void logout(UserDetails userDetails);
 }
