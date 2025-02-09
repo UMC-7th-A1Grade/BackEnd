@@ -76,18 +76,7 @@ public class TokenServiceImpl implements TokenService {
     String socialId = jwtProvider.extractSocialId(refreshToken);
     String tokenId = jwtProvider.extractTokenId(refreshToken);
 
-    if (!userDetails.getUsername().equals(socialId)) {
-      log.error(" 로그아웃 실패 - 사용자 정보 불일치 ");
-      throw new AuthHandler(AuthErrorStatus._LOGOUT_FAILED);
-    }
-
     String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId + ":" + tokenId;
-    String storedToken = redisTemplate.opsForValue().get(refreshTokenKey);
-
-    if (storedToken == null || !storedToken.equals(refreshToken)) {
-      log.error(" 로그아웃 실패 - Redis에 저장된 RT와 제공된 RT가 일치하지 않음 : {}, {}", refreshToken, storedToken);
-      throw new AuthHandler(AuthErrorStatus._LOGOUT_FAILED);
-    }
 
     redisTemplate.delete(refreshTokenKey);
     log.info("로그아웃 - Refresh Token 삭제 완료  {}", refreshTokenKey);
@@ -106,11 +95,6 @@ public class TokenServiceImpl implements TokenService {
     String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId + ":" + tokenId;
     String storedToken = redisTemplate.opsForValue().get(refreshTokenKey);
     log.error("저장된 토큰 {}", storedToken);
-
-    if (storedToken == null || !storedToken.equals(refreshToken)) {
-      log.error("토큰 검증 실패 : 저장된 토큰과 일치하지 않음");
-      throw new AuthHandler(AuthErrorStatus._RTR_FAIL_DELETE);
-    }
 
     redisTemplate.delete(refreshTokenKey);
     log.info("Refresh Token 삭제 완료 : {}", refreshTokenKey);
