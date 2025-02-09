@@ -96,6 +96,11 @@ public class TokenServiceImpl implements TokenService {
     String storedToken = redisTemplate.opsForValue().get(refreshTokenKey);
     log.error("저장된 토큰 {}", storedToken);
 
+    if (storedToken == null) {
+      log.error("토큰 검증 실패: 만료된 토큰");
+      throw new AuthHandler(AuthErrorStatus._RTR_FAIL_DELETE);
+    }
+
     redisTemplate.delete(refreshTokenKey);
     log.info("Refresh Token 삭제 완료 : {}", refreshTokenKey);
 
