@@ -3,6 +3,7 @@ package com.umc7th.a1grade.domain.auth.service;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -72,16 +73,6 @@ public class GoogleTokenService implements OAuth2TokenService {
             .findBySocialId(attributes.getSub())
             .orElseGet(() -> createNewUser(attributes));
 
-    String refreshTokenKey = REFRESH_TOKEN_PREFIX + user.getSocialId();
-    String existingRefreshToken = redisTemplate.opsForValue().get(refreshTokenKey);
-
-    if (existingRefreshToken != null) {
-      log.info("기존 RefreshToken 존재 - 삭제 {}", existingRefreshToken);
-      redisTemplate.delete(refreshTokenKey);
-    } else {
-      log.info("기존 rt 없음 - 새로운 rt 발급 진행 ");
-    }
-
     Map<String, String> tokens = generateTokens(user);
 
     log.info("JWT 액세스 토큰 생성: {}", tokens.get("accessToken"));
@@ -102,18 +93,19 @@ public class GoogleTokenService implements OAuth2TokenService {
   public Map<String, String> generateTokens(User user) {
     boolean isProfileComplete = user.getNickName() != null;
     String socialId = user.getSocialId();
+    String tokenId = UUID.randomUUID().toString();
 
     String accessToken = jwtProvider.createAccessToken(socialId, isProfileComplete);
-    String refreshToken = jwtProvider.createRefreshToken(user.getSocialId());
+    String refreshToken = jwtProvider.createRefreshToken(socialId, tokenId);
 
     redisTemplate
         .opsForValue()
         .set(
-            REFRESH_TOKEN_PREFIX + socialId,
+            REFRESH_TOKEN_PREFIX + socialId + ":" + tokenId,
             refreshToken,
             REFRESH_TOKEN_EXPIRE_TIME,
             TimeUnit.MILLISECONDS);
-    log.info("Refresh Token 저장 완료 {}", REFRESH_TOKEN_PREFIX + refreshToken);
+    log.info("Refresh Token 저장 완료 {}", REFRESH_TOKEN_PREFIX + socialId + ":" + tokenId);
 
     return Map.of(
         "accessToken", accessToken,

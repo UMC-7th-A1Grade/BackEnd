@@ -1,15 +1,9 @@
 package com.umc7th.a1grade.unittest.auth.service;
 
-import org.junit.jupiter.api.BeforeEach;
-
 import com.umc7th.a1grade.domain.auth.service.TokenService;
-import com.umc7th.a1grade.domain.auth.service.TokenServiceImpl;
 import com.umc7th.a1grade.domain.jwt.JwtProvider;
-import com.umc7th.a1grade.domain.user.entity.Role;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.domain.user.repository.UserRepository;
-import com.umc7th.a1grade.unittest.auth.fake.FakeJwtProvider;
-import com.umc7th.a1grade.unittest.user.fake.FakeUserRepository;
 
 public class TokenServiceTest {
   private TokenService tokenService;
@@ -19,23 +13,24 @@ public class TokenServiceTest {
   private final String socialId = "user123";
   private User existingUser;
 
-  @BeforeEach
-  void init() {
-    fakeUserRepository = new FakeUserRepository();
-    jwtProvider = new FakeJwtProvider();
-    this.tokenService =
-        TokenServiceImpl.builder()
-            .userRepository(fakeUserRepository)
-            .jwtProvider(jwtProvider)
-            .build();
-
-    this.existingUser =
-        User.builder().socialId(socialId).email("existing-test-email").role(Role.ROLE_USER).build();
-
-    mockRefreshToken = jwtProvider.createRefreshToken(socialId);
-    //    existingUser.setRefreshToken(mockRefreshToken);
-    fakeUserRepository.save(existingUser);
-  }
+  //  @BeforeEach
+  //  void init() {
+  //    fakeUserRepository = new FakeUserRepository();
+  //    jwtProvider = new FakeJwtProvider();
+  //    this.tokenService =
+  //        TokenServiceImpl.builder()
+  //            .userRepository(fakeUserRepository)
+  //            .jwtProvider(jwtProvider)
+  //            .build();
+  //
+  //    this.existingUser =
+  //
+  // User.builder().socialId(socialId).email("existing-test-email").role(Role.ROLE_USER).build();
+  //
+  //    mockRefreshToken = jwtProvider.createRefreshToken(socialId);
+  //    //    existingUser.setRefreshToken(mockRefreshToken);
+  //    fakeUserRepository.save(existingUser);
+  //  }
 
   //  @Test
   //  @DisplayName("[getSocialIdFronRefreshToken] - 정상 요청")

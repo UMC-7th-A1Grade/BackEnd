@@ -56,10 +56,12 @@ public class JwtProviderImpl implements JwtProvider {
     return key;
   }
 
-  public String createRefreshToken(String socialId) {
+  @Override
+  public String createRefreshToken(String socialId, String tokenId) {
     Date now = new Date();
     return Jwts.builder()
         .setSubject(socialId)
+        .setId(tokenId)
         .setIssuedAt(now)
         .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME))
         .signWith(key, SignatureAlgorithm.HS256)
@@ -83,6 +85,7 @@ public class JwtProviderImpl implements JwtProvider {
     }
   }
 
+  @Override
   public String extractSocialId(String token) {
     return Jwts.parserBuilder()
         .setSigningKey(key)
@@ -90,5 +93,10 @@ public class JwtProviderImpl implements JwtProvider {
         .parseClaimsJws(token)
         .getBody()
         .getSubject();
+  }
+
+  @Override
+  public String extractTokenId(String token) {
+    return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getId();
   }
 }

@@ -11,16 +11,9 @@ public class FakeJwtProvider implements JwtProvider {
 
   private final Map<String, String> tokenStore = new HashMap<>();
 
-  public String createAccessToken(String socialId) {
-    String token = "mock-access-token:" + socialId;
-    tokenStore.put(token, socialId);
-    return token;
-  }
-
-  public String createRefreshToken(String socialId) {
-    String token = "mock-refresh-token" + socialId;
-    tokenStore.put(token, socialId);
-    return token;
+  @Override
+  public String createRefreshToken(String socialId, String tokenId) {
+    return null;
   }
 
   public boolean validateToken(String token) {
@@ -39,5 +32,10 @@ public class FakeJwtProvider implements JwtProvider {
   @Override
   public long getExpiration(String accessToken) {
     return 0;
+  }
+
+  @Override
+  public String extractTokenId(String refreshToken) {
+    return null;
   }
 }

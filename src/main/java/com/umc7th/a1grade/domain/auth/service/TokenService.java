@@ -7,9 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface TokenService {
   Map<String, String> rotateRefreshToken(String refreshToke);
 
-  String validateAndExtractSocialId(String refreshToken);
+  Map<String, String> validateAndExtractSocialId(String refreshToken);
 
-  Map<String, String> createNewTokens(String socialId, boolean isProfileComplete);
+  Map<String, String> createNewTokens(String socialId, boolean isProfileComplete, String tokenId);
 
   void logout(UserDetails userDetails, String refreshToken);
 }

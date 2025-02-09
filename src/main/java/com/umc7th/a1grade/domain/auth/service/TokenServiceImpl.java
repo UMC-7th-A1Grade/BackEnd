@@ -1,6 +1,7 @@
 package com.umc7th.a1grade.domain.auth.service;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,8 +35,11 @@ public class TokenServiceImpl implements TokenService {
 
   @Override
   public Map<String, String> rotateRefreshToken(String refreshToken) {
-    String socialId = validateAndExtractSocialId(refreshToken);
-    log.info("socialId 출력: {}", socialId);
+    Map<String, String> tokenInfo = validateAndExtractSocialId(refreshToken);
+    String socialId = tokenInfo.get("socialId");
+    String oldTokenId = tokenInfo.get("tokenId");
+
+    log.info("요청 RT로부터 추출한 socialId {}, oldTokenId {}", socialId, oldTokenId);
 
     User user =
         userRepository
@@ -43,13 +47,14 @@ public class TokenServiceImpl implements TokenService {
             .orElseThrow(() -> new AuthHandler(UserErrorStatus._USER_NOT_FOUND));
 
     boolean isProfileComplete = user.getNickName() != null;
-    Map<String, String> newTokens = createNewTokens(socialId, isProfileComplete);
-    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId;
+    String newTokenId = UUID.randomUUID().toString();
+    Map<String, String> newTokens = createNewTokens(socialId, isProfileComplete, newTokenId);
+    String newRefreshTokenKey = REFRESH_TOKEN_PREFIX + socialId + ":" + newTokenId;
 
     redisTemplate
         .opsForValue()
         .set(
-            refreshTokenKey,
+            newRefreshTokenKey,
             newTokens.get("refreshToken"),
             REFRESH_TOKEN_EXPIRE_TIME,
             TimeUnit.MILLISECONDS);
@@ -68,12 +73,19 @@ public class TokenServiceImpl implements TokenService {
       throw new AuthHandler(AuthErrorStatus._LOGOUT_FAILED);
     }
 
-    String socialId = userDetails.getUsername();
-    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId;
+    String socialId = jwtProvider.extractSocialId(refreshToken);
+    String tokenId = jwtProvider.extractTokenId(refreshToken);
+
+    if (!userDetails.getUsername().equals(socialId)) {
+      log.error(" 로그아웃 실패 - 사용자 정보 불일치 ");
+      throw new AuthHandler(AuthErrorStatus._LOGOUT_FAILED);
+    }
+
+    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId + ":" + tokenId;
     String storedToken = redisTemplate.opsForValue().get(refreshTokenKey);
 
-    if (storedToken == null) {
-      log.error("로그아웃 실패 - Redis에 해당 Refresh Token이 존재하지 않음: {}", refreshTokenKey);
+    if (storedToken == null || !storedToken.equals(refreshToken)) {
+      log.error(" 로그아웃 실패 - Redis에 저장된 RT와 제공된 RT가 일치하지 않음 : {}, {}", refreshToken, storedToken);
       throw new AuthHandler(AuthErrorStatus._LOGOUT_FAILED);
     }
 
@@ -81,18 +93,20 @@ public class TokenServiceImpl implements TokenService {
     log.info("로그아웃 - Refresh Token 삭제 완료  {}", refreshTokenKey);
   }
 
-  public String validateAndExtractSocialId(String refreshToken) {
+  public Map<String, String> validateAndExtractSocialId(String refreshToken) {
     if (refreshToken == null) {
       throw new AuthHandler(AuthErrorStatus._REFRESH_TOKEN_REQUIRED);
     }
 
     jwtProvider.validateToken(refreshToken);
     String socialId = jwtProvider.extractSocialId(refreshToken);
-    log.info("아이디 {}", socialId);
+    String tokenId = jwtProvider.extractTokenId(refreshToken);
+    log.info("아이디 {}, 토큰 아이디{}", socialId, tokenId);
 
-    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId;
+    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId + ":" + tokenId;
     String storedToken = redisTemplate.opsForValue().get(refreshTokenKey);
     log.error("저장된 토큰 {}", storedToken);
+
     if (storedToken == null || !storedToken.equals(refreshToken)) {
       log.error("토큰 검증 실패 : 저장된 토큰과 일치하지 않음");
       throw new AuthHandler(AuthErrorStatus._RTR_FAIL_DELETE);
@@ -101,12 +115,15 @@ public class TokenServiceImpl implements TokenService {
     redisTemplate.delete(refreshTokenKey);
     log.info("Refresh Token 삭제 완료 : {}", refreshTokenKey);
 
-    return socialId;
+    return Map.of(
+        "socialId", socialId,
+        "tokenId", tokenId);
   }
 
-  public Map<String, String> createNewTokens(String socialId, boolean isProfileComplete) {
+  public Map<String, String> createNewTokens(
+      String socialId, boolean isProfileComplete, String tokenId) {
     String newAccessToken = jwtProvider.createAccessToken(socialId, isProfileComplete);
-    String newRefreshToken = jwtProvider.createRefreshToken(socialId);
+    String newRefreshToken = jwtProvider.createRefreshToken(socialId, tokenId);
 
     return Map.of(
         "accessToken", newAccessToken,
