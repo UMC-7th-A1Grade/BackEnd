@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc7th.a1grade.domain.character.entity.Character;
 import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
 import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
+import com.umc7th.a1grade.domain.user.dto.UserCreditResponseDto;
 import com.umc7th.a1grade.domain.user.dto.UserGradeResponseDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
@@ -22,6 +23,7 @@ import com.umc7th.a1grade.domain.user.exception.UserHandler;
 import com.umc7th.a1grade.domain.user.exception.status.UserErrorStatus;
 import com.umc7th.a1grade.domain.user.repository.UserCharacterRepository;
 import com.umc7th.a1grade.domain.user.repository.UserRepository;
+import com.umc7th.a1grade.global.exception.GeneralException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +88,25 @@ public class UserServiceImpl implements UserService {
       }
     }
     return top3Users;
+  }
+
+  @Override
+  public UserCreditResponseDto findUserCredit(UserDetails userDetails) {
+    User user = findUserBySocialId(userDetails.getUsername());
+    return new UserCreditResponseDto(user.getCredit());
+  }
+
+  @Override
+  @Transactional
+  public UserCreditResponseDto updateUserCredit(UserDetails userDetails) {
+    User user = findUserBySocialId(userDetails.getUsername());
+    if (user.getCredit() > 0) {
+      user.setCredit(user.getCredit() - 1);
+    } else {
+      throw new GeneralException(UserErrorStatus._USER_CREDIT_ZERO);
+    }
+    userRepository.save(user);
+    return new UserCreditResponseDto(user.getCredit());
   }
 
   @Override

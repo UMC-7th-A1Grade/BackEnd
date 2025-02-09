@@ -18,7 +18,8 @@ public enum UserErrorStatus implements BaseErrorCode {
   _USER_NICKNAME_NULL(HttpStatus.BAD_REQUEST, "NICKNAME4003", "닉네임은 필수로 입력해야 합니다."),
 
   _USER_EMAIL_EXIST(HttpStatus.BAD_REQUEST, "EMAIL4004", "이미 가입되어 있는 이메일입니다."),
-  _USER_INFO_INVALID(HttpStatus.BAD_REQUEST, "CHAR4005", "존재하지 않은 캐릭터 아이디 입니다.");
+  _USER_INFO_INVALID(HttpStatus.BAD_REQUEST, "CHAR4005", "존재하지 않은 캐릭터 아이디 입니다."),
+  _USER_CREDIT_ZERO(HttpStatus.BAD_REQUEST, "CREDIT4003", "사용자의 크레딧이 부족합니다.");
 
   private final HttpStatus httpStatus;
   private final String code;

@@ -15,6 +15,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import com.umc7th.a1grade.domain.question.entity.mapping.UserQuestion;
 import com.umc7th.a1grade.domain.user.entity.mapping.UserCharacter;
 import com.umc7th.a1grade.global.common.BaseTimeEntity;
@@ -48,6 +50,10 @@ public class User extends BaseTimeEntity {
 
   private String nickName;
 
+  @ColumnDefault("100")
+  @Builder.Default
+  private Integer credit = 100;
+
   @Builder.Default
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<UserCharacter> userCharacters = new ArrayList<>();
@@ -62,5 +68,9 @@ public class User extends BaseTimeEntity {
 
   public void setNickName(String nickname) {
     this.nickName = nickname;
+  }
+
+  public void setCredit(Integer credit) {
+    this.credit = credit;
   }
 }

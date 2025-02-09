@@ -86,6 +86,7 @@ public class GoogleTokenService implements OAuth2TokenService {
   public User createNewUser(OAuthAttributes attributes) {
     User newUser = attributes.toEntity();
     newUser.setRole(Role.ROLE_USER);
+    newUser.setCredit(100);
     return userRepository.save(newUser);
   }
 
