@@ -89,10 +89,14 @@ public class TokenServiceImpl implements TokenService {
     jwtProvider.validateToken(refreshToken);
     String socialId = jwtProvider.extractSocialId(refreshToken);
     log.info("아이디 {}", socialId);
-    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId;
 
+    String refreshTokenKey = REFRESH_TOKEN_PREFIX + socialId;
     String storedToken = redisTemplate.opsForValue().get(refreshTokenKey);
     log.error("저장된 토큰 {}", storedToken);
+    if (storedToken == null || !storedToken.equals(refreshToken)) {
+      log.error("토큰 검증 실패 : 저장된 토큰과 일치하지 않음");
+      throw new AuthHandler(AuthErrorStatus._RTR_FAIL_DELETE);
+    }
 
     redisTemplate.delete(refreshTokenKey);
     log.info("Refresh Token 삭제 완료 : {}", refreshTokenKey);
