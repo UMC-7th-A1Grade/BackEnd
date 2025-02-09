@@ -48,6 +48,8 @@ public class User extends BaseTimeEntity {
 
   private String nickName;
 
+  @NotNull private Integer credit;
+
   @Builder.Default
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   private List<UserCharacter> userCharacters = new ArrayList<>();
@@ -62,5 +64,9 @@ public class User extends BaseTimeEntity {
 
   public void setNickName(String nickname) {
     this.nickName = nickname;
+  }
+
+  public void setCredit(Integer credit) {
+    this.credit = credit;
   }
 }

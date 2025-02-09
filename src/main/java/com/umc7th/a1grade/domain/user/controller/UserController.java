@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
+import com.umc7th.a1grade.domain.user.dto.UserCreditResponseDto;
 import com.umc7th.a1grade.domain.user.dto.UserGradeResponseDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
 import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
@@ -104,5 +105,24 @@ public class UserController {
 
     List<AllGradeResponseDto> response = userService.findTop3UserGrade(userDetails);
     return ApiResponse.of(UserSuccessStatus._ALLUSER_GRADE_OK, response);
+  }
+
+  @Operation(summary = "사용자 크레딧 개수 조회", description = "사용자 현재 크레딧 개수 조회")
+  @ApiErrorCodeExample(UserErrorStatus.class)
+  @GetMapping(value = "/credit", produces = "application/json")
+  public ApiResponse<UserCreditResponseDto> findUserCredit(
+      @AuthenticationPrincipal UserDetails userDetails) {
+
+    UserCreditResponseDto response = userService.findUserCredit(userDetails);
+    return ApiResponse.of(UserSuccessStatus._USER_CREDIT_OK, response);
+  }
+
+  @Operation(summary = "사용자 크레딧 개수 수정", description = "사용자 현재 크레딧 1개 차감")
+  @ApiErrorCodeExample(UserErrorStatus.class)
+  @PatchMapping(value = "/credit", produces = "application/json")
+  public ApiResponse<UserCreditResponseDto> updateUserCredit(
+      @AuthenticationPrincipal UserDetails userDetails) {
+    UserCreditResponseDto response = userService.updateUserCredit(userDetails);
+    return ApiResponse.of(UserSuccessStatus._USER_CREDIT_OK, response);
   }
 }
