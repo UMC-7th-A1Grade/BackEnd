@@ -3,6 +3,7 @@ package com.umc7th.a1grade.domain.user.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.umc7th.a1grade.domain.user.dto.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc7th.a1grade.domain.character.entity.Character;
 import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
-import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserCreditResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserGradeResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
-import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.domain.user.entity.mapping.UserCharacter;
 import com.umc7th.a1grade.domain.user.exception.UserHandler;
@@ -112,6 +108,12 @@ public class UserServiceImpl implements UserService {
   @Override
   public void logout(UserDetails userDetails) {
     User user = findUserBySocialId(userDetails.getUsername());
+  }
+
+  @Override
+  public UserNicknameResponseDto getUserNickName(UserDetails userDetails) {
+    User user = findUserBySocialId(userDetails.getUsername());
+    return new UserNicknameResponseDto(user.getNickName());
   }
 
   private UserCharacter createUserCharacter(User user, Character character) {

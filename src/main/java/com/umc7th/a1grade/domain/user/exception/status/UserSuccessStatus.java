@@ -12,6 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserSuccessStatus implements BaseCode {
   _NICKNAME_OK(HttpStatus.OK, "NINKNAME2000", "사용가능한 닉네임입니다."),
+  _GET_NICKNAME_OK(HttpStatus.OK, "NINKNAME2002", "사용자의 닉네임을 조회하였습니다.."),
   _USER_GRADE_OK(HttpStatus.OK, "GRADE2000", "사용자의 오답 정답 개수를 성공적으로 조회하였습니다."),
   _ALLUSER_GRADE_OK(HttpStatus.OK, "GRADE2001", "TOP 3명의 정답 오답 개수를 성공적으로 조회하였습니다."),
   _USER_CREDIT_OK(HttpStatus.OK, "CREDIT2000", "사용자의 크레딧 개수를 성공적으로 조회하였습니다."),
