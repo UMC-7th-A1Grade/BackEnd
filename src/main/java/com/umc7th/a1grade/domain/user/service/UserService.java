@@ -2,8 +2,9 @@ package com.umc7th.a1grade.domain.user.service;
 
 import java.util.List;
 
-import com.umc7th.a1grade.domain.user.dto.*;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.umc7th.a1grade.domain.user.dto.*;
 
 public interface UserService {
 

@@ -72,8 +72,9 @@ public class RankingServiceImpl implements RankingService {
         characterUrl = user.getUserCharacters().get(0).getCharacter().getImageUrl();
       }
 
-      AllGradeResponseDto dto = AllGradeResponseDto.builder()
-              .grade(i+1)
+      AllGradeResponseDto dto =
+          AllGradeResponseDto.builder()
+              .grade(i + 1)
               .userId(user.getId())
               .nickName(user.getNickName())
               .characterUrl(characterUrl)

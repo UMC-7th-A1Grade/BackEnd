@@ -2,7 +2,6 @@ package com.umc7th.a1grade.domain.user.controller;
 
 import java.util.List;
 
-import com.umc7th.a1grade.domain.user.dto.*;
 import jakarta.validation.Valid;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.umc7th.a1grade.domain.user.dto.*;
 import com.umc7th.a1grade.domain.user.exception.status.UserErrorStatus;
 import com.umc7th.a1grade.domain.user.exception.status.UserSuccessStatus;
 import com.umc7th.a1grade.domain.user.service.UserService;
@@ -37,67 +37,70 @@ public class UserController {
   private final UserService userService;
 
   @Operation(
-          summary = "닉네임 중복 확인",
-          description = """
+      summary = "닉네임 중복 확인",
+      description = """
                   사용자가 입력한 닉네임이 이미 존재하는지 확인합니다.
                   """)
   @Parameters({
-          @Parameter(
-                  name = "nickname",
-                  description = "중복 확인을 요청할 닉네임",
-                  required = true,
-                  example = "testUser")
+    @Parameter(
+        name = "nickname",
+        description = "중복 확인을 요청할 닉네임",
+        required = true,
+        example = "testUser")
   })
   @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "", produces = "application/json")
   public ApiResponse<Boolean> confirmNickName(
-          @AuthenticationPrincipal UserDetails userDetails, @RequestParam("nickname") String nickname) {
+      @AuthenticationPrincipal UserDetails userDetails, @RequestParam("nickname") String nickname) {
     userService.confirmNickName(userDetails, nickname);
     return ApiResponse.of(UserSuccessStatus._NICKNAME_OK, true);
   }
 
   @Operation(
-          summary = "닉네임 및 선택한 캐릭터 정보 저장",
-          description = """
+      summary = "닉네임 및 선택한 캐릭터 정보 저장",
+      description = """
                   사용자에게 입력받은 닉네임과 캐릭터 Id 를 저장합니다.
                   """,
-          requestBody =
+      requestBody =
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                  description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
-                  required = true,
-                  content =
+              description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
+              required = true,
+              content =
                   @Content(
-                          mediaType = "application/json",
-                          schema = @Schema(implementation = UserInfoRequestDto.class))))
+                      mediaType = "application/json",
+                      schema = @Schema(implementation = UserInfoRequestDto.class))))
   @ApiErrorCodeExample(UserErrorStatus.class)
   @PatchMapping(value = "", consumes = "application/json", produces = "application/json")
   public ApiResponse<UserInfoResponseDto> saveUserInfo(
-          @AuthenticationPrincipal UserDetails userDetails,
-          @RequestBody @Valid UserInfoRequestDto requestDto) {
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestBody @Valid UserInfoRequestDto requestDto) {
     UserInfoResponseDto response = userService.saveUserInfo(userDetails, requestDto);
     return ApiResponse.of(UserSuccessStatus._USER_INFO_UPDATE, response);
   }
 
-  @Operation(summary = "오늘의 정답률", description = """
+  @Operation(
+      summary = "오늘의 정답률",
+      description = """
           사용자의 닉네임과 오답 정답의 개수를 조회합니다. \n
           """)
   @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "/grade", produces = "application/json")
   public ApiResponse<UserGradeResponseDto> findUserGrade(
-          @AuthenticationPrincipal UserDetails userDetails) {
+      @AuthenticationPrincipal UserDetails userDetails) {
     UserGradeResponseDto response = userService.findUserGrade(userDetails);
     return ApiResponse.of(UserSuccessStatus._USER_GRADE_OK, response);
   }
 
   @Operation(
-          summary = "1등급 경쟁 랭킹 조회",
-          description = """
+      summary = "1등급 경쟁 랭킹 조회",
+      description =
+          """
                   오답정답의 개수가 가장 많은 TOP 3 사용자의 정보를 조회합니다.  \n
                   """)
   @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "/allgrade", produces = "application/json")
   public ApiResponse<List<AllGradeResponseDto>> findTop3UserGrade(
-          @AuthenticationPrincipal UserDetails userDetails) {
+      @AuthenticationPrincipal UserDetails userDetails) {
 
     List<AllGradeResponseDto> response = userService.findTop3UserGrade(userDetails);
     return ApiResponse.of(UserSuccessStatus._ALLUSER_GRADE_OK, response);
@@ -107,7 +110,7 @@ public class UserController {
   @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "/credit", produces = "application/json")
   public ApiResponse<UserCreditResponseDto> findUserCredit(
-          @AuthenticationPrincipal UserDetails userDetails) {
+      @AuthenticationPrincipal UserDetails userDetails) {
 
     UserCreditResponseDto response = userService.findUserCredit(userDetails);
     return ApiResponse.of(UserSuccessStatus._USER_CREDIT_OK, response);
@@ -117,17 +120,17 @@ public class UserController {
   @ApiErrorCodeExample(UserErrorStatus.class)
   @PatchMapping(value = "/credit", produces = "application/json")
   public ApiResponse<UserCreditResponseDto> updateUserCredit(
-          @AuthenticationPrincipal UserDetails userDetails) {
+      @AuthenticationPrincipal UserDetails userDetails) {
     UserCreditResponseDto response = userService.updateUserCredit(userDetails);
     return ApiResponse.of(UserSuccessStatus._USER_CREDIT_OK, response);
   }
 
-  @Operation(summary = "메인 페이지 유저 닉네임 조회",description="사용자의 닉네임 조회")
+  @Operation(summary = "메인 페이지 유저 닉네임 조회", description = "사용자의 닉네임 조회")
   @ApiErrorCodeExample(UserErrorStatus.class)
-  @GetMapping(value="/nickname",produces = "application/json")
+  @GetMapping(value = "/nickname", produces = "application/json")
   public ApiResponse<UserNicknameResponseDto> getUserNickname(
-          @AuthenticationPrincipal UserDetails userDetails){
+      @AuthenticationPrincipal UserDetails userDetails) {
     UserNicknameResponseDto response = userService.getUserNickName(userDetails);
-    return ApiResponse.of(UserSuccessStatus._GET_NICKNAME_OK,response);
+    return ApiResponse.of(UserSuccessStatus._GET_NICKNAME_OK, response);
   }
 }

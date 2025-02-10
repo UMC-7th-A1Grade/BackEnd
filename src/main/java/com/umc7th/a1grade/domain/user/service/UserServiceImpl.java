@@ -3,7 +3,6 @@ package com.umc7th.a1grade.domain.user.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.umc7th.a1grade.domain.user.dto.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc7th.a1grade.domain.character.entity.Character;
 import com.umc7th.a1grade.domain.character.repository.CharacterRepository;
+import com.umc7th.a1grade.domain.user.dto.*;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.domain.user.entity.mapping.UserCharacter;
 import com.umc7th.a1grade.domain.user.exception.UserHandler;
