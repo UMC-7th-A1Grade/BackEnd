@@ -13,11 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserCreditResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserGradeResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
-import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
+import com.umc7th.a1grade.domain.user.dto.*;
 import com.umc7th.a1grade.domain.user.exception.status.UserErrorStatus;
 import com.umc7th.a1grade.domain.user.exception.status.UserSuccessStatus;
 import com.umc7th.a1grade.domain.user.service.UserService;
@@ -43,8 +39,8 @@ public class UserController {
   @Operation(
       summary = "닉네임 중복 확인",
       description = """
-        사용자가 입력한 닉네임이 이미 존재하는지 확인합니다.
-        """)
+                  사용자가 입력한 닉네임이 이미 존재하는지 확인합니다.
+                  """)
   @Parameters({
     @Parameter(
         name = "nickname",
@@ -63,8 +59,8 @@ public class UserController {
   @Operation(
       summary = "닉네임 및 선택한 캐릭터 정보 저장",
       description = """
-      사용자에게 입력받은 닉네임과 캐릭터 Id 를 저장합니다.
-      """,
+                  사용자에게 입력받은 닉네임과 캐릭터 Id 를 저장합니다.
+                  """,
       requestBody =
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
               description = "사용자가 입력한 닉네임 및 캐릭터 아이디 정보",
@@ -82,9 +78,11 @@ public class UserController {
     return ApiResponse.of(UserSuccessStatus._USER_INFO_UPDATE, response);
   }
 
-  @Operation(summary = "오늘의 정답률", description = """
-      사용자의 닉네임과 오답 정답의 개수를 조회합니다. \n
-      """)
+  @Operation(
+      summary = "오늘의 정답률",
+      description = """
+          사용자의 닉네임과 오답 정답의 개수를 조회합니다. \n
+          """)
   @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "/grade", produces = "application/json")
   public ApiResponse<UserGradeResponseDto> findUserGrade(
@@ -95,9 +93,10 @@ public class UserController {
 
   @Operation(
       summary = "1등급 경쟁 랭킹 조회",
-      description = """
-      오답정답의 개수가 가장 많은 TOP 3 사용자의 정보를 조회합니다.  \n
-      """)
+      description =
+          """
+                  오답정답의 개수가 가장 많은 TOP 3 사용자의 정보를 조회합니다.  \n
+                  """)
   @ApiErrorCodeExample(UserErrorStatus.class)
   @GetMapping(value = "/allgrade", produces = "application/json")
   public ApiResponse<List<AllGradeResponseDto>> findTop3UserGrade(
@@ -124,5 +123,14 @@ public class UserController {
       @AuthenticationPrincipal UserDetails userDetails) {
     UserCreditResponseDto response = userService.updateUserCredit(userDetails);
     return ApiResponse.of(UserSuccessStatus._USER_CREDIT_OK, response);
+  }
+
+  @Operation(summary = "메인 페이지 유저 닉네임 조회", description = "사용자의 닉네임 조회")
+  @ApiErrorCodeExample(UserErrorStatus.class)
+  @GetMapping(value = "/nickname", produces = "application/json")
+  public ApiResponse<UserNicknameResponseDto> getUserNickname(
+      @AuthenticationPrincipal UserDetails userDetails) {
+    UserNicknameResponseDto response = userService.getUserNickName(userDetails);
+    return ApiResponse.of(UserSuccessStatus._GET_NICKNAME_OK, response);
   }
 }

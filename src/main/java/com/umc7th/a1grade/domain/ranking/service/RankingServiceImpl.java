@@ -65,19 +65,26 @@ public class RankingServiceImpl implements RankingService {
     for (int i = 0; i < top3Users.size(); i++) {
       UserRankingDto ranking = top3Users.get(i);
       String rankKey = "RANK:" + (i + 1);
+
+      User user = ranking.getUser();
+      String characterUrl = "";
+      if (user.getUserCharacters() != null && !user.getUserCharacters().isEmpty()) {
+        characterUrl = user.getUserCharacters().get(0).getCharacter().getImageUrl();
+      }
+
       AllGradeResponseDto dto =
           AllGradeResponseDto.builder()
-              .userId(ranking.getUser().getId())
-              .nickName(ranking.getUser().getNickName())
+              .grade(i + 1)
+              .userId(user.getId())
+              .nickName(user.getNickName())
+              .characterUrl(characterUrl)
               .correctCount(ranking.getCorrectCount())
               .accuracy(BigDecimal.valueOf(ranking.getAccuracy()))
               .build();
 
       try {
         String rankingJson = objectMapper.writeValueAsString(dto);
-
         redisTemplate.opsForValue().set(rankKey, rankingJson, ttl);
-
         log.info("저장 성공 : {} == {}, ( 삭제 시간 = {} )", rankKey, rankingJson, ttl.getSeconds());
       } catch (Exception e) {
         log.error("JSON 변환 오류: {}", e.getMessage());

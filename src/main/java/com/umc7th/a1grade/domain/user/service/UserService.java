@@ -4,11 +4,7 @@ import java.util.List;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.umc7th.a1grade.domain.user.dto.AllGradeResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserCreditResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserGradeResponseDto;
-import com.umc7th.a1grade.domain.user.dto.UserInfoRequestDto;
-import com.umc7th.a1grade.domain.user.dto.UserInfoResponseDto;
+import com.umc7th.a1grade.domain.user.dto.*;
 
 public interface UserService {
 
@@ -25,4 +21,6 @@ public interface UserService {
   UserCreditResponseDto updateUserCredit(UserDetails userDetails);
 
   void logout(UserDetails userDetails);
+
+  UserNicknameResponseDto getUserNickName(UserDetails userDetails);
 }
