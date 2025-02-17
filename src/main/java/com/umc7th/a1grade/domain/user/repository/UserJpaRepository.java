@@ -32,6 +32,6 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
           + "    FROM QuestionLog ql "
           + "    WHERE ql.isCorrect = true "
           + "    GROUP BY ql.user.id "
-          + "    HAVING COUNT(DISTINCT ql.userQuestion.id) >= 50)")
+          + "    HAVING COUNT(DISTINCT ql.userQuestion.id) >= 10)")
   List<User> findUserWithCorrectAnswers();
 }
