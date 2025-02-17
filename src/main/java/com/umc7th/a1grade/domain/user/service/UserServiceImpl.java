@@ -3,10 +3,13 @@ package com.umc7th.a1grade.domain.user.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,16 +75,27 @@ public class UserServiceImpl implements UserService {
 
     for (int i = 1; i <= 3; i++) {
       String rankKey = "RANK:" + i;
-      String rankingJson = redisTemplate.opsForValue().get(rankKey);
-
-      if (rankingJson != null) {
-        try {
-          AllGradeResponseDto dto = objectMapper.readValue(rankingJson, AllGradeResponseDto.class);
-          top3Users.add(dto);
-        } catch (JsonProcessingException e) {
-          log.info("JSON 변환 오류: " + e.getMessage());
+      try {
+        String rankingJson = redisTemplate.opsForValue().get(rankKey);
+        if (!StringUtils.hasText(rankingJson)) {
+          log.info("순위{}에 해당하는 데이터 없음", i);
+          continue;
         }
+        top3Users.add(objectMapper.readValue(rankingJson, AllGradeResponseDto.class));
+      } catch (JsonProcessingException e) {
+        log.error("순위 {} 데이터 JSON 변환 실패: {}", i, e.getMessage());
+        throw new UserHandler(UserErrorStatus._USER_JSON_PARSE_FAIL);
+      } catch (RedisConnectionFailureException e) {
+        log.error("Redis 서버 연결 실패: {}", e.getMessage());
+        throw new UserHandler(UserErrorStatus._USER_REDIS_CONNECTION_FAIL);
+      } catch (DataAccessException e) {
+        log.error("Redis 데이터 접근 오류 발생: {}", e.getMessage());
+        throw new UserHandler(UserErrorStatus._USER_REDIS_ACCESS_ERROR);
       }
+    }
+    if (top3Users.isEmpty()) {
+      log.warn("상위 3명에 대한 데이터가 없습니다.");
+      throw new UserHandler(UserErrorStatus._USER_TOP3_NOT_FOUND);
     }
     return top3Users;
   }
