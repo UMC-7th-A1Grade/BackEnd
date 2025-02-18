@@ -73,7 +73,8 @@ public class GenerateQuestionManager {
                     the output (message) should be: “Successfully generated a similar problem.”
                     8. You should not present the same problem as the image. You must modify it to create a similar problem.
                     9. When returning similar problems and solutions, any mathematical expressions in LaTeX should be enclosed between $ and $.
-                    For example: "Given the condition, the function $y = 8f(x) = 8 \\log x$ and the line..."
+                    For example: "Given the condition, the function $y = 8f(x) = 8 log x$ and the line..."
+                    10. Any mathematical expressions, except for general variables, should be enclosed with dollar signs ($) on both sides.
                     </instruction>
                     <example>
                     I will provide an example response. Even if an image with a problem similar
