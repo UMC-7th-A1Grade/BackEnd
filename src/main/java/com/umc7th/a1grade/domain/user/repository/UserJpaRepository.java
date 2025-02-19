@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.domain.user.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,4 +35,11 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
           + "    GROUP BY ql.user.id "
           + "    HAVING COUNT(DISTINCT ql.userQuestion.id) >= 10)")
   List<User> findUserWithCorrectAnswers();
+
+  @Query(
+      "SELECT DISTINCT ql.user FROM QuestionLog ql "
+          + "WHERE ql.submissionTime "
+          + "BETWEEN :start AND :end")
+  List<User> findUsersWhoSolvedQuestions(
+      @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
