@@ -36,10 +36,11 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
           + "    HAVING COUNT(DISTINCT ql.userQuestion.id) >= 10)")
   List<User> findUserWithCorrectAnswers();
 
-  @Query("SELECT u FROM User u " +
-          "LEFT JOIN FETCH u.userCharacters " +
-          "WHERE u.id IN " +
-          "(SELECT DISTINCT ql.user.id FROM QuestionLog ql WHERE ql.submissionTime BETWEEN :start AND :end)")
-  List<User> findUsersWhoSolvedQuestions(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
-
+  @Query(
+      "SELECT u FROM User u "
+          + "LEFT JOIN FETCH u.userCharacters "
+          + "WHERE u.id IN "
+          + "(SELECT DISTINCT ql.user.id FROM QuestionLog ql WHERE ql.submissionTime BETWEEN :start AND :end)")
+  List<User> findUsersWhoSolvedQuestions(
+      @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }

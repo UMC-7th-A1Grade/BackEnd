@@ -33,7 +33,7 @@ public class RankingServiceImpl implements RankingService {
   private final ObjectMapper objectMapper;
 
   @Scheduled(cron = "0 0 0 * * ?")
-//  @Scheduled(cron = "0 */1 * * * ?")
+  //  @Scheduled(cron = "0 */1 * * * ?")
   public void scheduleDailyRankingUpdate() {
     log.info("갱신 실행");
     updateDailyRanking();

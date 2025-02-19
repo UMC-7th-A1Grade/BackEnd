@@ -43,7 +43,8 @@ public interface QuestionLogRepository extends JpaRepository<QuestionLog, Long> 
           + "FROM QuestionLog ql "
           + "WHERE ql.user.id = :userId "
           + "AND ql.submissionTime BETWEEN :start AND :end")
-  long countTotalAttempts(@Param("userId") Long userId,
-                          @Param("start") LocalDateTime start,
-                          @Param("end") LocalDateTime end);
+  long countTotalAttempts(
+      @Param("userId") Long userId,
+      @Param("start") LocalDateTime start,
+      @Param("end") LocalDateTime end);
 }
