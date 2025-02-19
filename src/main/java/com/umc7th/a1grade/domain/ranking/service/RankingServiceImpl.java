@@ -33,6 +33,7 @@ public class RankingServiceImpl implements RankingService {
   private final ObjectMapper objectMapper;
 
   @Scheduled(cron = "0 0 0 * * ?")
+  //  @Scheduled(cron = "0 */1 * * * ?")
   public void scheduleDailyRankingUpdate() {
     log.info("갱신 실행");
     updateDailyRanking();
@@ -59,7 +60,8 @@ public class RankingServiceImpl implements RankingService {
     saveRankingToRedis(top3Users);
   }
 
-  private void saveRankingToRedis(List<UserRankingDto> top3Users) {
+  @Transactional
+  public void saveRankingToRedis(List<UserRankingDto> top3Users) {
     Duration ttl = getRemainingTime();
 
     for (int i = 0; i < top3Users.size(); i++) {

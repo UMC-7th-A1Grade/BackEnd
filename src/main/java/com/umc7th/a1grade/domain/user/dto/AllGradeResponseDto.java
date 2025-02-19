@@ -3,15 +3,13 @@ package com.umc7th.a1grade.domain.user.dto;
 import java.math.BigDecimal;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 @Data
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Schema(title = "AllGradeResponseDto : 3순위 사용자 조회 응답 DTO")
 public class AllGradeResponseDto {
   @Schema(description = "사용자 순위", example = "1")

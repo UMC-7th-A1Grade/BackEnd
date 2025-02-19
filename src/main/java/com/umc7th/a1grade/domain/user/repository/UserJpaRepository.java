@@ -37,9 +37,10 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
   List<User> findUserWithCorrectAnswers();
 
   @Query(
-      "SELECT DISTINCT ql.user FROM QuestionLog ql "
-          + "WHERE ql.submissionTime "
-          + "BETWEEN :start AND :end")
+      "SELECT u FROM User u "
+          + "LEFT JOIN FETCH u.userCharacters "
+          + "WHERE u.id IN "
+          + "(SELECT DISTINCT ql.user.id FROM QuestionLog ql WHERE ql.submissionTime BETWEEN :start AND :end)")
   List<User> findUsersWhoSolvedQuestions(
       @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 }
