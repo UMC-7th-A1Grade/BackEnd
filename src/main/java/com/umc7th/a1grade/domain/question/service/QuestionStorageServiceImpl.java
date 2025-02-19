@@ -53,12 +53,15 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
       throw new GeneralException(QuestionStorageErrorStatus.QUESTION_DATABASE_ERROR);
     }
 
+<<<<<<< HEAD
     if (questionType != QuestionType.AI
         && questionType != QuestionType.USER
         && questionType != null) {
       throw new GeneralException(QuestionStorageErrorStatus.INVALID_QUESTION_TYPE);
     }
 
+=======
+>>>>>>> d2bea99 (♻️ Refactor: 저장소 문제 조회 리턴값 수정)
     return QuestionStorageConverter.toQuestionListDTO(userQuestions);
   }
 

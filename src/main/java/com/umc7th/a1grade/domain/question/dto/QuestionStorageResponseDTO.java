@@ -35,6 +35,7 @@ public class QuestionStorageResponseDTO {
   @Getter
   @NoArgsConstructor
   @AllArgsConstructor
+<<<<<<< HEAD
   @Schema(title = "Storage : 문제 리스트 Response DTO")
   public static class UserQuestionListDTO {
     @Schema(description = "문제 리스트")
@@ -52,5 +53,11 @@ public class QuestionStorageResponseDTO {
   public static class UserQuestionIdListDTO {
     @Schema(description = "문제 아이디 리스트")
     List<Long> userQuestionIds;
+=======
+  @Schema(title = "Storage : 문제 리스트 DTO")
+  public static class QuestionListDTO {
+    @Schema(description = " 문제 리스트")
+    List<QuestionStorageResponseDTO.UserQuestionDTO> questions;
+>>>>>>> d2bea99 (♻️ Refactor: 저장소 문제 조회 리턴값 수정)
   }
 }
