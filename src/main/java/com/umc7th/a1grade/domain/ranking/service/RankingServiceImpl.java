@@ -44,7 +44,7 @@ public class RankingServiceImpl implements RankingService {
     LocalDateTime start = LocalDate.now().minusDays(1).atStartOfDay();
     LocalDateTime end = LocalDate.now().atStartOfDay();
 
-    List<User> users = getUsersWithEnoughCorrectAnswers();
+    List<User> users = getUsers(start, end);
 
     List<UserRankingDto> top3Users =
         users.stream()
@@ -99,8 +99,8 @@ public class RankingServiceImpl implements RankingService {
     return Duration.between(now, night);
   }
 
-  private List<User> getUsersWithEnoughCorrectAnswers() {
-    return userRepository.findUserWithCorrectAnswers();
+  private List<User> getUsers(LocalDateTime start, LocalDateTime end) {
+    return userRepository.findUsersWhoSolvedQuestions(start, end);
   }
 
   private UserRankingDto calculateUserRanking(User user, LocalDateTime start, LocalDateTime end) {

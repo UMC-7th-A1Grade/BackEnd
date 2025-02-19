@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.domain.user.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,5 +43,15 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public List<User> findUserWithCorrectAnswers() {
     return userJpaRepository.findUserWithCorrectAnswers();
+  }
+
+  @Override
+  public List<User> findAll() {
+    return userJpaRepository.findAll();
+  }
+
+  @Override
+  public List<User> findUsersWhoSolvedQuestions(LocalDateTime start, LocalDateTime end) {
+    return userJpaRepository.findUsersWhoSolvedQuestions(start, end);
   }
 }

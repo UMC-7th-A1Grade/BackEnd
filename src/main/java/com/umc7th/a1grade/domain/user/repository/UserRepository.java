@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.domain.user.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +18,8 @@ public interface UserRepository {
   Long countCorrectAnswerByUserId(Long userId);
 
   List<User> findUserWithCorrectAnswers();
+
+  List<User> findAll();
+
+  List<User> findUsersWhoSolvedQuestions(LocalDateTime start, LocalDateTime end);
 }
