@@ -1,5 +1,6 @@
 package com.umc7th.a1grade.unittest.user.fake;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,6 +64,11 @@ public class FakeUserRepository implements UserRepository {
 
   public List<User> findAll() {
     return new ArrayList<>(data);
+  }
+
+  @Override
+  public List<User> findUsersWhoSolvedQuestions(LocalDateTime start, LocalDateTime end) {
+    return null;
   }
 
   public void clear() {
