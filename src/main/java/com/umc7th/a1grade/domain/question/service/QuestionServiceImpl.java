@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +44,7 @@ public class QuestionServiceImpl implements QuestionService {
   private final S3Service s3Service;
 
   @Override
-  @Cacheable(value = "recentQuestions", key = "#userDetails.username")
+  // @Cacheable(value = "recentQuestions", key = "#userDetails.username")
   @Transactional(readOnly = true)
   public QuestionResponseDTO.RandomQuestionDTO getRecentQuestions(
       @AuthenticationPrincipal UserDetails userDetails) {
@@ -147,7 +145,7 @@ public class QuestionServiceImpl implements QuestionService {
   }
 
   @Override
-  @CacheEvict(value = "recentQuestions", key = "#userDetails.username")
+  // @CacheEvict(value = "recentQuestions", key = "#userDetails.username")
   public QuestionResponseDTO.SaveUserQuestionDTO saveQuestion(
       QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO, UserDetails userDetails) {
 
