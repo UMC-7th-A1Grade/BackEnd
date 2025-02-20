@@ -127,7 +127,12 @@ public class AuthController {
   @GetMapping(value = "/google", produces = "application/json")
   public ApiResponse<LoginResponse> processGoogleLogin(
       @RequestParam("code") String code, HttpServletResponse response) {
-    LoginResponse loginResponse = googleTokenService.handleLogin(code);
+
+    LoginResponse loginResponse =
+        code.equals("test")
+            ? googleTokenService.handleTestLogin(code)
+            : googleTokenService.handleLogin(code);
+
     ResponseCookie responseCookie =
         cookieHelper.createHttpOnlyCookie("refreshToken", loginResponse.getRefreshToken());
     response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());

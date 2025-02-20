@@ -10,4 +10,6 @@ public interface OAuth2TokenService {
   OAuthAttributes getUserInfo(String accessToken);
 
   LoginResponse handleLogin(String code);
+
+  LoginResponse handleTestLogin(String code);
 }

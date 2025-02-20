@@ -53,6 +53,12 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public UserInfoResponseDto saveUserInfo(UserDetails userDetails, UserInfoRequestDto requestDto) {
     User user = findUserBySocialId(userDetails.getUsername());
+
+    // 평가용 테스트 계정 용도(실제 서비스하는 경우 삭제)
+    if (user.getSocialId().equals("test")) {
+      return new UserInfoResponseDto(user, 7L); // 테스트 계정은 7번 캐릭터로 고정
+    }
+
     Character character = findCharacterById(requestDto.getCharacterId());
     UserCharacter userCharacter = createUserCharacter(user, character);
 
@@ -127,6 +133,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserNicknameResponseDto getUserNickName(UserDetails userDetails) {
     User user = findUserBySocialId(userDetails.getUsername());
+
     return new UserNicknameResponseDto(user.getNickName());
   }
 

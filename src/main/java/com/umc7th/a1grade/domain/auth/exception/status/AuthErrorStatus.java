@@ -22,6 +22,7 @@ public enum AuthErrorStatus implements BaseErrorCode {
   _RTR_FAIL_DELETE(HttpStatus.BAD_REQUEST, "AUTH4007", "리프레시 토큰 삭제 실패"),
 
   _LOGOUT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5000", "로그아웃 처리 중 오류가 발생했습니다."),
+  _TEST_LOGIN_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "테스트 유저 로그인 처리 중 오류가 발생했습니다."),
 
   EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_EXPIRED4001", "JWT 토큰이 만료되었습니다."),
   UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT_UNSUPPORTED4002", "지원되지 않는 JWT 형식입니다."),
