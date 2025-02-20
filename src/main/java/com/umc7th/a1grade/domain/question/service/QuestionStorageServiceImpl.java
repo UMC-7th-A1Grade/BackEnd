@@ -64,7 +64,7 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
   }
 
   @Override
-  @CacheEvict(value = "recentQuestions", key = "#userDetails.username")
+  //@CacheEvict(value = "recentQuestions", key = "#userDetails.username")
   public boolean deleteStorageQuestions(
       @AuthenticationPrincipal UserDetails userDetails,
       UserQuestionIdListDTO userQuestionIdListDTO) {

@@ -43,7 +43,7 @@ public class QuestionServiceImpl implements QuestionService {
   private final Utils utils;
 
   @Override
-  @Cacheable(value = "recentQuestions", key = "#userDetails.username")
+  //@Cacheable(value = "recentQuestions", key = "#userDetails.username")
   @Transactional(readOnly = true)
   public QuestionResponseDTO.RandomQuestionDTO getRecentQuestions(
       @AuthenticationPrincipal UserDetails userDetails) {
@@ -142,7 +142,7 @@ public class QuestionServiceImpl implements QuestionService {
   }
 
   @Override
-  @CacheEvict(value = "recentQuestions", key = "#userDetails.username")
+  //@CacheEvict(value = "recentQuestions", key = "#userDetails.username")
   public QuestionResponseDTO.SaveUserQuestionDTO saveQuestion(
       QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO, UserDetails userDetails) {
 
