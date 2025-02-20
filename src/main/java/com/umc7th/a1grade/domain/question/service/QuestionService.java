@@ -21,4 +21,6 @@ public interface QuestionService {
 
   QuestionResponseDTO.SaveUserQuestionDTO saveQuestion(
       QuestionRequestDTO.RequestSaveQuestionDTO requestSaveQuestionDTO, UserDetails userDetails);
+
+  void isDuplicateQuestion(UserDetails userDetails, String imageUrl);
 }

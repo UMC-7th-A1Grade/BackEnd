@@ -1,6 +1,8 @@
 package com.umc7th.a1grade.domain.openAI.controller;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +15,7 @@ import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.confirmQuestionRespon
 import com.umc7th.a1grade.domain.openAI.dto.OpenAIResponse.generateQuestionResponse;
 import com.umc7th.a1grade.domain.openAI.exception.AIErrorStatus;
 import com.umc7th.a1grade.domain.openAI.service.OpenAIService;
+import com.umc7th.a1grade.domain.question.service.QuestionService;
 import com.umc7th.a1grade.global.annotation.ApiErrorCodeExample;
 import com.umc7th.a1grade.global.apiPayload.ApiResponse;
 
@@ -26,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class OpenAIController {
 
   private final OpenAIService openAIService;
+  private final QuestionService questionService;
 
   @Operation(summary = "수학 문제 판별", description = "문제 업로드 페이지에서 사진을 찍은 후 찍은 사진이 수학 문제 이미지인지 판별")
   @ApiErrorCodeExample(AIErrorStatus.class)
@@ -42,8 +46,12 @@ public class OpenAIController {
   @ApiErrorCodeExample(AIErrorStatus.class)
   @PostMapping(value = "/generate", produces = "application/json")
   public ApiResponse<generateQuestionResponse> generateQuestion(
-      @Parameter(description = "유사 문제를 생성할 이미지 URL") @RequestParam String imageUrl) {
+      @Parameter(description = "유사 문제를 생성할 이미지 URL") @RequestParam String imageUrl,
+      @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
+          @AuthenticationPrincipal
+          UserDetails userDetails) {
 
+    questionService.isDuplicateQuestion(userDetails, imageUrl);
     generateQuestionResponse response = openAIService.generateQuestion(imageUrl);
     return ApiResponse.onSuccess(response);
   }

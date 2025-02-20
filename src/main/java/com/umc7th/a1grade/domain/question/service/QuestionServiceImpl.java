@@ -183,10 +183,7 @@ public class QuestionServiceImpl implements QuestionService {
       throw new GeneralException(QuestionErrorStatus.INVALID_QUESTION_TYPE);
     }
 
-    if (userQuestionRepository.existsByUserIdAndQuestionImageUrl(
-        user.getId(), requestSaveQuestionDTO.getImageUrl())) {
-      throw new GeneralException(QuestionErrorStatus.DUPLICATE_QUESTIONS);
-    }
+    isDuplicateQuestion(userDetails, requestSaveQuestionDTO.getImageUrl());
 
     Question question =
         questionRepository.save(QuestionConverter.toQuestion(requestSaveQuestionDTO));
@@ -205,5 +202,15 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     return QuestionConverter.toUserQuestionDTO(userQuestion);
+  }
+
+  @Override
+  public void isDuplicateQuestion(UserDetails userDetails, String imageUrl) {
+
+    User user = utils.getUserByUsername(userDetails.getUsername());
+
+    if (userQuestionRepository.existsByUserIdAndQuestionImageUrl(user.getId(), imageUrl)) {
+      throw new GeneralException(QuestionErrorStatus.DUPLICATE_QUESTIONS);
+    }
   }
 }
