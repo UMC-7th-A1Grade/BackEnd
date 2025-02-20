@@ -53,18 +53,6 @@ public class QuestionController {
     return ApiResponse.onSuccess(result);
   }
 
-  @GetMapping("/random/test")
-  @Operation(summary = "틀린 문제 중 랜덤 3문제 조회하기", description = "사용자가 틀린 3문제를 랜덤으로 조회하는 API")
-  @ApiErrorCodeExample(QuestionErrorStatus.class)
-  public ApiResponse<QuestionResponseDTO.RandomFalseQuestionDTO> getTestFalseRandomQuestions(
-      @Parameter(name = "userDetails", description = "인증된 사용자 정보", hidden = true)
-          @AuthenticationPrincipal
-          UserDetails userDetails) {
-    QuestionResponseDTO.RandomFalseQuestionDTO result =
-        questionService.testGetRandomFalseQuestions(userDetails);
-    return ApiResponse.onSuccess(result);
-  }
-
   @PostMapping("{questionId}/submit/")
   @Operation(summary = "답안 입력하기 컨트롤러 구현", description = "사용자가 푼 문제를 제출하는 API")
   @ApiErrorCodeExample(QuestionErrorStatus.class)
