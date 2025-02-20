@@ -76,6 +76,7 @@ public class GenerateQuestionManager {
                     For example: "Given the condition, the function $y = 8f(x) = 8 log x$ and the line..."
                     10. Any mathematical expressions, except for general variables, should be enclosed with dollar signs ($) on both sides.
                     11. If a LaTeX format string is output, you need to use double backslashes to include it in a JSON string. e.g. \\log{x}.
+                    12. When creating a problem-solving process, use the word 'Step' to indicate each stage. e.g. Step 1:, Step 2:
                     </instruction>
                     <example>
                     I will provide an example response. Even if an image with a problem similar
