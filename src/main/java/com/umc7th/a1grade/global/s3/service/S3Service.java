@@ -1,5 +1,7 @@
 package com.umc7th.a1grade.global.s3.service;
 
+import java.io.ByteArrayInputStream;
+import java.util.Base64;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -38,6 +40,38 @@ public class S3Service {
     try {
       amazonS3.putObject(
           new PutObjectRequest(s3Config.getBucket(), keyName, file.getInputStream(), metadata));
+      return amazonS3.getUrl(s3Config.getBucket(), keyName).toString();
+    } catch (Exception e) {
+      throw new GeneralException(S3ErrorStatus._FILE_SERVER_ERROR);
+    }
+  }
+
+  public String base64UploadFile(PathName pathName, String base64Url) {
+    if (!validateBase64(base64Url)) {
+      throw new GeneralException(S3ErrorStatus._INVALID_BASE64);
+    }
+
+    String base64Data = base64Url;
+    String contentType = "image/png";
+
+    if (base64Url.contains(",")) {
+      String[] parts = base64Url.split(",");
+      if (parts[0].contains("data:") && parts[0].contains(";base64")) {
+        contentType = parts[0].substring(5, parts[0].indexOf(";"));
+      }
+      base64Data = parts[1];
+    }
+
+    byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
+    String keyName = createKeyName(pathName);
+
+    ObjectMetadata metadata = new ObjectMetadata();
+    metadata.setContentLength(decodedBytes.length);
+    metadata.setContentType(contentType);
+
+    try (ByteArrayInputStream inputStream = new ByteArrayInputStream(decodedBytes)) {
+      amazonS3.putObject(
+          new PutObjectRequest(s3Config.getBucket(), keyName, inputStream, metadata));
       return amazonS3.getUrl(s3Config.getBucket(), keyName).toString();
     } catch (Exception e) {
       throw new GeneralException(S3ErrorStatus._FILE_SERVER_ERROR);
@@ -93,6 +127,10 @@ public class S3Service {
     if (contentType == null || !contentType.startsWith("image/")) {
       throw new GeneralException(S3ErrorStatus._FILE_TYPE_INVALID);
     }
+  }
+
+  private boolean validateBase64(String base64Data) {
+    return base64Data != null && !base64Data.trim().isEmpty();
   }
 
   public S3ResponseDTO.ImgUrlDTO ImgUpload(PathName pathName, MultipartFile file) {

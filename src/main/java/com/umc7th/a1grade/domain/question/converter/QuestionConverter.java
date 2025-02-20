@@ -25,15 +25,12 @@ public class QuestionConverter {
   private final QuestionLogRepository questionLogRepository;
 
   public QuestionLog toQuestionLog(
-      User user,
-      UserQuestion userQuestion,
-      QuestionRequestDTO.submitAnswerDTO answer,
-      boolean isCorrect) {
+      User user, UserQuestion userQuestion, String fileUrl, boolean isCorrect) {
     return QuestionLog.builder()
         .user(user)
         .userQuestion(userQuestion)
         .submissionTime(LocalDateTime.now())
-        .note(answer.getNote())
+        .note(fileUrl)
         .isCorrect(isCorrect)
         .build();
   }

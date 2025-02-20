@@ -29,6 +29,8 @@ import com.umc7th.a1grade.domain.question.repository.UserQuestionRepository;
 import com.umc7th.a1grade.domain.user.entity.User;
 import com.umc7th.a1grade.global.common.Utils;
 import com.umc7th.a1grade.global.exception.GeneralException;
+import com.umc7th.a1grade.global.s3.entity.PathName;
+import com.umc7th.a1grade.global.s3.service.S3Service;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,6 +43,7 @@ public class QuestionServiceImpl implements QuestionService {
   private final QuestionConverter questionConverter;
   private final UserQuestionRepository userQuestionRepository;
   private final Utils utils;
+  private final S3Service s3Service;
 
   @Override
   @Cacheable(value = "recentQuestions", key = "#userDetails.username")
@@ -73,8 +76,10 @@ public class QuestionServiceImpl implements QuestionService {
 
     boolean isCorrect = question.getAnswer().equals(answer.getAnswer());
 
+    String fileUrl = s3Service.base64UploadFile(PathName.NOTE, answer.getNote());
+
     questionLogRepository.save(
-        questionConverter.toQuestionLog(user, userQuestion, answer, isCorrect));
+        questionConverter.toQuestionLog(user, userQuestion, fileUrl, isCorrect));
 
     return questionConverter.toSubmitAnswerDTO(isCorrect);
   }
