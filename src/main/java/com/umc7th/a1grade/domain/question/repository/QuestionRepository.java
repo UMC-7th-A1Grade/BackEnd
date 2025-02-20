@@ -15,41 +15,29 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
   @Query(
       value =
           """
-        WITH ReviewableQuestions AS (
-            SELECT
-                q.id,
-                MAX(ql.submission_time) AS last_submission,
-                CASE
-                    WHEN MAX(ql.submission_time) IS NULL THEN 0
-                    WHEN TIMESTAMPDIFF(MONTH, MAX(ql.submission_time), NOW()) >= 2 THEN 6
-                    ELSE COUNT(ql.id)
-                END AS attempt_count
-            FROM question q
-            JOIN user_question uq ON q.id = uq.question_id
-            LEFT JOIN question_log ql ON uq.id = ql.user_question_id
-            WHERE uq.user_id = :userId
-            GROUP BY q.id
-            HAVING (
-                attempt_count = 0
-                OR (attempt_count = 1 AND last_submission + INTERVAL 10 MINUTE <= NOW())
-                OR (attempt_count = 2 AND last_submission + INTERVAL 1 DAY <= NOW())
-                OR (attempt_count = 3 AND last_submission + INTERVAL 1 WEEK <= NOW())
-                OR (attempt_count = 4 AND last_submission + INTERVAL 1 MONTH <= NOW())
-                OR (attempt_count = 5 AND last_submission + INTERVAL 2 MONTH <= NOW())
-            )
-        ),
-        RandomIds AS (
-            SELECT id
-            FROM ReviewableQuestions
-            WHERE attempt_count < 6
-            ORDER BY RAND()
-            LIMIT 3
-        )
         SELECT q.*
         FROM question q
-        JOIN RandomIds r ON q.id = r.id
+        JOIN user_question uq ON q.id = uq.question_id
+        LEFT JOIN question_log ql ON uq.id = ql.user_question_id
+        WHERE uq.user_id = :userId
+        GROUP BY q.id
+        HAVING (
+            MAX(ql.submission_time) IS NULL
+            OR MAX(ql.submission_time) + INTERVAL 2 MONTH >= NOW()
+        )
+        AND (
+            COUNT(ql.id) = 0
+            OR (COUNT(ql.id) = 1 AND MAX(ql.submission_time) + INTERVAL 10 MINUTE <= NOW())
+            OR (COUNT(ql.id) = 2 AND MAX(ql.submission_time) + INTERVAL 1 DAY <= NOW())
+            OR (COUNT(ql.id) = 3 AND MAX(ql.submission_time) + INTERVAL 1 WEEK <= NOW())
+            OR (COUNT(ql.id) = 4 AND MAX(ql.submission_time) + INTERVAL 1 MONTH <= NOW())
+            OR (COUNT(ql.id) = 5 AND MAX(ql.submission_time) + INTERVAL 2 MONTH <= NOW())
+        )
+        AND q.id >= (SELECT FLOOR(RAND() * (SELECT MAX(id) FROM question)))
+        LIMIT 3
         """,
       nativeQuery = true)
+
   // QuestionHistory를 사용하지 않고 questionLog submission_time과 count 함수를 사용하여 계산하는걸로 쿼리문 변경
   // CASE 문으로 2달이 넘은 문제는 count 6으로 변경하여 조회되지 않도록 변경
   // ID 값만 rand()함수를 적용하여 쿼리 최적화 진행
@@ -57,4 +45,31 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
   List<Question> findQuestionsByUserAndType(@Param("userId") Long userId);
 
   Optional<Question> findByImageUrlAndMemo(String imageUrl, String memo);
+
+  @Query(
+      value =
+          """
+        SELECT q.*
+        FROM question q
+        JOIN user_question uq ON q.id = uq.question_id
+        LEFT JOIN question_log ql ON uq.id = ql.user_question_id
+        WHERE uq.user_id = :userId
+        GROUP BY q.id
+        HAVING (
+            MAX(ql.submission_time) IS NULL
+            OR MAX(ql.submission_time) + INTERVAL 2 MONTH >= NOW()
+        )
+        AND (
+            COUNT(ql.id) = 0
+            OR (COUNT(ql.id) = 1 AND MAX(ql.submission_time) + INTERVAL 10 MINUTE <= NOW())
+            OR (COUNT(ql.id) = 2 AND MAX(ql.submission_time) + INTERVAL 1 DAY <= NOW())
+            OR (COUNT(ql.id) = 3 AND MAX(ql.submission_time) + INTERVAL 1 WEEK <= NOW())
+            OR (COUNT(ql.id) = 4 AND MAX(ql.submission_time) + INTERVAL 1 MONTH <= NOW())
+            OR (COUNT(ql.id) = 5 AND MAX(ql.submission_time) + INTERVAL 2 MONTH <= NOW())
+        )
+        ORDER BY RAND()
+        LIMIT 3
+        """,
+      nativeQuery = true)
+  List<Question> testFindQuestionsByUserAndType(@Param("userId") Long userId);
 }
