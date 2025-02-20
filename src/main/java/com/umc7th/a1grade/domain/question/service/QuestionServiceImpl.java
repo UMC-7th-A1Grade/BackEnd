@@ -118,6 +118,33 @@ public class QuestionServiceImpl implements QuestionService {
 
   @Override
   @Transactional(readOnly = true)
+  public QuestionResponseDTO.RandomFalseQuestionDTO testGetRandomFalseQuestions(
+      UserDetails userDetails) {
+    User user = utils.getUserByUsername(userDetails.getUsername());
+
+    List<Question> randomFalseQuestions;
+    try {
+      randomFalseQuestions = questionRepository.testFindQuestionsByUserAndType(user.getId());
+    } catch (DataAccessException e) {
+      throw new GeneralException(QuestionErrorStatus.QUESTION_DATABASE_ERROR);
+    }
+
+    if (randomFalseQuestions == null || randomFalseQuestions.isEmpty()) {
+      throw new GeneralException(QuestionErrorStatus.NO_QUESTIONS_FOUND);
+    }
+
+    if (randomFalseQuestions.size() < 3) {
+      throw new GeneralException(QuestionErrorStatus.INSUFFICENT_QUESTIONS);
+    }
+
+    List<QuestionResponseDTO.FalseQuestionDTO> falseQuestionDTO =
+        questionConverter.toFalseQuestionDTO(randomFalseQuestions);
+
+    return questionConverter.toRandomFalseQuestionDTO(falseQuestionDTO);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
   public QuestionResponseDTO.GetQuestionDTO getQuestion(
       Long userQuestionId, UserDetails userDetails) {
     UserQuestion userQuestion =
