@@ -2,7 +2,6 @@ package com.umc7th.a1grade.domain.question.service;
 
 import java.util.List;
 
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,7 +63,7 @@ public class QuestionStorageServiceImpl implements QuestionStorageService {
   }
 
   @Override
-  //@CacheEvict(value = "recentQuestions", key = "#userDetails.username")
+  // @CacheEvict(value = "recentQuestions", key = "#userDetails.username")
   public boolean deleteStorageQuestions(
       @AuthenticationPrincipal UserDetails userDetails,
       UserQuestionIdListDTO userQuestionIdListDTO) {
