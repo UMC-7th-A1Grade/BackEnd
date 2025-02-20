@@ -134,11 +134,6 @@ public class UserServiceImpl implements UserService {
   public UserNicknameResponseDto getUserNickName(UserDetails userDetails) {
     User user = findUserBySocialId(userDetails.getUsername());
 
-    // 평가용 테스트 계정 용도(실제 서비스하는 경우 삭제)
-    if (user.getSocialId().equals("test")) {
-      return new UserNicknameResponseDto(null);
-    }
-
     return new UserNicknameResponseDto(user.getNickName());
   }
 

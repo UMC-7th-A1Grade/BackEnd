@@ -99,4 +99,9 @@ public class FakeOAuth2TokenService implements OAuth2TokenService {
     // jwtRefreshToken);
     return null;
   }
+
+  @Override
+  public LoginResponse handleTestLogin(String code) {
+    return null;
+  }
 }
