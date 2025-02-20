@@ -20,6 +20,7 @@ public enum QuestionErrorStatus implements BaseErrorCode {
   INVALID_QUESTION_TYPE(HttpStatus.BAD_REQUEST, "QUESTION4009", "유효하지 않은 문제 타입입니다."),
   NO_QUESTIONS_FOUND(HttpStatus.NOT_FOUND, "QUESTION4010", "조건에 맞는 문제가 없습니다."),
   QUESTIONLOG_NOT_FOUND(HttpStatus.NOT_FOUND, "QUESTION4009", "문제 로그가 존재하지 않습니다."),
+  DUPLICATE_QUESTIONS(HttpStatus.BAD_REQUEST, "QUESTION4091", "이미 저장된 문제입니다."),
 
   QUESTION_DATABASE_ERROR(
       HttpStatus.INTERNAL_SERVER_ERROR, "QUESTION5000", "문제 조회 중 데이터베이스 오류가 발생하였습니다.");

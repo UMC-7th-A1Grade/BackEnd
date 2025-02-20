@@ -3,6 +3,7 @@ package com.umc7th.a1grade.domain.question.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -153,12 +154,21 @@ public class QuestionServiceImpl implements QuestionService {
       throw new GeneralException(QuestionErrorStatus.INVALID_QUESTION_TYPE);
     }
 
-    Question question = QuestionConverter.toQuestion(requestSaveQuestionDTO);
+    Optional<Question> existingQuestion =
+        questionRepository.findByImageUrlAndMemo(
+            requestSaveQuestionDTO.getImageUrl(), requestSaveQuestionDTO.getMemo());
 
-    try {
-      questionRepository.save(question);
-    } catch (DataAccessException e) {
-      throw new GeneralException(QuestionErrorStatus.QUESTION_DATABASE_ERROR);
+    Question question =
+        existingQuestion.orElseGet(
+            () -> {
+              Question newQuestion = QuestionConverter.toQuestion(requestSaveQuestionDTO);
+              return questionRepository.save(newQuestion);
+            });
+
+    Optional<UserQuestion> existingUserQuestion =
+        userQuestionRepository.findByUserIdAndQuestionId(user.getId(), question.getId());
+    if (existingUserQuestion.isPresent()) {
+      throw new GeneralException(QuestionErrorStatus.DUPLICATE_QUESTIONS);
     }
 
     UserQuestion userQuestion =
