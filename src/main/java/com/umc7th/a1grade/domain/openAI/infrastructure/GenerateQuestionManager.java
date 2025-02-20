@@ -75,6 +75,7 @@ public class GenerateQuestionManager {
                     9. When returning similar problems and solutions, any mathematical expressions in LaTeX should be enclosed between $ and $.
                     For example: "Given the condition, the function $y = 8f(x) = 8 log x$ and the line..."
                     10. Any mathematical expressions, except for general variables, should be enclosed with dollar signs ($) on both sides.
+                    11. You need to ensure that the string is generated without including invalid escape characters like \l.
                     </instruction>
                     <example>
                     I will provide an example response. Even if an image with a problem similar
