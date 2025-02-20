@@ -51,4 +51,6 @@ public interface UserQuestionRepository extends JpaRepository<UserQuestion, Long
           + "WHERE uq.id = :userQuestionId "
           + "ORDER BY ql.submissionTime DESC")
   Optional<UserQuestion> findUserQuestion(@Param("userQuestionId") Long userQuestionId);
+
+  boolean existsByUserIdAndQuestionImageUrl(Long userId, String imageUrl);
 }
