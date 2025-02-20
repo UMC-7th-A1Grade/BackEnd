@@ -82,6 +82,19 @@ public class GoogleTokenService implements OAuth2TokenService {
         user.getEmail(), tokens.get("accessToken"), user.getSocialId(), tokens.get("refreshToken"));
   }
 
+  @Override
+  @Transactional
+  public LoginResponse handleTestLogin(String code) {
+    User user =
+        userRepository
+            .findBySocialId("test")
+            .orElseThrow(() -> new AuthHandler(AuthErrorStatus._TEST_LOGIN_FAIL));
+
+    Map<String, String> tokens = generateTokens(user);
+    return new LoginResponse(
+        user.getEmail(), tokens.get("accessToken"), user.getSocialId(), tokens.get("refreshToken"));
+  }
+
   @Transactional
   public User createNewUser(OAuthAttributes attributes) {
     User newUser = attributes.toEntity();
