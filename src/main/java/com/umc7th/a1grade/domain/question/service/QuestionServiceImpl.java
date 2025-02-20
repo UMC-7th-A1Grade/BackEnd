@@ -153,13 +153,13 @@ public class QuestionServiceImpl implements QuestionService {
       throw new GeneralException(QuestionErrorStatus.INVALID_QUESTION_TYPE);
     }
 
-    Question question = QuestionConverter.toQuestion(requestSaveQuestionDTO);
-
-    try {
-      questionRepository.save(question);
-    } catch (DataAccessException e) {
-      throw new GeneralException(QuestionErrorStatus.QUESTION_DATABASE_ERROR);
+    if (userQuestionRepository.existsByUserIdAndQuestionImageUrl(
+        user.getId(), requestSaveQuestionDTO.getImageUrl())) {
+      throw new GeneralException(QuestionErrorStatus.DUPLICATE_QUESTIONS);
     }
+
+    Question question =
+        questionRepository.save(QuestionConverter.toQuestion(requestSaveQuestionDTO));
 
     UserQuestion userQuestion =
         UserQuestion.builder()
